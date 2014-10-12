@@ -1,1 +1,0 @@
-alert('first 2');
