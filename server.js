@@ -27,11 +27,17 @@ io.on('connection', function (socket) {
         });
     });
 
+    /**
+     * Upload a new file to the server
+     * Long uploads can be resumed
+     * @param  {Object} data the file data
+     */
     socket.on('start upload', function (data) {
         var name = data.name;
 
         files[name] = {
             fileSize: data.size,
+            handler: '',
             data: '',
             downloaded: 0
         };
@@ -39,23 +45,44 @@ io.on('connection', function (socket) {
         var place = 0;
 
         try {
-            var stat = fs.statSync('temp/' + name);
-            if (stat.isFile()) {
-                files[name].downloaded = stat.size;
-                place = stat.size / HALF_MEG;
+            var existingFile = fs.statSync('temp/' + name);
+
+            /**
+             * If the file exists in temp/
+             * continue downloading where we left off
+             */
+            if (existingFile.isFile()) {
+                console.log('Resuming upload...');
+                files[name].downloaded = existingFile.size;
+                place = existingFile.size / HALF_MEG;
             }
         }
-        catch (er) {} //It's a New File
+        catch (err) {
+            console.log('Uploading new tune...');
+        }
 
+        /**
+         * If it's a new file we create it,
+         * if it's an existing file we open it.
+         * We ask the client to send more data.
+         * @param  {[type]} err [description]
+         * @param  {[type]} fd  [description]
+         * @return {[type]}     [description]
+         */
         fs.open('temp/' + name, 'a', 0755, function (err, fd) {
             if (err) {
                 console.log(err);
             }
             else {
-                // Store the file handler so we can write to it later
+
+                /**
+                 * Store the file handler so we can write to it later
+                 * The handler will also be used as the element id in the DOM
+                 */
                 files[name].handler = fd;
+
                 socket.emit('more data', {
-                    'place': place,
+                    place: place,
                     percent: 0
                 });
             }
