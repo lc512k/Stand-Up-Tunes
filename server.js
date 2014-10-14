@@ -1,79 +1,93 @@
-// Setup basic express server
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var port = process.env.PORT || 3000;
 
+var fs = require('fs');
+
+var files = {};
+
+var HALF_MEG = 524288;
+var TEN_MEGS = 10485760;
+
 server.listen(port, function () {
     console.log('Server listening at port %d', port);
 });
 
-// Routing
-app.use(express.static(__dirname + '/public'));
-
-// Chatroom
-
-// usernames which are currently connected to the chat
-var usernames = {};
-var numUsers = 0;
+app.use(express.static(__dirname + '/public')); //jshint ignore:line
 
 io.on('connection', function (socket) {
-    var addedUser = false;
 
-    // when the client emits 'new message', this listens and executes
-    socket.on('new message', function (data) {
-        // we tell the client to execute 'new message'
-        socket.broadcast.emit('new message', {
-            username: socket.username,
+    socket.on('vote', function (data) {
+        console.log('vote received', data);
+
+        socket.broadcast.emit('new vote', {
             message: data
         });
     });
 
-    // when the client emits 'add user', this listens and executes
-    socket.on('add user', function (username) {
-        // we store the username in the socket session for this client
-        socket.username = username;
-        // add the client's username to the global list
-        usernames[username] = username;
-        ++numUsers;
-        addedUser = true;
-        socket.emit('login', {
-            numUsers: numUsers
-        });
-        // echo globally (all clients) that a person has connected
-        socket.broadcast.emit('user joined', {
-            username: socket.username,
-            numUsers: numUsers
+    socket.on('start', function (data) {
+        var name = data.name;
+        files[name] = {
+            fileSize: data.size,
+            data: '',
+            downloaded: 0
+        };
+
+        var place = 0;
+
+        try {
+            var stat = fs.statSync('temp/' + name);
+            if (stat.isFile()) {
+                files[name].downloaded = stat.size;
+                place = stat.size / HALF_MEG;
+            }
+        }
+        catch (er) {} //It's a New File
+
+        fs.open('temp/' + name, 'a', 0755, function (err, fd) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                // Store the file handler so we can write to it later
+                files[name].handler = fd;
+                socket.emit('more data', {
+                    'place': place,
+                    percent: 0
+                });
+            }
         });
     });
 
-    // when the client emits 'typing', we broadcast it to others
-    socket.on('typing', function () {
-        socket.broadcast.emit('typing', {
-            username: socket.username
-        });
-    });
+    socket.on('upload', function (data) {
+        var name = data.name;
 
-    // when the client emits 'stop typing', we broadcast it to others
-    socket.on('stop typing', function () {
-        socket.broadcast.emit('stop typing', {
-            username: socket.username
-        });
-    });
+        files[name].downloaded += data.data.length;
+        files[name].data += data.data;
 
-    // when the user disconnects.. perform this
-    socket.on('disconnect', function () {
-        // remove the username from global usernames list
-        if (addedUser) {
-            delete usernames[socket.username];
-            --numUsers;
-
-            // echo globally that this client has left
-            socket.broadcast.emit('user left', {
-                username: socket.username,
-                numUsers: numUsers
+        // If File is Fully Uploaded
+        if (files[name].downloaded === files[name].fileSize) {
+            fs.write(files[name].handler, files[name].data, null, 'Binary', function (err, Writen) {
+                //Get Thumbnail Here
             });
+            socket.emit('done');
+            console.info('upload done');
+        }
+        else if (files[name].data.length > TEN_MEGS) {
+            socket.emit('abort');
+        }
+        else {
+            console.info('PROGRESS');
+            var place = files[name].downloaded / HALF_MEG;
+            var percent = (files[name].downloaded / files[name].fileSize) * 100;
+            socket.emit('more data', {
+                'place': place,
+                'percent': percent
+            });
+            console.info('uploading ', percent);
         }
     });
+
 });
