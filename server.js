@@ -22,14 +22,14 @@ io.on('connection', function (socket) {
 
     socket.on('vote', function (data) {
         console.log('vote received', data);
-
         socket.broadcast.emit('new vote', {
             message: data
         });
     });
 
-    socket.on('start', function (data) {
+    socket.on('start upload', function (data) {
         var name = data.name;
+
         files[name] = {
             fileSize: data.size,
             data: '',

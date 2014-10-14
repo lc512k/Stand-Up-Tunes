@@ -30,44 +30,45 @@ var selectedFile;
 
 function fileChosen(evnt) {
     selectedFile = evnt.target.files[0];
-    document.getElementById('NameBox').value = selectedFile.name;
+    document.getElementById('name-box').value = selectedFile.name;
 }
 
 var FReader;
 var name;
+
 function startUpload() {
-    if (document.getElementById('FileBox').value !== '') {
+    if (document.getElementById('file-box').value !== '') {
 
         FReader = new FileReader();
 
-        name = document.getElementById('NameBox').value;
+        name = document.getElementById('name-box').value;
 
-        var Content = '<span id="NameArea">Uploading ' + selectedFile.name + ' as ' + name + '</span>';
-        Content += '<div id="ProgressContainer"><div id="ProgressBar"></div></div><span id="percent">0%</span>';
-        Content += '<span id="Uploaded"> - <span id="MB">0</span>/' + Math.round(selectedFile.size / 1048576) + 'MB</span>';
+        var Content = '<span id="name-area">Uploading ' + selectedFile.name + ' as ' + name + '</span>';
+        Content += '<div id="progress-container"><div id="progress-bar"></div></div><span id="percent">0%</span>';
+        Content += '<span id="uploaded"> - <span id="MB">0</span>/' + Math.round(selectedFile.size / 1048576) + 'MB</span>';
 
-        document.getElementById('UploadArea').innerHTML = Content;
+        document.getElementById('upload-area').innerHTML = Content;
         FReader.onload = function (evnt) {
             console.info('evnt', evnt, evnt.target, evnt.target.result);
             //alert('data client');
             socket.emit('upload', {
-                'name': name,
+                name: name,
                 data: evnt.target.result
             });
         };
 
-        socket.emit('start', {
-            'name': name,
-            'size': selectedFile.size
+        socket.emit('start upload', {
+            name: name,
+            size: selectedFile.size
         });
     }
     else {
-        alert('Please Select A File');
+        alert('Please select a file to upload');
     }
 }
 
 function updateBar(percent) {
-    document.getElementById('ProgressBar').style.width = percent + '%';
+    document.getElementById('progress-bar').style.width = percent + '%';
     document.getElementById('percent').innerHTML = (Math.round(percent * 100) / 100) + '%';
     var MBDone = Math.round(((percent / 100.0) * selectedFile.size) / 1048576);
     document.getElementById('MB').innerHTML = MBDone;
@@ -94,11 +95,11 @@ function init () {
         voteButtons[i].addEventListener('click', castVote);
     }
     if (window.File && window.FileReader) {
-        document.getElementById('UploadButton').addEventListener('click', startUpload);
-        document.getElementById('FileBox').addEventListener('change', fileChosen);
+        document.getElementById('upload-button').addEventListener('click', startUpload);
+        document.getElementById('file-box').addEventListener('change', fileChosen);
     }
     else {
-        document.getElementById('UploadArea').innerHTML = 'Your Browser Doesn\'t Support The File API Please Update Your Browser';
+        document.getElementById('upload-area').innerHTML = 'Your Browser Doesn\'t Support The File API Please Update Your Browser';
     }
 }
 
