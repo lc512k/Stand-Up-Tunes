@@ -8,6 +8,7 @@ var fs = require('fs');
 
 var files = {};
 
+// CONSTANTS
 var HALF_MEG = 524288;
 var TEN_MEGS = 10485760;
 
