@@ -23,6 +23,27 @@ app.use(express.static(__dirname + '/public')); //jshint ignore:line
 
 io.on('connection', function (socket) {
 
+    socket.on('init', function () {
+        console.log('booting');
+
+        var handlers = [];
+
+        fs.readdir('temp', function (err, files) {
+
+            if (err) {
+                // TODO emit it
+                throw err;
+            }
+
+            // TODO filter out stuff
+            socket.emit('tunes list', {
+                tuneIds: files
+            });
+        });
+
+        socket.emit('loading file list');
+    });
+
     socket.on('vote', function (data) {
         console.log('vote received', data);
         socket.broadcast.emit('new vote', {
@@ -107,7 +128,7 @@ io.on('connection', function (socket) {
             console.info('upload done');
         }
         else if (files[name].data.length > TEN_MB) {
-            socket.emit('abort');
+            socket.emit('abort. file is over 10megs');
         }
         else {
             console.info('PROGRESS', files[name].downloaded, HUNDRED_KB);

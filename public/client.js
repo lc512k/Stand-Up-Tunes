@@ -1,23 +1,24 @@
 /* global window, document, io, FileReader */
 
-var voteButtons = document.getElementsByClassName('js-vote');
-var socket      = io();
+var tunesContainer  = document.getElementById('tunes-container');
+var socket          = io();
 
-var HALF_MB    = 524288;
-var ONE_MB     = HALF_MB  * 2;
-var ONE_KB     = ONE_MB / 1024;
-var HUNDRED_KB = ONE_KB * 100;
+var HALF_MB         = 524288;
+var ONE_MB          = HALF_MB  * 2;
+var ONE_KB          = ONE_MB / 1024;
+var HUNDRED_KB      = ONE_KB * 100;
 
 function castVote(e) {
 
-    var chosenTune   = e.currentTarget;
-    var chosenTuneId = chosenTune.dataset.tuneId;
+    var voteButton    = e.currentTarget;
+    var tuneContainer = voteButton.parentNode;
+    var chosenTuneId  = tuneContainer.dataset.tuneId;
 
     if (chosenTuneId) {
         socket.emit('vote', chosenTuneId);
     }
     else {
-        console.error('no tuneId for', chosenTune);
+        console.error('no tuneId for', chosenTuneId);
     }
 }
 
@@ -50,10 +51,17 @@ function startUpload() {
 
         var Content = '<span id="name-area">Uploading ' + selectedFile.name + ' as ' + name + '</span>';
         Content += '<div id="progress-container"><div id="progress-bar"></div></div><span id="percent">0%</span>';
-        Content += '<span id="uploaded"> - <span id="MB">0</span>/' + Math.round(selectedFile.size / ONE_KB) + 'KB</span>';
+        Content += '<span id="uploaded"> - <span id="kb">0</span>/' + Math.round(selectedFile.size / ONE_KB) + 'KB</span>';
 
         document.getElementById('upload-area').innerHTML = Content;
+
+        /**
+         * Bind the read event to the socket event
+         * Every time we read a chunk of the file, we send it to the server
+         * @param  {Event} evnt [description]
+         */
         FReader.onload = function (evnt) {
+            alert('onload');
             socket.emit('upload', {
                 name: name,
                 data: evnt.target.result
@@ -70,37 +78,61 @@ function startUpload() {
     }
 }
 
-function updateBar(percent) {
+function updateProgressBar(percent) {
     document.getElementById('progress-bar').style.width = percent + '%';
     document.getElementById('percent').innerHTML = (Math.round(percent * 100) / 100) + '%';
     var kilobitesDone = Math.round(((percent / 100.0) * selectedFile.size) / ONE_KB);
-    document.getElementById('MB').innerHTML = kilobitesDone;
+    document.getElementById('kb').innerHTML = kilobitesDone;
 }
 
 /**
- * We send the file 100KB at a time, which is terribly wasteful in terms of network resources
- * but absolutely beautiful for updating a nice, usable progress bar
- * TODO: Send the whole file and let the server write it to disk 100KB at a time
- * and tell us about each chunk
+ * We send the file 100KB at a time, which is probably overkill
+ * but we get a lovely, usable progress bar for the user in return
  * @param  {[type]} data [description]
  * @return {[type]}      [description]
  */
 socket.on('more data', function (data) {
-    updateBar(data.percent);
-    var marker = data.marker * HUNDRED_KB; //The Next Blocks Starting Position
+    updateProgressBar(data.percent);
+
+    //The Next Blocks Starting Position
+    var marker = data.marker * HUNDRED_KB;
     var nextBlock = selectedFile.slice(marker, marker + Math.min(HUNDRED_KB, (selectedFile.size - marker)));
 
     FReader.readAsBinaryString(nextBlock);
 });
 
 socket.on('done', function () {
-    updateBar(100);
+    updateProgressBar(100);
+});
+
+socket.on('loading file list', function () {
+    // TODO
+    console.info('Spinner...');
+});
+
+socket.on('tunes list', function (data) {
+    console.info('tunes list data', data);
+    for (var i = 0; i < data.tuneIds.length; i++) {
+
+        // Vote button for each tune
+        var tuneBtn = document.createElement('button');
+        var tuneName = document.createTextNode('tune ' + data.tuneIds[i]);
+        tuneBtn.appendChild(tuneName);
+        tuneBtn.addEventListener('click', castVote);
+
+        // Container for each tune
+        var tuneDiv = document.createElement('div');
+        tuneDiv.setAttribute('data-tune-id', data.tuneIds[i]);
+        tuneDiv.appendChild(tuneBtn);
+
+        tunesContainer.appendChild(tuneDiv);
+    }
 });
 
 function init () {
-    for (var i = 0; i < voteButtons.length; i++) {
-        voteButtons[i].addEventListener('click', castVote);
-    }
+
+    socket.emit('init');
+
     if (window.File && window.FileReader) {
         document.getElementById('upload-button').addEventListener('click', startUpload);
         document.getElementById('file-box').addEventListener('change', fileChosen);
