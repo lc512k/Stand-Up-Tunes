@@ -3,6 +3,11 @@
 var voteButtons = document.getElementsByClassName('js-vote');
 var socket      = io();
 
+var HALF_MB    = 524288;
+var ONE_MB     = HALF_MB  * 2;
+var ONE_KB     = ONE_MB / 1024;
+var HUNDRED_KB = ONE_KB * 100;
+
 function castVote(e) {
 
     var chosenTune   = e.currentTarget;
@@ -45,12 +50,10 @@ function startUpload() {
 
         var Content = '<span id="name-area">Uploading ' + selectedFile.name + ' as ' + name + '</span>';
         Content += '<div id="progress-container"><div id="progress-bar"></div></div><span id="percent">0%</span>';
-        Content += '<span id="uploaded"> - <span id="MB">0</span>/' + Math.round(selectedFile.size / 1048576) + 'MB</span>';
+        Content += '<span id="uploaded"> - <span id="MB">0</span>/' + Math.round(selectedFile.size / ONE_KB) + 'KB</span>';
 
         document.getElementById('upload-area').innerHTML = Content;
         FReader.onload = function (evnt) {
-            console.info('evnt', evnt, evnt.target, evnt.target.result);
-            //alert('data client');
             socket.emit('upload', {
                 name: name,
                 data: evnt.target.result
@@ -70,22 +73,26 @@ function startUpload() {
 function updateBar(percent) {
     document.getElementById('progress-bar').style.width = percent + '%';
     document.getElementById('percent').innerHTML = (Math.round(percent * 100) / 100) + '%';
-    var MBDone = Math.round(((percent / 100.0) * selectedFile.size) / 1048576);
-    document.getElementById('MB').innerHTML = MBDone;
+    var kilobitesDone = Math.round(((percent / 100.0) * selectedFile.size) / ONE_KB);
+    document.getElementById('MB').innerHTML = kilobitesDone;
 }
 
+/**
+ * We send the file 100KB at a time, which is terribly wasteful in terms of network resources
+ * but absolutely beautiful for updating a nice, usable progress bar
+ * TODO: Send the whole file and let the server write it to disk 100KB at a time
+ * and tell us about each chunk
+ * @param  {[type]} data [description]
+ * @return {[type]}      [description]
+ */
 socket.on('more data', function (data) {
-    //alert('more data');
     updateBar(data.percent);
-    var place = data.place * 524288; //The Next Blocks Starting Position
-    var newFile; //The Variable that will hold the new Block of Data
+    var marker = data.marker * HUNDRED_KB; //The Next Blocks Starting Position
+    var nextBlock = selectedFile.slice(marker, marker + Math.min(HUNDRED_KB, (selectedFile.size - marker)));
 
-    newFile = selectedFile.slice(place, place + Math.min(524288, (selectedFile.size - place)));
-
-    console.info('newFile', newFile);
-
-    FReader.readAsBinaryString(newFile);
+    FReader.readAsBinaryString(nextBlock);
 });
+
 socket.on('done', function () {
     updateBar(100);
 });

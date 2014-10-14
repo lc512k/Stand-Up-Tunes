@@ -9,8 +9,11 @@ var fs = require('fs');
 var files = {};
 
 // CONSTANTS
-var HALF_MEG = 524288;
-var TEN_MEGS = 10485760;
+
+var ONE_KB     = 1024;
+var HUNDRED_KB = ONE_KB * 100;
+var ONE_MB     = Math.pow(ONE_KB, 2);
+var TEN_MB     = ONE_MB * 10;
 
 server.listen(port, function () {
     console.log('Server listening at port %d', port);
@@ -28,9 +31,9 @@ io.on('connection', function (socket) {
     });
 
     /**
-     * Upload a new file to the server
+     * Start a new file upload
      * Long uploads can be resumed
-     * @param  {Object} data the file data
+     * @param {Object} data the file data
      */
     socket.on('start upload', function (data) {
         var name = data.name;
@@ -42,7 +45,7 @@ io.on('connection', function (socket) {
             downloaded: 0
         };
 
-        var place = 0;
+        var marker = 0;
 
         try {
             var existingFile = fs.statSync('temp/' + name);
@@ -54,7 +57,7 @@ io.on('connection', function (socket) {
             if (existingFile.isFile()) {
                 console.log('Resuming upload...');
                 files[name].downloaded = existingFile.size;
-                place = existingFile.size / HALF_MEG;
+                marker = existingFile.size / HUNDRED_KB;
             }
         }
         catch (err) {
@@ -82,7 +85,7 @@ io.on('connection', function (socket) {
                 files[name].handler = fd;
 
                 socket.emit('more data', {
-                    place: place,
+                    marker: marker,
                     percent: 0
                 });
             }
@@ -103,15 +106,15 @@ io.on('connection', function (socket) {
             socket.emit('done');
             console.info('upload done');
         }
-        else if (files[name].data.length > TEN_MEGS) {
+        else if (files[name].data.length > TEN_MB) {
             socket.emit('abort');
         }
         else {
-            console.info('PROGRESS');
-            var place = files[name].downloaded / HALF_MEG;
+            console.info('PROGRESS', files[name].downloaded, HUNDRED_KB);
+            var marker = files[name].downloaded / HUNDRED_KB;
             var percent = (files[name].downloaded / files[name].fileSize) * 100;
             socket.emit('more data', {
-                'place': place,
+                'marker': marker,
                 'percent': percent
             });
             console.info('uploading ', percent);
