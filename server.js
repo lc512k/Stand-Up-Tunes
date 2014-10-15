@@ -1,8 +1,15 @@
+// > DEBUG=http node server.js
+
 var express = require('express');
 var app = express();
-var server = require('http').createServer(app);
+var http = require('http');
+var server = http.createServer(app);
 var io = require('socket.io')(server);
 var port = process.env.PORT || 3000;
+var debug = require('debug')('http');
+
+// TODO require('./voting');
+// TODO require('./uploading');
 
 var fs = require('fs');
 
@@ -24,13 +31,14 @@ var files = {};
 var votes = {};
 
 // CONSTANTS
+
 var ONE_KB = 1024;
 var HUNDRED_KB = ONE_KB * 100;
 var ONE_MB = Math.pow(ONE_KB, 2);
 var TEN_MB = ONE_MB * 10;
 
 server.listen(port, function () {
-    console.log('Server listening at port %d', port);
+    debug('Server listening at port %d', port);
 });
 
 app.use(express.static(__dirname + '/public')); //jshint ignore:line
@@ -38,7 +46,7 @@ app.use(express.static(__dirname + '/public')); //jshint ignore:line
 io.on('connection', function (socket) {
 
     socket.on('init', function () {
-        console.log('booting');
+        debug('booting');
 
         fs.readdir('temp', function (err, files) {
 
@@ -57,7 +65,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('vote', function (tuneId) {
-        console.log('vote received', tuneId);
+        debug('vote received', tuneId);
 
         // If this tune hasn't been voted on before, add it to 'votes'
         votes[tuneId]       = votes[tuneId] || {};
@@ -97,13 +105,13 @@ io.on('connection', function (socket) {
              * continue downloading where we left off
              */
             if (existingFile.isFile()) {
-                console.log('Resuming upload...');
+                debug('Resuming upload...');
                 files[name].downloaded = existingFile.size;
                 marker = existingFile.size / HUNDRED_KB;
             }
         }
         catch (err) {
-            console.log('Uploading new tune...');
+            debug('Uploading new tune...');
         }
 
         /**
@@ -116,7 +124,7 @@ io.on('connection', function (socket) {
          */
         fs.open('temp/' + name, 'a', 0755, function (err, fd) {
             if (err) {
-                console.log(err);
+                debug(err);
             }
             else {
 
@@ -153,11 +161,13 @@ io.on('connection', function (socket) {
         }
         else {
             console.info('PROGRESS', files[name].downloaded, HUNDRED_KB);
+            var size = files[name].fileSize;
             var marker = files[name].downloaded / HUNDRED_KB;
             var percent = (files[name].downloaded / files[name].fileSize) * 100;
             socket.emit('more data', {
-                'marker': marker,
-                'percent': percent
+                marker: marker,
+                percent: percent,
+                size: size
             });
             console.info('uploading ', percent);
         }

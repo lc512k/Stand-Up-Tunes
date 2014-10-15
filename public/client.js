@@ -8,8 +8,23 @@ var ONE_MB          = HALF_MB  * 2;
 var ONE_KB          = ONE_MB / 1024;
 var HUNDRED_KB      = ONE_KB * 100;
 
-// CACHE DOM NODES
-var tunesContainer  = document.getElementById('tunes-container');
+///////////////////////////////// UI /////////////////////////////////
+
+var UI = {
+    tunesContainer: document.getElementById('tunes-container'),
+    selectedFile: null,
+
+    updateProgressBar: function (percent) {
+        if (!this.selectedFile) {
+            console.error('no file selected');
+            return;
+        }
+        document.getElementById('progress-bar').style.width = percent + '%';
+        document.getElementById('percent').innerHTML = (Math.round(percent * 100) / 100) + '%';
+        var kilobitesDone = Math.round(((percent / 100.0) * this.selectedFile.size) / ONE_KB);
+        document.getElementById('kb').innerHTML = kilobitesDone;
+    }
+};
 
 /////////////////////////////// VOTING ///////////////////////////////
 
@@ -47,25 +62,26 @@ socket.on('new vote', function (data) {
 
 ///////////////////////////// UPLOADING /////////////////////////////
 
-var selectedFile;
 var FReader;
-var name;
+var fileName;
 
 function fileChosen(e) {
-    selectedFile = e.target.files[0];
-    document.getElementById('name-box').value = selectedFile.name;
+    UI.selectedFile = e.target.files[0];
+    document.getElementById('name-box').value = UI.selectedFile.name;
 }
 
 function startUpload() {
-    if (document.getElementById('file-box').value !== '') {
+    fileName = UI.fileBox.value !== '';
+
+    if (fileName) {
 
         FReader = new FileReader();
 
-        name = document.getElementById('name-box').value;
+        fileName = document.getElementById('name-box').value;
 
-        var Content = '<span id="name-area">Uploading ' + selectedFile.name + ' as ' + name + '</span>';
+        var Content = '<span id="name-area">Uploading ' + UI.selectedFile.name + ' as ' + fileName + '</span>';
         Content += '<div id="progress-container"><div id="progress-bar"></div></div><span id="percent">0%</span>';
-        Content += '<span id="uploaded"> - <span id="kb">0</span>/' + Math.round(selectedFile.size / ONE_KB) + 'KB</span>';
+        Content += '<span id="uploaded"> - <span id="kb">0</span>/' + Math.round(UI.selectedFile.size / ONE_KB) + 'KB</span>';
 
         document.getElementById('upload-area').innerHTML = Content;
 
@@ -75,28 +91,20 @@ function startUpload() {
          * @param  {Event} e [description]
          */
         FReader.onload = function (e) {
-            alert('onload');
             socket.emit('upload', {
-                name: name,
+                name: fileName,
                 data: e.target.result
             });
         };
 
         socket.emit('start upload', {
-            name: name,
-            size: selectedFile.size
+            name: fileName,
+            size: UI.selectedFile.size
         });
     }
     else {
         alert('Please select a file to upload');
     }
-}
-
-function updateProgressBar(percent) {
-    document.getElementById('progress-bar').style.width = percent + '%';
-    document.getElementById('percent').innerHTML = (Math.round(percent * 100) / 100) + '%';
-    var kilobitesDone = Math.round(((percent / 100.0) * selectedFile.size) / ONE_KB);
-    document.getElementById('kb').innerHTML = kilobitesDone;
 }
 
 /**
@@ -106,17 +114,17 @@ function updateProgressBar(percent) {
  * @return {[type]}      [description]
  */
 socket.on('more data', function (data) {
-    updateProgressBar(data.percent);
+    UI.updateProgressBar(data.percent);
 
     //The Next Blocks Starting Position
     var marker = data.marker * HUNDRED_KB;
-    var nextBlock = selectedFile.slice(marker, marker + Math.min(HUNDRED_KB, (selectedFile.size - marker)));
+    var nextBlock = UI.selectedFile.slice(marker, marker + Math.min(HUNDRED_KB, (UI.selectedFile.size - marker)));
 
     FReader.readAsBinaryString(nextBlock);
 });
 
 socket.on('done', function () {
-    updateProgressBar(100);
+    UI.updateProgressBar(100);
 });
 
 socket.on('loading file list', function () {
@@ -139,7 +147,7 @@ socket.on('tunes list', function (data) {
         tuneDiv.setAttribute('data-tune-id', data.tuneIds[i]);
         tuneDiv.appendChild(tuneBtn);
 
-        tunesContainer.appendChild(tuneDiv);
+        UI.tunesContainer.appendChild(tuneDiv);
     }
 });
 
