@@ -8,12 +8,26 @@ var fs = require('fs');
 
 var files = {};
 
-// CONSTANTS
+/**
+ * List of tuneIds and their vote counts
+ * A tuneId is the file handler for the sound file
+ *
+ * {
+ *     '214324' : {
+ *         count: 12
+ *     },
+ *     '465344' {
+ *         count: 4
+ *     }
+ * }
+ */
+var votes = {};
 
-var ONE_KB     = 1024;
+// CONSTANTS
+var ONE_KB = 1024;
 var HUNDRED_KB = ONE_KB * 100;
-var ONE_MB     = Math.pow(ONE_KB, 2);
-var TEN_MB     = ONE_MB * 10;
+var ONE_MB = Math.pow(ONE_KB, 2);
+var TEN_MB = ONE_MB * 10;
 
 server.listen(port, function () {
     console.log('Server listening at port %d', port);
@@ -25,8 +39,6 @@ io.on('connection', function (socket) {
 
     socket.on('init', function () {
         console.log('booting');
-
-        var handlers = [];
 
         fs.readdir('temp', function (err, files) {
 
@@ -44,10 +56,19 @@ io.on('connection', function (socket) {
         socket.emit('loading file list');
     });
 
-    socket.on('vote', function (data) {
-        console.log('vote received', data);
+    socket.on('vote', function (tuneId) {
+        console.log('vote received', tuneId);
+
+        // If this tune hasn't been voted on before, add it to 'votes'
+        votes[tuneId]       = votes[tuneId] || {};
+
+        // Increase the vote count by one
+        votes[tuneId].count = votes[tuneId].count ? votes[tuneId].count++ : 1;
+
+        // Update the client with the new vote
         socket.broadcast.emit('new vote', {
-            message: data
+            tuneId: tuneId,
+            count: votes[tuneId].count
         });
     });
 

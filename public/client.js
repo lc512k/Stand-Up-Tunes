@@ -1,15 +1,25 @@
 /* global window, document, io, FileReader */
 
-var tunesContainer  = document.getElementById('tunes-container');
 var socket          = io();
 
+// FILE SIZE CONSTANTS
 var HALF_MB         = 524288;
 var ONE_MB          = HALF_MB  * 2;
 var ONE_KB          = ONE_MB / 1024;
 var HUNDRED_KB      = ONE_KB * 100;
 
-function castVote(e) {
+// CACHE DOM NODES
+var tunesContainer  = document.getElementById('tunes-container');
 
+/////////////////////////////// VOTING ///////////////////////////////
+
+/**
+ * Event handler for Vote button
+ * When the user clicks a vote button for a tune
+ * send the tuneId to the server
+ * @param  {Event} e [description]
+ */
+function onCastVote(e) {
     var voteButton    = e.currentTarget;
     var tuneContainer = voteButton.parentNode;
     var chosenTuneId  = tuneContainer.dataset.tuneId;
@@ -22,25 +32,29 @@ function castVote(e) {
     }
 }
 
-// Whenever the server emits 'new message', update the chat body
+/**
+ * Server message listener
+ * The server emits 'new vote' every time it receives a 'vote'
+ * Update the UI with the new vote count
+ * @param {Object} data
+ * @param {String} data.tuneId
+ * @param {String} data.count
+ */
 socket.on('new vote', function (data) {
-    console.info('data', data);
-    alert('someone voted');
+    console.info('new vote', data);
+    alert('new vote');
 });
 
-/**
- * Uploading files
- */
+///////////////////////////// UPLOADING /////////////////////////////
 
 var selectedFile;
-
-function fileChosen(evnt) {
-    selectedFile = evnt.target.files[0];
-    document.getElementById('name-box').value = selectedFile.name;
-}
-
 var FReader;
 var name;
+
+function fileChosen(e) {
+    selectedFile = e.target.files[0];
+    document.getElementById('name-box').value = selectedFile.name;
+}
 
 function startUpload() {
     if (document.getElementById('file-box').value !== '') {
@@ -58,13 +72,13 @@ function startUpload() {
         /**
          * Bind the read event to the socket event
          * Every time we read a chunk of the file, we send it to the server
-         * @param  {Event} evnt [description]
+         * @param  {Event} e [description]
          */
-        FReader.onload = function (evnt) {
+        FReader.onload = function (e) {
             alert('onload');
             socket.emit('upload', {
                 name: name,
-                data: evnt.target.result
+                data: e.target.result
             });
         };
 
@@ -118,7 +132,7 @@ socket.on('tunes list', function (data) {
         var tuneBtn = document.createElement('button');
         var tuneName = document.createTextNode('tune ' + data.tuneIds[i]);
         tuneBtn.appendChild(tuneName);
-        tuneBtn.addEventListener('click', castVote);
+        tuneBtn.addEventListener('click', onCastVote);
 
         // Container for each tune
         var tuneDiv = document.createElement('div');
@@ -128,6 +142,8 @@ socket.on('tunes list', function (data) {
         tunesContainer.appendChild(tuneDiv);
     }
 });
+
+/////////////////////////////// INIT ///////////////////////////////
 
 function init () {
 
