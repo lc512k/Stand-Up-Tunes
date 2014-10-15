@@ -7,11 +7,13 @@ var server = http.createServer(app);
 var io = require('socket.io')(server);
 var port = process.env.PORT || 3000;
 var debug = require('debug')('http');
+var sys = require('sys');
+var exec = require('child_process').exec;
+var fs = require('fs');
 
 // TODO require('./voting');
 // TODO require('./uploading');
-
-var fs = require('fs');
+// TODO require('./system');
 
 var files = {};
 
@@ -48,7 +50,12 @@ io.on('connection', function (socket) {
     socket.on('init', function () {
         debug('booting');
 
-        fs.readdir('temp', function (err, files) {
+        function play(error, stdout, stderr) {
+            debug('played!', error, stdout, stderr);
+        }
+        exec('afplay ./tunes/mario.mp3', play);
+
+        fs.readdir('tunes', function (err, files) {
 
             if (err) {
                 // TODO emit it
@@ -172,5 +179,4 @@ io.on('connection', function (socket) {
             console.info('uploading ', percent);
         }
     });
-
 });
