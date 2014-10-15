@@ -7,7 +7,6 @@ var server = http.createServer(app);
 var io = require('socket.io')(server);
 var port = process.env.PORT || 3000;
 var debug = require('debug')('http');
-var sys = require('sys');
 var exec = require('child_process').exec;
 var fs = require('fs');
 
