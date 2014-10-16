@@ -4,6 +4,10 @@ var debug = require('debug')('timer');
 var exec = require('child_process').exec;
 var domain = require('domain').create();
 
+/**
+ * [init description]
+ * @return {[type]} [description]
+ */
 exports.init = function () {
     debug('init');
     var now = new Date();

@@ -6,6 +6,13 @@ var HUNDRED_KB = ONE_KB * 100;
 var ONE_MB = Math.pow(ONE_KB, 2);
 var TEN_MB = ONE_MB * 10;
 
+/**
+ * [upload description]
+ * @param  {[type]} data   [description]
+ * @param  {[type]} files  [description]
+ * @param  {[type]} socket [description]
+ * @return {[type]}        [description]
+ */
 exports.upload = function (data, files, socket) {
     var name = data.name;
     files[name].downloaded += data.data.length;
@@ -34,6 +41,13 @@ exports.upload = function (data, files, socket) {
     }
 };
 
+/**
+ * [startUpload description]
+ * @param  {[type]} data   [description]
+ * @param  {[type]} files  [description]
+ * @param  {[type]} socket [description]
+ * @return {[type]}        [description]
+ */
 exports.startUpload = function (data, files, socket) {
     var name = data.name;
 
@@ -49,10 +63,8 @@ exports.startUpload = function (data, files, socket) {
     try {
         var existingFile = fs.statSync('tunes/' + name);
 
-        /**
-         * If the file exists in tunes/
-         * continue downloading where we left off
-         */
+        // If the file exists in tunes/
+        // continue downloading where we left off
         if (existingFile.isFile()) {
             debug('Resuming upload...');
             files[name].downloaded = existingFile.size;
@@ -76,11 +88,8 @@ exports.startUpload = function (data, files, socket) {
             debug(err);
         }
         else {
-
-            /**
-             * Store the file handler so we can write to it later
-             * The handler will also be used as the element id in the DOM
-             */
+            // Store the file handler so we can write to it later
+            // The handler will also be used as the element id in the DOM
             files[name].handler = fd;
 
             socket.emit('more data', {

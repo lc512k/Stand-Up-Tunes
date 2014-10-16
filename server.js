@@ -1,22 +1,20 @@
-// > DEBUG=http,uploader,timer node server.js
-
-/* global votes */
-GLOBAL.votes = {};
-
 var express = require('express');
 var app = express();
-var http = require('http');
-var server = http.createServer(app);
+
+var server = require('http').createServer(app);
 var io = require('socket.io')(server);
-var port = process.env.PORT || 3000;
-var debug = require('debug')('http');
+var debug = require('debug')('server');
 var fs = require('fs');
+
+var port = process.env.PORT || 3000;
 
 var uploader = require('./uploader');
 var timer = require('./timer');
-// TODO require('./voting');
+var voting = require('./voting');
 
-var files = {};
+///////////////////////////////// GLOBALS /////////////////////////////////
+
+/* global files */
 
 /**
  * List of tuneIds and their vote counts
@@ -31,66 +29,47 @@ var files = {};
  *     }
  * }
  */
+GLOBAL.votes = {};
+GLOBAL.files = {};
 
-///////////////////////////////// STARTUP /////////////////////////////////
+// Host static files
+app.use(express.static(__dirname + '/public')); //jshint ignore:line
 
+// Start listening on defined port
 server.listen(port, function () {
     debug('Server listening at port %d', port);
 });
 
-app.use(express.static(__dirname + '/public')); //jshint ignore:line
-
+// Connect
 io.on('connection', function (socket) {
 
+    // Initialize the timer module
+    // Sets up the alarm every day based on the winning tune
+    // TODO GET THIS ONE OUT OF HERE. DO ONLY ONCE< NOT PER CLIENT
+    timer.init();
+
+    // Initialize the voting module
+    // Tells the client about the existing tunes to vote on
+    voting.init(files, socket);
+
+    // A client connected
     socket.on('init', function () {
-        debug('booting');
-
-        timer.init();
-
-        fs.readdir('tunes', function (err, files) {
-
-            if (err) {
-                // TODO emit it
-                throw err;
-            }
-
-            // TODO filter out stuff that isn't music
-            socket.emit('tunes list', {
-                tuneIds: files
-            });
-        });
-
-        socket.emit('loading file list');
+        debug('client connected');
     });
 
     socket.on('vote', function (tuneId) {
         debug('vote received', tuneId);
 
-        // If this tune hasn't been voted on before, register it
-        // with zero votes
-        votes[tuneId] = votes[tuneId] || {count:0};
-
-        // Increase the vote count by one
-        votes[tuneId].count++;
-
-        // Update the client with the new vote
-        socket.broadcast.emit('new vote', {
-            tuneId: tuneId,
-            count: votes[tuneId].count
-        });
-
-        debug('tally', votes);
+        // Count the vote and broadcast the new vote counts to all clients
+        voting.send(tuneId, socket);
     });
 
-    /**
-     * Start a new file upload
-     * Long uploads can be resumed
-     * @param {Object} data the file data
-     */
+    // Start saving a new file or resuming a previous upload
     socket.on('start upload', function (data) {
         uploader.startUpload(data, files, socket, fs);
     });
 
+    // Save the chunk of the file send from the client
     socket.on('upload', function (data) {
         uploader.upload(data, files, socket, fs);
     });
