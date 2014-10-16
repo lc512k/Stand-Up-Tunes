@@ -12,6 +12,7 @@ var HUNDRED_KB      = ONE_KB * 100;
 
 var UI = {
     tunesContainer: document.getElementById('tunes-container'),
+    fileBox: document.getElementById('file-box'),
     selectedFile: null,
 
     updateProgressBar: function (percent) {

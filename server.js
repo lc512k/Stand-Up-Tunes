@@ -1,4 +1,7 @@
-// > DEBUG=http node server.js
+// > DEBUG=http,uploader,timer node server.js
+
+/* global votes */
+GLOBAL.votes = {};
 
 var express = require('express');
 var app = express();
@@ -7,13 +10,11 @@ var server = http.createServer(app);
 var io = require('socket.io')(server);
 var port = process.env.PORT || 3000;
 var debug = require('debug')('http');
-var exec = require('child_process').exec;
 var fs = require('fs');
-var domain = require('domain').create();
 
+var uploader = require('./uploader');
+var timer = require('./timer');
 // TODO require('./voting');
-// TODO require('./uploading');
-// TODO require('./system');
 
 var files = {};
 
@@ -30,65 +31,6 @@ var files = {};
  *     }
  * }
  */
-var votes = {};
-
-// CONSTANTS
-
-var ONE_KB = 1024;
-var HUNDRED_KB = ONE_KB * 100;
-var ONE_MB = Math.pow(ONE_KB, 2);
-var TEN_MB = ONE_MB * 10;
-
-///////////////////////////////// TIMER /////////////////////////////////
-
-var now = new Date();
-var STANDUP_TIME = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 57, 0, 0);
-
-var millisTillStandup = STANDUP_TIME - now;
-
-if (millisTillStandup < 0) {
-    // Stand up time has passed
-    // try again tomorrow
-    millisTillStandup += 60 * 60 * 1000 * 24;
-}
-
-setTimeout(function () {
-    debug('STAND UP TIME!');
-
-    function findWinner() {
-        var todaysWinner;
-
-        var highScore = 0;
-
-        for (var tuneId in votes) {
-
-            if (votes.hasOwnProperty(tuneId)) {
-                var thisCount = votes[tuneId].count;
-
-                if (thisCount > highScore) {
-                    highScore = thisCount;
-                    todaysWinner = tuneId;
-                }
-            }
-        }
-        return todaysWinner;
-    }
-
-    domain.on('error', function (err) {
-        exec('say stand up time!');
-    });
-
-    domain.run(function () {
-        function play(error) {
-            if (error) {
-                throw error;
-            }
-            debug('played!');
-        }
-        exec('afplay ./tunes/' + findWinner() + '34', play);
-    });
-
-}, millisTillStandup);
 
 ///////////////////////////////// STARTUP /////////////////////////////////
 
@@ -102,6 +44,8 @@ io.on('connection', function (socket) {
 
     socket.on('init', function () {
         debug('booting');
+
+        timer.init();
 
         fs.readdir('tunes', function (err, files) {
 
@@ -144,90 +88,10 @@ io.on('connection', function (socket) {
      * @param {Object} data the file data
      */
     socket.on('start upload', function (data) {
-        var name = data.name;
-
-        files[name] = {
-            fileSize: data.size,
-            handler: '',
-            data: '',
-            downloaded: 0
-        };
-
-        var marker = 0;
-
-        try {
-            var existingFile = fs.statSync('temp/' + name);
-
-            /**
-             * If the file exists in temp/
-             * continue downloading where we left off
-             */
-            if (existingFile.isFile()) {
-                debug('Resuming upload...');
-                files[name].downloaded = existingFile.size;
-                marker = existingFile.size / HUNDRED_KB;
-            }
-        }
-        catch (err) {
-            debug('Uploading new tune...');
-        }
-
-        /**
-         * If it's a new file we create it,
-         * if it's an existing file we open it.
-         * We ask the client to send more data.
-         * @param  {[type]} err [description]
-         * @param  {[type]} fd  [description]
-         * @return {[type]}     [description]
-         */
-        fs.open('temp/' + name, 'a', 0755, function (err, fd) {
-            if (err) {
-                debug(err);
-            }
-            else {
-
-                /**
-                 * Store the file handler so we can write to it later
-                 * The handler will also be used as the element id in the DOM
-                 */
-                files[name].handler = fd;
-
-                socket.emit('more data', {
-                    marker: marker,
-                    percent: 0
-                });
-            }
-        });
+        uploader.startUpload(data, files, socket, fs);
     });
 
     socket.on('upload', function (data) {
-        var name = data.name;
-
-        files[name].downloaded += data.data.length;
-        files[name].data += data.data;
-
-        // If File is Fully Uploaded
-        if (files[name].downloaded === files[name].fileSize) {
-            fs.write(files[name].handler, files[name].data, null, 'Binary', function (err, Writen) {
-                //Get Thumbnail Here
-            });
-            socket.emit('done');
-            console.info('upload done');
-        }
-        else if (files[name].data.length > TEN_MB) {
-            socket.emit('abort. file is over 10megs');
-        }
-        else {
-            console.info('PROGRESS', files[name].downloaded, HUNDRED_KB);
-            var size = files[name].fileSize;
-            var marker = files[name].downloaded / HUNDRED_KB;
-            var percent = (files[name].downloaded / files[name].fileSize) * 100;
-            socket.emit('more data', {
-                marker: marker,
-                percent: percent,
-                size: size
-            });
-            console.info('uploading ', percent);
-        }
+        uploader.upload(data, files, socket, fs);
     });
 });
