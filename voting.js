@@ -45,7 +45,7 @@ exports.send = function (tuneId, socket) {
     votes[tuneId].count++;
 
     // Update the client with the new vote
-    socket.broadcast.emit('new vote', {
+    socket.emit('new vote', {
         tuneId: tuneId,
         count: votes[tuneId].count
     });

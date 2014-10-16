@@ -21,6 +21,9 @@ exports.init = function () {
         millisTillStandup += 60 * 60 * 1000 * 24;
     }
 
+    // testing
+    millisTillStandup = 3000;
+
     setTimeout(function () {
         debug('Standup time!');
 
@@ -45,7 +48,7 @@ exports.init = function () {
 
         domain.on('error', function (err) {
             debug(err);
-            exec('say The mobile web jingle is broken, but the standup is still on.');
+            exec('say Oh no! The mobile web jingle is broken.');
         });
 
         domain.run(function () {

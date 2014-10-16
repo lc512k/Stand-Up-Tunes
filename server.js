@@ -40,13 +40,12 @@ server.listen(port, function () {
     debug('Server listening at port %d', port);
 });
 
+// Initialize the timer module
+// Sets up the alarm every day based on the winning tune
+timer.init();
+
 // Connect
 io.on('connection', function (socket) {
-
-    // Initialize the timer module
-    // Sets up the alarm every day based on the winning tune
-    // TODO GET THIS ONE OUT OF HERE. DO ONLY ONCE< NOT PER CLIENT
-    timer.init();
 
     // Initialize the voting module
     // Tells the client about the existing tunes to vote on

@@ -25,6 +25,11 @@ var UI = {
         var kilobitesDone = Math.round(((percent / 100.0) * this.selectedFile.size) / ONE_KB);
         document.getElementById('kb').innerHTML = kilobitesDone;
     },
+
+    cleanTunesList: function () {
+        this.tunesContainer.innerHtml = '';
+    },
+
     createTuneItem: function (tuneId) {
 
         // Score container
@@ -73,6 +78,9 @@ var UI = {
 // INIT
 
 socket.on('tunes list', function (data) {
+
+    UI.cleanTunesList();
+
     for (var i = 0; i < data.tuneIds.length; i++) {
         var tuneItem = UI.createTuneItem(data.tuneIds[i]);
         UI.tunesContainer.appendChild(tuneItem);
@@ -197,9 +205,6 @@ function init() {
     if (window.File && window.FileReader) {
         document.getElementById('upload-button').addEventListener('click', startUpload);
         document.getElementById('file-box').addEventListener('change', fileChosen);
-    }
-    else {
-        document.getElementById('upload-area').innerHTML = 'Your Browser Doesn\'t Support The File API Please Update Your Browser';
     }
 }
 
