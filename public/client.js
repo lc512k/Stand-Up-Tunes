@@ -1,12 +1,12 @@
 /* global window, document, io, FileReader */
 
-var socket          = io();
+var socket = io();
 
 // FILE SIZE CONSTANTS
-var HALF_MB         = 524288;
-var ONE_MB          = HALF_MB  * 2;
-var ONE_KB          = ONE_MB / 1024;
-var HUNDRED_KB      = ONE_KB * 100;
+var HALF_MB = 524288;
+var ONE_MB = HALF_MB * 2;
+var ONE_KB = ONE_MB / 1024;
+var HUNDRED_KB = ONE_KB * 100;
 
 ///////////////////////////////// UI /////////////////////////////////
 
@@ -24,9 +24,60 @@ var UI = {
         document.getElementById('percent').innerHTML = (Math.round(percent * 100) / 100) + '%';
         var kilobitesDone = Math.round(((percent / 100.0) * this.selectedFile.size) / ONE_KB);
         document.getElementById('kb').innerHTML = kilobitesDone;
+    },
+    createTuneItem: function (tuneId) {
+
+        // Score container
+        var scoreContainer = document.createElement('span');
+        scoreContainer.className = 'tune-score';
+        scoreContainer.appendChild(document.createTextNode('3'));
+
+        // Vote button with label for each tune
+        var voteBtn = document.createElement('a');
+        var voteLabel = document.createTextNode('♡');
+        voteBtn.appendChild(voteLabel);
+        voteBtn.addEventListener('click', onCastVote);
+
+        // Tune name
+        var tuneNameContainer = document.createElement('span');
+        tuneNameContainer.className = 'tune-name';
+        var tuneName = document.createTextNode(tuneId);
+        tuneNameContainer.appendChild(tuneName);
+
+        // Tune audio
+        var tuneAudioContainer = document.createElement('div');
+        var tuneAudio = document.createElement('audio');
+        var tuneSource = document.createElement('source');
+        tuneSource.setAttribute('src', 'tunes-client/' + tuneId);
+        tuneSource.setAttribute('type', 'audio/mpeg');
+        tuneAudio.appendChild(tuneSource);
+        tuneAudio.setAttribute('controls', '');
+        tuneAudio.setAttribute('style', 'display');
+        tuneAudioContainer.appendChild(tuneAudio);
+        tuneAudioContainer.className = 'tune-audio';
+
+        // Container for each tune
+        var tuneItem = document.createElement('li');
+        tuneItem.setAttribute('data-tune-id', tuneId);
+        tuneItem.className = 'tune-item';
+
+        tuneItem.appendChild(scoreContainer);
+        tuneItem.appendChild(tuneNameContainer);
+        tuneItem.appendChild(tuneAudioContainer);
+        tuneItem.appendChild(voteBtn);
+
+        return tuneItem;
     }
 };
 
+// INIT
+
+socket.on('tunes list', function (data) {
+    for (var i = 0; i < data.tuneIds.length; i++) {
+        var tuneItem = UI.createTuneItem(data.tuneIds[i]);
+        UI.tunesContainer.appendChild(tuneItem);
+    }
+});
 /////////////////////////////// PLAYBACK ///////////////////////////////
 // TODO hide the default audio ui, make small play button that when you .on('click', play)
 // var v = document.getElementsByTagName('video')[0];
@@ -41,9 +92,9 @@ var UI = {
  * @param  {Event} e [description]
  */
 function onCastVote(e) {
-    var voteButton    = e.currentTarget;
+    var voteButton = e.currentTarget;
     var tuneContainer = voteButton.parentNode;
-    var chosenTuneId  = tuneContainer.dataset.tuneId;
+    var chosenTuneId = tuneContainer.dataset.tuneId;
 
     if (chosenTuneId) {
         socket.emit('vote', chosenTuneId);
@@ -63,7 +114,6 @@ function onCastVote(e) {
  */
 socket.on('new vote', function (data) {
     console.info('new vote', data);
-    alert('new vote');
 });
 
 ///////////////////////////// UPLOADING /////////////////////////////
@@ -138,28 +188,9 @@ socket.on('loading file list', function () {
     console.info('Spinner...');
 });
 
-socket.on('tunes list', function (data) {
-    console.info('tunes list data', data);
-    for (var i = 0; i < data.tuneIds.length; i++) {
-
-        // Vote button for each tune
-        var tuneBtn = document.createElement('button');
-        var tuneName = document.createTextNode('tune ' + data.tuneIds[i]);
-        tuneBtn.appendChild(tuneName);
-        tuneBtn.addEventListener('click', onCastVote);
-
-        // Container for each tune
-        var tuneDiv = document.createElement('div');
-        tuneDiv.setAttribute('data-tune-id', data.tuneIds[i]);
-        tuneDiv.appendChild(tuneBtn);
-
-        UI.tunesContainer.appendChild(tuneDiv);
-    }
-});
-
 /////////////////////////////// INIT ///////////////////////////////
 
-function init () {
+function init() {
 
     socket.emit('init');
 

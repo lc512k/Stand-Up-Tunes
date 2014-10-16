@@ -11,7 +11,7 @@ var domain = require('domain').create();
 exports.init = function () {
     debug('init');
     var now = new Date();
-    var STANDUP_TIME = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 13, 38, 0, 0);
+    var STANDUP_TIME = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 21, 27, 30, 0);
 
     var millisTillStandup = STANDUP_TIME - now;
 
