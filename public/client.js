@@ -26,6 +26,11 @@ var UI = {
     }
 };
 
+/////////////////////////////// PLAYBACK ///////////////////////////////
+// TODO hide the default audio ui, make small play button that when you .on('click', play)
+// var v = document.getElementsByTagName('video')[0];
+// v.play();
+
 /////////////////////////////// VOTING ///////////////////////////////
 
 /**

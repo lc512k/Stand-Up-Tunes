@@ -9,6 +9,7 @@ var port = process.env.PORT || 3000;
 var debug = require('debug')('http');
 var exec = require('child_process').exec;
 var fs = require('fs');
+var domain = require('domain').create();
 
 // TODO require('./voting');
 // TODO require('./uploading');
@@ -38,6 +39,59 @@ var HUNDRED_KB = ONE_KB * 100;
 var ONE_MB = Math.pow(ONE_KB, 2);
 var TEN_MB = ONE_MB * 10;
 
+///////////////////////////////// TIMER /////////////////////////////////
+
+var now = new Date();
+var STANDUP_TIME = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 57, 0, 0);
+
+var millisTillStandup = STANDUP_TIME - now;
+
+if (millisTillStandup < 0) {
+    // Stand up time has passed
+    // try again tomorrow
+    millisTillStandup += 60 * 60 * 1000 * 24;
+}
+
+setTimeout(function () {
+    debug('STAND UP TIME!');
+
+    function findWinner() {
+        var todaysWinner;
+
+        var highScore = 0;
+
+        for (var tuneId in votes) {
+
+            if (votes.hasOwnProperty(tuneId)) {
+                var thisCount = votes[tuneId].count;
+
+                if (thisCount > highScore) {
+                    highScore = thisCount;
+                    todaysWinner = tuneId;
+                }
+            }
+        }
+        return todaysWinner;
+    }
+
+    domain.on('error', function (err) {
+        exec('say stand up time!');
+    });
+
+    domain.run(function () {
+        function play(error) {
+            if (error) {
+                throw error;
+            }
+            debug('played!');
+        }
+        exec('afplay ./tunes/' + findWinner() + '34', play);
+    });
+
+}, millisTillStandup);
+
+///////////////////////////////// STARTUP /////////////////////////////////
+
 server.listen(port, function () {
     debug('Server listening at port %d', port);
 });
@@ -49,11 +103,6 @@ io.on('connection', function (socket) {
     socket.on('init', function () {
         debug('booting');
 
-        function play(error, stdout, stderr) {
-            debug('played!', error, stdout, stderr);
-        }
-        exec('afplay ./tunes/mario.mp3', play);
-
         fs.readdir('tunes', function (err, files) {
 
             if (err) {
@@ -61,7 +110,7 @@ io.on('connection', function (socket) {
                 throw err;
             }
 
-            // TODO filter out stuff
+            // TODO filter out stuff that isn't music
             socket.emit('tunes list', {
                 tuneIds: files
             });
@@ -73,17 +122,20 @@ io.on('connection', function (socket) {
     socket.on('vote', function (tuneId) {
         debug('vote received', tuneId);
 
-        // If this tune hasn't been voted on before, add it to 'votes'
-        votes[tuneId]       = votes[tuneId] || {};
+        // If this tune hasn't been voted on before, register it
+        // with zero votes
+        votes[tuneId] = votes[tuneId] || {count:0};
 
         // Increase the vote count by one
-        votes[tuneId].count = votes[tuneId].count ? votes[tuneId].count++ : 1;
+        votes[tuneId].count++;
 
         // Update the client with the new vote
         socket.broadcast.emit('new vote', {
             tuneId: tuneId,
             count: votes[tuneId].count
         });
+
+        debug('tally', votes);
     });
 
     /**
