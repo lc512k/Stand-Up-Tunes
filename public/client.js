@@ -53,7 +53,8 @@ var UI = {
         var tuneAudioContainer = document.createElement('div');
         var tuneAudio = document.createElement('audio');
         var tuneSource = document.createElement('source');
-        tuneSource.setAttribute('src', 'tunes-client/' + tuneId);
+        //TODO use url as source
+        tuneSource.setAttribute('src', 'http://66.90.91.26:777/ost/mario-bros/yulwardwfa/01-mb-title.mp3');
         tuneSource.setAttribute('type', 'audio/mpeg');
         tuneAudio.appendChild(tuneSource);
         tuneAudio.setAttribute('controls', '');

@@ -22,6 +22,7 @@ exports.init = function (files, socket) {
         // TODO filter out stuff that isn't music
         socket.emit('tunes list', {
             tuneIds: files
+            //TODO url on the server http://123.234.23.2/bla/mario.mp3
         });
     });
 

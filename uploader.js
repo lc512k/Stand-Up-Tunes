@@ -22,6 +22,7 @@ exports.upload = function (data, files, socket) {
     if (files[name].downloaded === files[name].fileSize) {
         fs.write(files[name].handler, files[name].data, null, 'Binary', function () {
             socket.emit('done');
+            //TODO send the new file to the clients
             debug('done!');
         });
     }
