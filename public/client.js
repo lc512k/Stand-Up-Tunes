@@ -206,6 +206,9 @@ function init() {
     if (window.File && window.FileReader) {
         document.getElementById('upload-button').addEventListener('click', startUpload);
         document.getElementById('file-box').addEventListener('change', fileChosen);
+        document.getElementById('name-box').addEventListener('click', function () {
+            document.getElementById('file-box').click();
+        });
     }
 }
 
