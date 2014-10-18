@@ -22,7 +22,7 @@ exports.init = function () {
     }
 
     // testing
-    millisTillStandup = 3000;
+    millisTillStandup = 10000;
 
     setTimeout(function () {
         debug('Standup time!');
@@ -46,17 +46,20 @@ exports.init = function () {
             return todaysWinner;
         }
 
+        // if playing a file failed, fallback to audio error message
         domain.on('error', function (err) {
             debug(err);
             exec('say Oh no! The mobile web jingle is broken.');
         });
 
+        // try/catch for executing afplay on the command line
         domain.run(function () {
             function play(error) {
                 if (error) {
                     throw error;
                 }
-                debug('played!');
+                debug('Played! Resetting vote count');
+                GLOBAL.votes = {};
             }
             exec('afplay ./tunes/' + findWinner(), play);
         });

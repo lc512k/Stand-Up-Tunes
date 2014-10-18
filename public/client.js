@@ -1,4 +1,4 @@
-/* global window, document, io, FileReader */
+/* global window, document, FileReader, io */
 
 var socket = io();
 
@@ -7,6 +7,7 @@ var HALF_MB = 524288;
 var ONE_MB = HALF_MB * 2;
 var ONE_KB = ONE_MB / 1024;
 var HUNDRED_KB = ONE_KB * 100;
+var USER_LOG_STYLE = 'color: lime; background-color: black; padding: 4px;';
 
 ///////////////////////////////// UI /////////////////////////////////
 
@@ -27,7 +28,9 @@ var UI = {
     },
 
     cleanTunesList: function () {
-        this.tunesContainer.innerHtml = '';
+        while (this.tunesContainer.firstChild) {
+            this.tunesContainer.removeChild(this.tunesContainer.firstChild);
+        }
     },
 
     createTuneItem: function (tuneId) {
@@ -73,13 +76,18 @@ var UI = {
         tuneItem.appendChild(voteBtn);
 
         return tuneItem;
+    },
+    addRow: function (tuneId) {
+        var tuneItem = this.createTuneItem(tuneId);
+        UI.tunesContainer.appendChild(tuneItem);
     }
+
 };
 
 // INIT
 
-socket.on('tunes list', function (data) {
 
+socket.on('tunes list', function (data) {
     UI.cleanTunesList();
 
     for (var i = 0; i < data.tuneIds.length; i++) {
@@ -87,6 +95,14 @@ socket.on('tunes list', function (data) {
         UI.tunesContainer.appendChild(tuneItem);
     }
 });
+
+socket.on('welcome', function (ip) {
+    console.log('%c Welcome, %s', USER_LOG_STYLE, ip);
+});
+socket.on('new user', function (ip) {
+    console.log('%c %s joined!', USER_LOG_STYLE, ip);
+});
+
 /////////////////////////////// PLAYBACK ///////////////////////////////
 // TODO hide the default audio ui, make small play button that when you .on('click', play)
 // var v = document.getElementsByTagName('video')[0];
@@ -122,6 +138,8 @@ function onCastVote(e) {
  * @param {String} data.count
  */
 socket.on('new vote', function (data) {
+    // TODO update the counter, swap the rows??
+    // li has to have some id to find it here
     console.info('new vote', data);
 });
 
@@ -188,7 +206,8 @@ socket.on('more data', function (data) {
     FReader.readAsBinaryString(nextBlock);
 });
 
-socket.on('done', function () {
+socket.on('done', function (newFileName) {
+    UI.addRow(name);
     UI.updateProgressBar(100);
 });
 

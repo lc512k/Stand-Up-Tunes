@@ -15,24 +15,27 @@ var TEN_MB = ONE_MB * 10;
  */
 exports.upload = function (data, files, socket) {
     var name = data.name;
-    files[name].downloaded += data.data.length;
-    files[name].data += data.data;
+    var thisFile = files[name];
+
+    thisFile.downloaded += data.data.length;
+    thisFile.data += data.data;
 
     // If file is done
-    if (files[name].downloaded === files[name].fileSize) {
-        fs.write(files[name].handler, files[name].data, null, 'Binary', function () {
-            socket.emit('done');
-            //TODO send the new file to the clients
+    if (thisFile.downloaded === thisFile.fileSize) {
+        fs.write(thisFile.handler, thisFile.data, null, 'Binary', function () {
+            socket.emit('done', {
+                name: name
+            });
             debug('done!');
         });
     }
-    else if (files[name].data.length > TEN_MB) {
+    else if (thisFile.data.length > TEN_MB) {
         socket.emit('abort. file is over 10megs');
     }
     else {
-        var size = files[name].fileSize;
-        var marker = files[name].downloaded / HUNDRED_KB;
-        var percent = (files[name].downloaded / files[name].fileSize) * 100;
+        var size = thisFile.fileSize;
+        var marker = thisFile.downloaded / HUNDRED_KB;
+        var percent = (thisFile.downloaded / files[name].fileSize) * 100;
         debug('progress ' + Math.round(percent) + '%');
         socket.emit('more data', {
             marker: marker,
@@ -52,6 +55,9 @@ exports.upload = function (data, files, socket) {
 exports.startUpload = function (data, files, socket) {
     var name = data.name;
 
+    // add the file to the list
+    // TODO set the url here?
+    // TODO make the tunes folder public, client can access without sending url
     files[name] = {
         fileSize: data.size,
         handler: '',
@@ -80,9 +86,6 @@ exports.startUpload = function (data, files, socket) {
      * If it's a new file we create it,
      * if it's an existing file we open it.
      * We ask the client to send more data.
-     * @param  {[type]} err [description]
-     * @param  {[type]} fd  [description]
-     * @return {[type]}     [description]
      */
     fs.open('tunes/' + name, 'a', 0755, function (err, fd) {
         if (err) {

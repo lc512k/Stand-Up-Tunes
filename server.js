@@ -4,7 +4,7 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var debug = require('debug')('server');
-var fs = require('fs');
+var fileServer = require('fs');
 
 var port = process.env.PORT || 3000;
 
@@ -45,19 +45,43 @@ server.listen(port, function () {
 timer.init();
 
 // Connect
-io.on('connection', function (socket) {
-
-    // Initialize the voting module
-    // Tells the client about the existing tunes to vote on
-    voting.init(files, socket);
+io.sockets.on('connection', function (socket) {
 
     // A client connected
     socket.on('init', function () {
-        debug('client connected');
+        var clientIp = socket.client.conn.remoteAddress;
+        debug('new client connected ', clientIp);
+
+        // Say Hi!
+        socket.emit('welcome', clientIp);
+
+        // Tell everyone else too
+        socket.broadcast.emit('new user', clientIp);
     });
 
+    // Tell the client we've started reading the file list
+    // Client may choose to show a spinner
+    socket.emit('loading file list');
+
+    // Tell the client what tunes we have that can be voted on
+    fileServer.readdir('tunes', function (err, files) {
+
+        if (err) {
+            // TODO emit it
+            throw err;
+        }
+
+        // Filter out stuff that isn't music
+        // and send the list to the client
+        socket.emit('tunes list', {
+            tuneIds: filter(files)
+        });
+
+    });
+
+    // Handle a vote
     socket.on('vote', function (tuneId) {
-        debug('vote received', tuneId);
+        debug('vote received for ' + tuneId);
 
         // Count the vote and broadcast the new vote counts to all clients
         voting.send(tuneId, socket);
@@ -65,11 +89,28 @@ io.on('connection', function (socket) {
 
     // Start saving a new file or resuming a previous upload
     socket.on('start upload', function (data) {
-        uploader.startUpload(data, files, socket, fs);
+        uploader.startUpload(data, files, socket, fileServer);
     });
 
     // Save the chunk of the file send from the client
     socket.on('upload', function (data) {
-        uploader.upload(data, files, socket, fs);
+        uploader.upload(data, files, socket, fileServer);
     });
 });
+
+
+
+// UTILS
+var filter = function (filesToFilter) {
+
+    // Filter out anything that's not an audio file
+    var filtered = [];
+    for (var i = 0; i < filesToFilter.length; i++) {
+        var file = filesToFilter[i];
+        if (file.indexOf('.mp3') > 0 || file.indexOf('.wav') > 0 ) {
+            filtered.push(file);
+        }
+    }
+
+    return filtered;
+};
