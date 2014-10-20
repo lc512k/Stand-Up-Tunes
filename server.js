@@ -29,7 +29,6 @@ var voting = require('./voting');
  *     }
  * }
  */
-GLOBAL.votes = {};
 GLOBAL.files = {};
 
 // Host static files
@@ -49,8 +48,9 @@ io.sockets.on('connection', function (socket) {
 
     // A client connected
     socket.on('init', function () {
+
         var clientIp = socket.client.conn.remoteAddress;
-        debug('new client connected ', clientIp);
+        debug('New client connected ', clientIp);
 
         // Say Hi!
         socket.emit('welcome', clientIp);
@@ -64,18 +64,19 @@ io.sockets.on('connection', function (socket) {
     socket.emit('loading file list');
 
     // Tell the client what tunes we have that can be voted on
-    fileServer.readdir('tunes', function (err, files) {
+    fileServer.readdir('public/tunes', function (err, files) {
 
         if (err) {
             // TODO emit it
             throw err;
         }
 
+        // Load the files into the global files object
+        prePopulate(files);
+
         // Filter out stuff that isn't music
         // and send the list to the client
-        socket.emit('tunes list', {
-            tuneIds: filter(files)
-        });
+        socket.emit('tunes list', GLOBAL.files);
 
     });
 
@@ -98,19 +99,17 @@ io.sockets.on('connection', function (socket) {
     });
 });
 
-
-
 // UTILS
-var filter = function (filesToFilter) {
+var prePopulate = function (readFiles) {
 
     // Filter out anything that's not an audio file
-    var filtered = [];
-    for (var i = 0; i < filesToFilter.length; i++) {
-        var file = filesToFilter[i];
-        if (file.indexOf('.mp3') > 0 || file.indexOf('.wav') > 0 ) {
-            filtered.push(file);
+
+    for (var i = 0; i < readFiles.length; i++) {
+        var file = readFiles[i];
+        if (file.indexOf('.mp3') > 0 || file.indexOf('.wav') > 0) {
+            GLOBAL.files[file] = {
+                votes: 0
+            };
         }
     }
-
-    return filtered;
 };

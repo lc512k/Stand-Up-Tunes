@@ -23,9 +23,7 @@ exports.upload = function (data, files, socket) {
     // If file is done
     if (thisFile.downloaded === thisFile.fileSize) {
         fs.write(thisFile.handler, thisFile.data, null, 'Binary', function () {
-            socket.emit('done', {
-                name: name
-            });
+            socket.emit('done', name);
             debug('done!');
         });
     }
@@ -62,15 +60,16 @@ exports.startUpload = function (data, files, socket) {
         fileSize: data.size,
         handler: '',
         data: '',
-        downloaded: 0
+        downloaded: 0,
+        votes: 0
     };
 
     var marker = 0;
 
     try {
-        var existingFile = fs.statSync('tunes/' + name);
+        var existingFile = fs.statSync('public/tunes/' + name);
 
-        // If the file exists in tunes/
+        // If the file exists in public/tunes/
         // continue downloading where we left off
         if (existingFile.isFile()) {
             debug('Resuming upload...');
@@ -87,7 +86,7 @@ exports.startUpload = function (data, files, socket) {
      * if it's an existing file we open it.
      * We ask the client to send more data.
      */
-    fs.open('tunes/' + name, 'a', 0755, function (err, fd) {
+    fs.open('public/tunes/' + name, 'a', 0755, function (err, fd) {
         if (err) {
             debug(err);
         }

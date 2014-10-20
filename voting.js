@@ -1,4 +1,4 @@
-/* global votes */
+/* global files */
 
 var debug = require('debug')('voting');
 
@@ -11,18 +11,21 @@ var debug = require('debug')('voting');
 exports.send = function (tuneId, socket) {
     // If this tune hasn't been voted on before, register it
     // with zero votes
-    votes[tuneId] = votes[tuneId] || {
-        count: 0
-    };
 
     // Increase the vote count by one
-    votes[tuneId].count++;
+    files[tuneId].votes++;
 
-    // Update the client with the new vote
+    // Update the client (voter) with the new vote
     socket.emit('new vote', {
         tuneId: tuneId,
-        count: votes[tuneId].count
+        count: files[tuneId].votes
     });
 
-    debug('tally', votes);
+    // Update the client (everyone else) with the new vote
+    socket.broadcast.emit('new vote', {
+        tuneId: tuneId,
+        count: files[tuneId].votes
+    });
+
+    debug('tally', files);
 };

@@ -33,12 +33,13 @@ var UI = {
         }
     },
 
-    createTuneItem: function (tuneId) {
+    createTuneItem: function (tuneId, votes) {
 
         // Score container
         var scoreContainer = document.createElement('span');
+        var scoreText = document.createTextNode(votes);
         scoreContainer.className = 'tune-score';
-        scoreContainer.appendChild(document.createTextNode('3'));
+        scoreContainer.appendChild(scoreText);
 
         // Vote button with label for each tune
         var voteBtn = document.createElement('a');
@@ -57,7 +58,7 @@ var UI = {
         var tuneAudio = document.createElement('audio');
         var tuneSource = document.createElement('source');
         //TODO use url as source
-        tuneSource.setAttribute('src', 'http://66.90.91.26:777/ost/mario-bros/yulwardwfa/01-mb-title.mp3');
+        tuneSource.setAttribute('src', 'tunes/' + tuneId);
         tuneSource.setAttribute('type', 'audio/mpeg');
         tuneAudio.appendChild(tuneSource);
         tuneAudio.setAttribute('controls', '');
@@ -78,7 +79,7 @@ var UI = {
         return tuneItem;
     },
     addRow: function (tuneId) {
-        var tuneItem = this.createTuneItem(tuneId);
+        var tuneItem = this.createTuneItem(tuneId, 0);
         UI.tunesContainer.appendChild(tuneItem);
     }
 
@@ -86,12 +87,14 @@ var UI = {
 
 // INIT
 
+socket.on('tunes list', function (files) {
 
-socket.on('tunes list', function (data) {
+    console.info('files', files);
+    alert('THIS');
     UI.cleanTunesList();
 
-    for (var i = 0; i < data.tuneIds.length; i++) {
-        var tuneItem = UI.createTuneItem(data.tuneIds[i]);
+    for (var fileId in files) {
+        var tuneItem = UI.createTuneItem(fileId, files[fileId].votes);
         UI.tunesContainer.appendChild(tuneItem);
     }
 });
@@ -133,14 +136,21 @@ function onCastVote(e) {
  * Server message listener
  * The server emits 'new vote' every time it receives a 'vote'
  * Update the UI with the new vote count
- * @param {Object} data
- * @param {String} data.tuneId
- * @param {String} data.count
+ * @param {Object} vote
+ * @param {String} vote.tuneId
+ * @param {String} vote.count
  */
-socket.on('new vote', function (data) {
-    // TODO update the counter, swap the rows??
-    // li has to have some id to find it here
-    console.info('new vote', data);
+socket.on('new vote', function (vote) {
+
+    // Find the tune in the list and update the vote count
+    for (var i = 0; i < UI.tunesContainer.childNodes.length; i ++) {
+
+        var thisItem = UI.tunesContainer.childNodes[i];
+
+        if (thisItem.dataset.tuneId === vote.tuneId) {
+            thisItem.childNodes[0].innerText = vote.count;
+        }
+    }
 });
 
 ///////////////////////////// UPLOADING /////////////////////////////
@@ -207,7 +217,7 @@ socket.on('more data', function (data) {
 });
 
 socket.on('done', function (newFileName) {
-    UI.addRow(name);
+    UI.addRow(newFileName);
     UI.updateProgressBar(100);
 });
 

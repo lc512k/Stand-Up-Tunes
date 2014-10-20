@@ -1,4 +1,4 @@
-/* global votes */
+/* global files */
 
 var debug = require('debug')('timer');
 var exec = require('child_process').exec;
@@ -32,10 +32,10 @@ exports.init = function () {
 
             var highScore = 0;
 
-            for (var tuneId in votes) {
+            for (var tuneId in files) {
 
-                if (votes.hasOwnProperty(tuneId)) {
-                    var thisCount = votes[tuneId].count;
+                if (files.hasOwnProperty(tuneId)) {
+                    var thisCount = files[tuneId].votes;
 
                     if (thisCount > highScore) {
                         highScore = thisCount;
@@ -59,9 +59,9 @@ exports.init = function () {
                     throw error;
                 }
                 debug('Played! Resetting vote count');
-                GLOBAL.votes = {};
+                GLOBAL.files = {};
             }
-            exec('afplay ./tunes/' + findWinner(), play);
+            exec('afplay ./public/tunes/' + findWinner(), play);
         });
 
     }, millisTillStandup);

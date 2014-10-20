@@ -1,5 +1,16 @@
+@font-face {
+    font-family: Lato;
+    src: url(lato/Lato-Regular.ttf);
+}
+
+@font-face {
+    font-family: Lato;
+    font-weight: bold;
+    src: url(lato/Lato-Bold.ttf);
+}
+
 body {
-    font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif !important;
+    font-family: Lato, Helvetica, Arial, sans-serif !important;
 }
 
 #tunes-container {
