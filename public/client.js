@@ -88,9 +88,6 @@ var UI = {
 // INIT
 
 socket.on('tunes list', function (files) {
-
-    console.info('files', files);
-    alert('THIS');
     UI.cleanTunesList();
 
     for (var fileId in files) {

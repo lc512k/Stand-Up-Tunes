@@ -4,14 +4,16 @@ var debug = require('debug')('timer');
 var exec = require('child_process').exec;
 var domain = require('domain').create();
 
+// 9:40 am
+var now = new Date();
+var STANDUP_TIME = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 40, 0, 0);
+
 /**
- * [init description]
- * @return {[type]} [description]
+ * Play winning tune at STANDUP_TIME
+ * Reset all counters and start over
  */
 exports.init = function () {
     debug('init');
-    var now = new Date();
-    var STANDUP_TIME = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 21, 27, 30, 0);
 
     var millisTillStandup = STANDUP_TIME - now;
 

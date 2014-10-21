@@ -7,15 +7,15 @@ var ONE_MB = Math.pow(ONE_KB, 2);
 var TEN_MB = ONE_MB * 10;
 
 /**
- * [upload description]
- * @param  {[type]} data   [description]
- * @param  {[type]} files  [description]
- * @param  {[type]} socket [description]
- * @return {[type]}        [description]
+ * Write a 100KB chunk of a file to disk
+ * Notify the client when done
+ * so it can send the next chunk
+ * @param  {Object} data
+ * @param  {Socket} socket
  */
-exports.upload = function (data, files, socket) {
+exports.upload = function (data, socket) {
     var name = data.name;
-    var thisFile = files[name];
+    var thisFile = GLOBAL.files[name];
 
     thisFile.downloaded += data.data.length;
     thisFile.data += data.data;
@@ -33,7 +33,7 @@ exports.upload = function (data, files, socket) {
     else {
         var size = thisFile.fileSize;
         var marker = thisFile.downloaded / HUNDRED_KB;
-        var percent = (thisFile.downloaded / files[name].fileSize) * 100;
+        var percent = (thisFile.downloaded / GLOBAL.files[name].fileSize) * 100;
         debug('progress ' + Math.round(percent) + '%');
         socket.emit('more data', {
             marker: marker,
@@ -44,19 +44,15 @@ exports.upload = function (data, files, socket) {
 };
 
 /**
- * [startUpload description]
- * @param  {[type]} data   [description]
- * @param  {[type]} files  [description]
- * @param  {[type]} socket [description]
- * @return {[type]}        [description]
+ * Init a file upload
+ * @param  {Object} data
+ * @param  {Socket} socket
  */
-exports.startUpload = function (data, files, socket) {
+exports.startUpload = function (data, socket) {
     var name = data.name;
 
-    // add the file to the list
-    // TODO set the url here?
-    // TODO make the tunes folder public, client can access without sending url
-    files[name] = {
+    // Add the file to the global file list
+    GLOBAL.files[name] = {
         fileSize: data.size,
         handler: '',
         data: '',
@@ -73,7 +69,7 @@ exports.startUpload = function (data, files, socket) {
         // continue downloading where we left off
         if (existingFile.isFile()) {
             debug('Resuming upload...');
-            files[name].downloaded = existingFile.size;
+            GLOBAL.files[name].downloaded = existingFile.size;
             marker = existingFile.size / HUNDRED_KB;
         }
     }
@@ -92,8 +88,7 @@ exports.startUpload = function (data, files, socket) {
         }
         else {
             // Store the file handler so we can write to it later
-            // The handler will also be used as the element id in the DOM
-            files[name].handler = fd;
+            GLOBAL.files[name].handler = fd;
 
             socket.emit('more data', {
                 marker: marker,
