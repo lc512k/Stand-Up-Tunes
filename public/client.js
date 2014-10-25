@@ -8,6 +8,7 @@ var HUNDRED_KB = ONE_KB * 100;
 var USER_LOG_STYLE = 'color: lime; background-color: black; padding: 4px;';
 var USER_WARN_STYLE = 'color: orange; background-color: black; padding: 4px;';
 var USER_ERROR_STYLE = 'color: red; background-color: black; padding: 4px;';
+var USER_INFO_STYLE = 'color: cyan; background-color: black; padding: 4px;';
 
 ///////////////////////////////// UI /////////////////////////////////
 
@@ -20,14 +21,18 @@ var UI = {
     selectedFile: null,
 
     updateProgressBar: function (percent) {
+
         if (!this.selectedFile) {
             console.error('%cNo file selected', USER_ERROR_STYLE);
             return;
         }
-        document.getElementById('progress-bar').style.width = percent + '%';
-        document.getElementById('percent').innerHTML = (Math.round(percent * 100) / 100) + '%';
-        var kilobitesDone = Math.round(((percent / 100.0) * this.selectedFile.size) / ONE_KB);
-        document.getElementById('kb').innerHTML = kilobitesDone;
+
+        if (percent >= 100) {
+            UI.resetUploadButton();
+        }
+        else {
+            UI.uploadButton.innerText = parseInt(percent) + '%';
+        }    
     },
 
     cleanTunesList: function () {
@@ -84,8 +89,11 @@ var UI = {
     addRow: function (tuneId) {
         var tuneItem = this.createTuneItem(tuneId, 0);
         UI.tunesContainer.appendChild(tuneItem);
+    },
+    resetUploadButton: function() {
+        UI.uploadButton.innerText = 'Select File';
+        UI.nameBox.value = '';
     }
-
 };
 
 // INIT
@@ -128,7 +136,7 @@ function onCastVote(e) {
         socket.emit('vote', chosenTuneId);
     }
     else {
-        console.error('no tuneId for', chosenTuneId);
+        console.error('><');
     }
 }
 
@@ -174,22 +182,21 @@ function startUpload() {
         return;
     }
 
-    // File is not .mp3 or .wav,
-    // abort
+    // Remove HTML5 fakepath
+    fileName = fileName.replace('C:\\fakepath\\', '');
+
+    // File is not .mp3 or .wav, abort
     if (fileName.indexOf('.mp3') < 0 && fileName.indexOf('.wav') < 0) {
         console.log('%cThat ain\'t no audio file. Try again.', USER_WARN_STYLE);
-        UI.uploadButton.innerText = 'Select File';
-        UI.nameBox.value = ''
+        UI.resetUploadButton();
         return;
     }
 
     fileReader = new FileReader();
 
-    var Content = '<span id="name-area">Uploading ' + UI.selectedFile.name + ' as ' + fileName + '</span>';
-    Content += '<div id="progress-container"><div id="progress-bar"></div></div><span id="percent">0%</span>';
-    Content += '<span id="uploaded"> - <span id="kb">0</span>/' + Math.round(UI.selectedFile.size / ONE_KB) + 'KB</span>';
+    console.log('%cFile size is%iKB', USER_INFO_STYLE, Math.round(UI.selectedFile.size / ONE_KB));
 
-    document.getElementById('upload-area').innerHTML = Content;
+    UI.uploadButton.innerText = '0%';
 
     /**
      * Bind the read event to the socket event

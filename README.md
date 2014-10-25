@@ -3,10 +3,10 @@ Stand-Up-Tunes
 
 Recovery
 - Styles
-- Percentage on upload button
 - Vote button
 - Vote count badge
 - Highlight winner
+- Default jingle when no votes (distinct)
 
 Pending
 - Delete strategy
