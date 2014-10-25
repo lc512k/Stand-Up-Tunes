@@ -3,17 +3,19 @@
 var socket = io();
 
 // FILE SIZE CONSTANTS
-var HALF_MB = 524288;
-var ONE_MB = HALF_MB * 2;
-var ONE_KB = ONE_MB / 1024;
+var ONE_KB = 1024;
 var HUNDRED_KB = ONE_KB * 100;
 var USER_LOG_STYLE = 'color: lime; background-color: black; padding: 4px;';
+var USER_WARN_STYLE = 'color: orange; background-color: black; padding: 4px;';
 
 ///////////////////////////////// UI /////////////////////////////////
 
 var UI = {
     tunesContainer: document.getElementById('tunes-container'),
     fileBox: document.getElementById('file-box'),
+    nameBox: document.getElementById('name-box'),
+    uploadButton: document.getElementById('upload-button'),
+
     selectedFile: null,
 
     updateProgressBar: function (percent) {
@@ -152,49 +154,50 @@ socket.on('new vote', function (vote) {
 
 ///////////////////////////// UPLOADING /////////////////////////////
 
-var FReader;
+var fileReader;
 var fileName;
 
 function fileChosen(e) {
     UI.selectedFile = e.target.files[0];
-    document.getElementById('name-box').value = UI.selectedFile.name;
+    UI.nameBox.value = UI.selectedFile.name;
+    UI.uploadButton.innerText = 'Upload!'
 }
 
 function startUpload() {
     fileName = UI.fileBox.value !== '';
 
-    if (fileName) {
+    if (!fileName) {
+        UI.fileBox.click();
+        return;
+    }
 
-        FReader = new FileReader();
+    fileReader = new FileReader();
 
-        fileName = document.getElementById('name-box').value;
+    fileName = UI.nameBox.value;
 
-        var Content = '<span id="name-area">Uploading ' + UI.selectedFile.name + ' as ' + fileName + '</span>';
-        Content += '<div id="progress-container"><div id="progress-bar"></div></div><span id="percent">0%</span>';
-        Content += '<span id="uploaded"> - <span id="kb">0</span>/' + Math.round(UI.selectedFile.size / ONE_KB) + 'KB</span>';
+    var Content = '<span id="name-area">Uploading ' + UI.selectedFile.name + ' as ' + fileName + '</span>';
+    Content += '<div id="progress-container"><div id="progress-bar"></div></div><span id="percent">0%</span>';
+    Content += '<span id="uploaded"> - <span id="kb">0</span>/' + Math.round(UI.selectedFile.size / ONE_KB) + 'KB</span>';
 
-        document.getElementById('upload-area').innerHTML = Content;
+    document.getElementById('upload-area').innerHTML = Content;
 
-        /**
-         * Bind the read event to the socket event
-         * Every time we read a chunk of the file, we send it to the server
-         * @param  {Event} e [description]
-         */
-        FReader.onload = function (e) {
-            socket.emit('upload', {
-                name: fileName,
-                data: e.target.result
-            });
-        };
-
-        socket.emit('start upload', {
+    /**
+     * Bind the read event to the socket event
+     * Every time we read a chunk of the file, we send it to the server
+     * @param  {Event} e [description]
+     */
+    fileReader.onload = function (e) {
+        socket.emit('upload', {
             name: fileName,
-            size: UI.selectedFile.size
+            data: e.target.result
         });
-    }
-    else {
-        alert('Please select a file to upload');
-    }
+    };
+
+    socket.emit('start upload', {
+        name: fileName,
+        size: UI.selectedFile.size
+    });
+
 }
 
 /**
@@ -210,7 +213,7 @@ socket.on('more data', function (data) {
     var marker = data.marker * HUNDRED_KB;
     var nextBlock = UI.selectedFile.slice(marker, marker + Math.min(HUNDRED_KB, (UI.selectedFile.size - marker)));
 
-    FReader.readAsBinaryString(nextBlock);
+    fileReader.readAsBinaryString(nextBlock);
 });
 
 socket.on('done', function (newFileName) {
@@ -231,9 +234,9 @@ function init() {
 
     if (window.File && window.FileReader) {
         document.getElementById('upload-button').addEventListener('click', startUpload);
-        document.getElementById('file-box').addEventListener('change', fileChosen);
-        document.getElementById('name-box').addEventListener('click', function () {
-            document.getElementById('file-box').click();
+        UI.fileBox.addEventListener('change', fileChosen);
+        UI.nameBox.addEventListener('click', function () {
+            UI.fileBox.click();
         });
     }
 }

@@ -5,13 +5,13 @@
   "main": "server.js",
   "author": "Laura Carvajal",
   "dependencies": {
-    "express": "^4.9.7",
-    "socket.io": "^1.1.0",
-    "node-static": "^0.7.6",
-    "debug": "^2.0.0",
-    "domain": "0.0.0",
-    "forever-monitor": "^1.3.0",
-    "mocha": "^1.21.5"
+    "debug": "*",
+    "domain": "*",
+    "express": "*",
+    "forever-monitor": "*",
+    "mocha": "^2.0.1",
+    "node-static": "*",
+    "socket.io": "*"
   },
   "repository": {
     "type": "git",

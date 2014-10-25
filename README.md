@@ -3,7 +3,6 @@ Stand-Up-Tunes
 
 Recovery
 - Styles
-- Upload button events
 - Percentage on upload button
 - Checking file format in client
 - Vote button
@@ -12,9 +11,15 @@ Recovery
 
 Pending
 - Delete strategy
+- Forever monitor
+- Read votes from disk after restarting server
+- This file
 
 Nice to haves
-- This file
 - Unit tests
-- CSS-only progress bar
+- Spinner on first load
+- CSS-only progress bar for upload
 - Hide HTML5 audio, replace with progress-aware play button
+- Emit file server errors to the client
+- media queries
+- DOM functions
