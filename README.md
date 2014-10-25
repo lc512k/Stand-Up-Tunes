@@ -6,12 +6,12 @@ Recovery
 - Vote button
 - Vote count badge
 - Highlight winner
-- Default jingle when no votes (distinct)
 
 Pending
 - Delete strategy
 - Forever monitor
 - Read votes from disk after restarting server
+- Default jingle when no votes (distinct)
 - This file
 
 Nice to haves

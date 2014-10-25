@@ -9,25 +9,23 @@
     src: url(lato/Lato-Bold.ttf);
 }
 
+@font-face {
+    font-family: Aller;
+    src: url(Aller/Aller_Rg.ttf);
+}
+
+@font-face {
+    font-family: Aller;
+    font-weight: bold;
+    src: url(Aller/Aller_Bd.ttf);
+}
+
 body {
-    font-family: Lato, Helvetica, Arial, sans-serif !important;
+    font-family: Aller, courier, Arial, sans-serif !important;
 }
 
 #tunes-container {
     padding: 0;
-}
-
-.tune-item {
-    position: relative;
-    display: block;
-    padding: 10px 15px;
-    margin-bottom: -1px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-
-    display: flex;
-    flex-direction: row
-    flex-wrap: no-wrap;
 }
 
 .tune-item:first-child {
@@ -41,47 +39,65 @@ body {
     border-bottom-left-radius: 4px;
 }
 
+.tune-item {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: no-wrap;
+}
+
+.tune-item * {
+    vertical-align: middle;
+    line-height: 30px;
+}
 
 .tune-item .tune-score {
     order: 1;
-    margin: auto;
-    flex-grow: auto;
+    flex-grow: 1;
     flex-basis: 30px;
 }
 
 .tune-item .tune-name {
     order: 2;
-    margin: auto;
-    flex-grow: auto;
+    flex-grow: 2;
     flex-basis: 100px;
+    font-weight: bold;
 }
 
 .tune-item .tune-audio {
     order: 3;
-    margin: auto;
     flex-grow: 3;
-    flex-basis: 100px;
     text-align: center;
 }
 
 .tune-item > a {
     order: 4;
-    margin: auto;
-    flex-grow: auto;
-    flex-basis: 30px;
+    flex-grow: 1;
 
-    border-radius: 30px;
-    border-width: 0px;
+    border-radius: 4px;
     cursor: pointer;
     text-align: center;
-    background-color: #008cba;
-    border-color: #007095;
-    color: white;
-    padding: 3px;
-    line-height: 30px;
+    border: 1px solid #007095;
 }
 
-/* TODO flex box it */
+.tune-item > a::after {
+    content: 'vote';
+}
+
+.tune-item > a:hover {
+    background-color: greenyellow;
+}
+
+.tune-item > a:active {
+    background-color: green;
+}
+
 #upload-area {
     position: relative;
     width: 100%;
@@ -94,14 +110,15 @@ body {
     position: absolute;
     right: 0;
     bottom: 0;
-    padding: 8px 16px;
+    padding: 0 16px;
+    line-height: 35px;
     cursor: pointer;
     text-align: center;
-    background-color: #008cba;
-    border-color: #007095;
-    color: white;
-    font-weight: lighter;
-    width: 20%;
+    border: 1px solid #007095;
+    /* minus padding left and right minus four 1px borders */
+    width: calc(20% - 32px - 4px);
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
 }
 
 #upload-area > input[type="file"] {
@@ -109,12 +126,14 @@ body {
 }
 
 #upload-area > input[type="text"] {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
     position: absolute;
     left: 0;
     bottom: 0;
     border-style: solid;
     border-width: 1px;
     border-color: #ccc;
-    height: 30px;
+    height: 33px;
     width: 80%;
 }

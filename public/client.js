@@ -10,6 +10,12 @@ var USER_WARN_STYLE = 'color: orange; background-color: black; padding: 4px;';
 var USER_ERROR_STYLE = 'color: red; background-color: black; padding: 4px;';
 var USER_INFO_STYLE = 'color: cyan; background-color: black; padding: 4px;';
 
+///////////////////////////////// DOM /////////////////////////////////
+
+var DOM = {
+    
+};
+
 ///////////////////////////////// UI /////////////////////////////////
 
 var UI = {
@@ -51,8 +57,6 @@ var UI = {
 
         // Vote button with label for each tune
         var voteBtn = document.createElement('a');
-        var voteLabel = document.createTextNode('♡');
-        voteBtn.appendChild(voteLabel);
         voteBtn.addEventListener('click', onCastVote);
 
         // Tune name
@@ -65,7 +69,6 @@ var UI = {
         var tuneAudioContainer = document.createElement('div');
         var tuneAudio = document.createElement('audio');
         var tuneSource = document.createElement('source');
-        //TODO use url as source
         tuneSource.setAttribute('src', 'tunes/' + tuneId);
         tuneSource.setAttribute('type', 'audio/mpeg');
         tuneAudio.appendChild(tuneSource);
@@ -169,7 +172,7 @@ var fileName;
 function fileChosen(e) {
     UI.selectedFile = e.target.files[0];
     UI.nameBox.value = UI.selectedFile.name;
-    UI.uploadButton.innerText = 'Upload!'
+    UI.uploadButton.innerText = 'Upload!';
 }
 
 function startUpload() {
