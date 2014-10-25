@@ -4,7 +4,6 @@ Stand-Up-Tunes
 Recovery
 - Styles
 - Percentage on upload button
-- Checking file format in client
 - Vote button
 - Vote count badge
 - Highlight winner

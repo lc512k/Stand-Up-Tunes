@@ -7,6 +7,7 @@ var ONE_KB = 1024;
 var HUNDRED_KB = ONE_KB * 100;
 var USER_LOG_STYLE = 'color: lime; background-color: black; padding: 4px;';
 var USER_WARN_STYLE = 'color: orange; background-color: black; padding: 4px;';
+var USER_ERROR_STYLE = 'color: red; background-color: black; padding: 4px;';
 
 ///////////////////////////////// UI /////////////////////////////////
 
@@ -20,7 +21,7 @@ var UI = {
 
     updateProgressBar: function (percent) {
         if (!this.selectedFile) {
-            console.error('no file selected');
+            console.error('%cNo file selected', USER_ERROR_STYLE);
             return;
         }
         document.getElementById('progress-bar').style.width = percent + '%';
@@ -99,10 +100,10 @@ socket.on('tunes list', function (files) {
 });
 
 socket.on('welcome', function (ip) {
-    console.log('%c Welcome, %s', USER_LOG_STYLE, ip);
+    console.log('%cWelcome,%s', USER_LOG_STYLE, ip);
 });
 socket.on('new user', function (ip) {
-    console.log('%c %s joined!', USER_LOG_STYLE, ip);
+    console.log('%cYour friend%shas joined!', USER_LOG_STYLE, ip);
 });
 
 /////////////////////////////// PLAYBACK ///////////////////////////////
@@ -164,16 +165,25 @@ function fileChosen(e) {
 }
 
 function startUpload() {
-    fileName = UI.fileBox.value !== '';
+    fileName = UI.fileBox.value;
 
+    // User hasn't selected a file yet,
+    // trigger the file-box and abort
     if (!fileName) {
         UI.fileBox.click();
         return;
     }
 
-    fileReader = new FileReader();
+    // File is not .mp3 or .wav,
+    // abort
+    if (fileName.indexOf('.mp3') < 0 && fileName.indexOf('.wav') < 0) {
+        console.log('%cThat ain\'t no audio file. Try again.', USER_WARN_STYLE);
+        UI.uploadButton.innerText = 'Select File';
+        UI.nameBox.value = ''
+        return;
+    }
 
-    fileName = UI.nameBox.value;
+    fileReader = new FileReader();
 
     var Content = '<span id="name-area">Uploading ' + UI.selectedFile.name + ' as ' + fileName + '</span>';
     Content += '<div id="progress-container"><div id="progress-bar"></div></div><span id="percent">0%</span>';
