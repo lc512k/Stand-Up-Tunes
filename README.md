@@ -1,24 +1,21 @@
 Stand-Up-Tunes
 ==============
 
-Recovery
-- Styles
-- Vote button
-- Vote count badge
-- Highlight winner
-
 Pending
-- Delete strategy
 - Forever monitor
 - Read votes from disk after restarting server
-- Default jingle when no votes (distinct)
-- This file
+- Proper README.md file
+- Unit tests
+- Reload page bug
 
 Nice to haves
-- Unit tests
+- More unit tests
+- Default jingle when no votes (distinct)
+- Delete strategy
 - Spinner on first load
 - CSS-only progress bar for upload
 - Hide HTML5 audio, replace with progress-aware play button
 - Emit file server errors to the client
 - media queries
 - DOM functions
+- remove default input highlight

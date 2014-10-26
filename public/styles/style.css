@@ -1,157 +1,199 @@
 @font-face {
-    font-family: Lato;
-    src: url(lato/Lato-Regular.ttf);
+
+    font-family:        Lato;
+    src:                url(lato/Lato-Regular.ttf);
 }
 
 @font-face {
-    font-family: Lato;
-    font-weight: bold;
-    src: url(lato/Lato-Bold.ttf);
-}
-@font-face {
-    font-family: Lato;
-    src: url(lato/Lato-Light.ttf);
-    font-weight: thin;
+
+    font-family:        Lato;
+    font-weight:        bold;
+    src:                url(lato/Lato-Bold.ttf);
 }
 
 @font-face {
-    font-family: Lato;
-    font-weight: lighter;
-    src: url(lato/Lato-Thin.ttf);
+
+    font-family:        Lato;
+    font-weight:        thin;
+    src:                url(lato/Lato-Light.ttf);
+}
+
+@font-face {
+
+    font-family:        Lato;
+    font-weight:        lighter;
+    src:                url(lato/Lato-Thin.ttf);
 }
 
 body {
-    font-family: Lato, courier, Arial, sans-serif !important;
-    font-weight: thin;
-    font-size: 1em;
+
+    font-family:        Lato, courier, Arial, sans-serif;
+    font-weight:        thin;
+    font-size:          1em;
 }
 
 #tunes-container {
-    padding: 0;
+
+    padding:            0;
 }
 
 .tune-item:first-child {
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
+
+    border-radius:      4px 4px 0 0;
 }
 
 .tune-item:last-child {
-    margin-bottom: 0;
-    border-bottom-right-radius: 4px;
-    border-bottom-left-radius: 4px;
+
+    border-radius:      0 0 4px 4px;
 }
 
-.tune-item {
-    position: relative;
-    display: block;
-    padding: 10px 15px;
-    margin-bottom: -1px;
-    background-color: #fff;
-    border: 1px solid #ddd;
 
-    display: flex;
-    flex-direction: row;
-    flex-wrap: no-wrap;
-    align-items: center;
+/* ROWS */
+
+.tune-item {
+
+    position:           relative;
+
+    display:            flex;
+    flex-direction:     row;
+    flex-wrap:          nowrap;
+    align-items:        center;
+    padding:            10px 15px;
+    margin-bottom:      -1px;
+    border:             1px solid #ddd;
+    
+    background-color:   #fff;
 }
 
 .tune-item .tune-score {
-    order: 1;
 
-    border: 1px solid #ccc;
-    text-align: center;
-    height: 50px;
-    width: 50px;
-    border-radius: 4px;
-    margin-right: 20px;
-    font-weight: normal;
-    font-size: 1.5em;
+    order:              1;
+    border:             1px solid #ccc;
+    height:             50px;
+    width:              50px;
+    border-radius:      4px;
+    margin-right:       20px;
+    box-shadow:         inset 0 0 2px 0 #ccc;
+
+    text-align:         center;
+    font-weight:        normal;
+    font-size:          1.5em;
 }
 
 .tune-item .tune-score::after {
-    content: 'votes';
-    font-size: 0.7em;
-    display: block;
-    font-weight: lighter;
-    line-height: 0.8em;
+    
+    display:            block;
+    
+    font-weight:        lighter;
+    line-height:        0.8em;
+    font-size:          0.7em;
+
+    content:            'votes';
 }
 
 .tune-item .tune-name {
-    order: 2;
-    flex-grow: 2;
-    flex-basis: 100px;
+
+    order:              2;
+    flex-grow:          2;
+    flex-basis:         100px;
 }
 
 .tune-item .tune-audio {
-    order: 3;
-    flex-grow: 3;
-    text-align: center;
+
+    order:              3;
+    flex-grow:          3;
+    text-align:         center;
 }
 
 .tune-item > a {
-    order: 4;
-    flex-grow: 1;
 
-    border-radius: 4px;
-    padding: 6px 3px;
+    order:              4;
+    flex-grow:          1;
+    border-radius:      4px;
+    padding:            6px 3px;
 }
 
 .tune-item > a::after {
-    content: 'Vote';
+
+    content:            'Vote';
 }
 
-.tune-item > a:hover {
-    background-color: #4390d4;
-}
-
-.tune-item > a:active {
-    background-color: green;
-}
+/* UPLOAD BOX */
 
 #upload-area {
-    position: relative;
-    width: 100%;
-    height: 40px;
-    display: inline-block;
-    padding: 0;
+
+    position:           relative;
+
+    width:              100%;
+    height:             40px;
+    display:            inline-block;
+    padding:            0;
 }
 
 #upload-area > a {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    padding: 6px 10px;
-    /* minus padding left and right minus four 1px borders */
-    width: calc(20% - 20px - 4px);
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
+
+    position:           absolute;
+    right:              0;
+    bottom:             0;
+    padding:            6px 10px;
+                        /* width - h paddings - h borders */
+    width:              calc(20% - 20px - 4px); 
+    border-radius:      0 4px 4px 0;
 }
 
 #upload-area > input[type="file"] {
+
     display: none;
 }
 
 #upload-area > input[type="text"] {
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    border-style: solid;
-    border-width: 1px;
-    border-color: #ccc;
-    width: 80%;
-    height: 26px;
-    padding-left: 10px;
-    font-family: arial, sans-serif;
-    font-size: 0.8em;
+
+    position:           absolute;
+    left:               0;
+    bottom:             0;
+
+    border-radius:      4px 0 0 4px;
+    border-style:       solid;
+    border-width:       1px;
+    border-color:       #ccc;
+    width:              80%;
+    height:             26px;
+    padding-left:       10px;
+
+    font-family:        arial, sans-serif;
+    font-size:          0.8em;
 }
 
+
+/* BUTTONS */
+
 a {
-    font-size: 0.8em;
-    cursor: pointer;
-    text-align: center;
-    color: white;
-    background-color: #2370b4;
-    border: 1px solid #1f639f;
+
+    border-style:       solid;
+    border-width:       1px;
+
+    color:              white;
+    background-color:   rgba(35, 112, 180, 0.9);    
+    border-color:       rgba(35, 112, 180, 1);
+
+    text-align:         center;
+    font-size:          0.8em;
+
+    cursor:             pointer;
+    transition:         background-color 0.3s ease;
+}
+
+a:hover {
+
+    background-color:   rgba(35, 112, 180, 0.7);
+}
+
+a:active {
+    
+    background-color:   rgba(15, 92, 160, 1);
+}
+
+.winner {
+
+    background-color: rgba(15, 92, 160, 0.1);
 }

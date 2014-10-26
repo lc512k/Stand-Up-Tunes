@@ -10,6 +10,10 @@ var USER_WARN_STYLE = 'color: orange; background-color: black; padding: 4px;';
 var USER_ERROR_STYLE = 'color: red; background-color: black; padding: 4px;';
 var USER_INFO_STYLE = 'color: cyan; background-color: black; padding: 4px;';
 
+var WINNER_STYLE = 'winner';
+
+var highScore = 0;
+
 ///////////////////////////////// DOM /////////////////////////////////
 
 var DOM = {
@@ -23,6 +27,7 @@ var UI = {
     fileBox: document.getElementById('file-box'),
     nameBox: document.getElementById('name-box'),
     uploadButton: document.getElementById('upload-button'),
+    winningRow: null,
 
     selectedFile: null,
 
@@ -105,14 +110,21 @@ socket.on('tunes list', function (files) {
     UI.cleanTunesList();
 
     for (var fileId in files) {
-        var tuneItem = UI.createTuneItem(fileId, files[fileId].votes);
+
+        var thisVoteCount = files[fileId].votes;
+
+        var tuneItem = UI.createTuneItem(fileId, thisVoteCount);
+        
         UI.tunesContainer.appendChild(tuneItem);
+        
+        highlightIfWinner(tuneItem, thisVoteCount);
     }
 });
 
 socket.on('welcome', function (ip) {
     console.log('%cWelcome,%s', USER_LOG_STYLE, ip);
 });
+
 socket.on('new user', function (ip) {
     console.log('%cYour friend%shas joined!', USER_LOG_STYLE, ip);
 });
@@ -154,15 +166,33 @@ function onCastVote(e) {
 socket.on('new vote', function (vote) {
 
     // Find the tune in the list and update the vote count
-    for (var i = 0; i < UI.tunesContainer.childNodes.length; i ++) {
+    for (var i = 0; i < UI.tunesContainer.childNodes.length; i++) {
 
         var thisItem = UI.tunesContainer.childNodes[i];
 
         if (thisItem.dataset.tuneId === vote.tuneId) {
+            highlightIfWinner(thisItem, vote.count);
             thisItem.childNodes[0].innerText = vote.count;
         }
     }
 });
+
+var highlightIfWinner = function(rowItem, voteCount) {
+
+    if (voteCount > highScore) {
+        
+        highScore = voteCount;
+        
+        // Demote previous winner
+        if (UI.winningRow) {
+            UI.winningRow.className = 'tune-item';
+        }
+
+        // Crown new winner
+        rowItem.className = rowItem.className + ' ' + WINNER_STYLE;
+        UI.winningRow = rowItem;
+    }
+};
 
 ///////////////////////////// UPLOADING /////////////////////////////
 
