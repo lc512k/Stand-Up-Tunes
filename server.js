@@ -4,7 +4,7 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var debug = require('debug')('server');
-var fileServer = require('fs');
+var fs = require('fs');
 
 var port = process.env.PORT || 3000;
 
@@ -27,13 +27,14 @@ server.listen(port, function () {
 
 // Initialize the timer module
 // Sets up the alarm every day to play the winning tune
-timer.init();
+timer.init(io);
 
-// Read tunes folder and set up file list
-fileServer.readdir('public/tunes', function (err, files) {
+// Read current tunes folder and set up file list
+fs.readdir('public/tunes', function (err, files) {
 
     if (err) {
         // TODO emit it
+        debug('error reading public tunes folder', err);
         throw err;
     }
 
@@ -50,7 +51,22 @@ fileServer.readdir('public/tunes', function (err, files) {
             };
         }
     }
+
+    try {
+        // Read last saved votes, if any, and set vote counts
+        var backupJSON = fs.readFileSync('backup.json', {encoding: 'utf8'});
+
+        var backup = JSON.parse(backupJSON);
+
+        for (var tune in backup) {
+            GLOBAL.files[key].votes = tune.votes;
+        }
+    }
+    catch (e) {
+        debug('error parsing backup votes', e, backupJSON);
+    }
 });
+
 
 ///////////////////////////////// CLIENT CONNECTIONS /////////////////////////////////
 
@@ -72,12 +88,14 @@ io.sockets.on('connection', function (socket) {
         socket.broadcast.emit('new user', clientIp);
     });
 
-    // Handle a vote
+    // Handle a votes
     socket.on('vote', function (tuneId) {
         debug('vote received for ' + tuneId);
 
         // Store the vote and broadcast the new vote counts to all clients
         voting.send(tuneId, socket);
+
+        save();
     });
 
     // Start saving a new file or resuming a previous upload
@@ -90,3 +108,33 @@ io.sockets.on('connection', function (socket) {
         uploader.upload(data, socket);
     });
 });
+
+///////////////////////////////// UTIL /////////////////////////////////
+
+/**
+ * Save the current vote count to disk
+ */
+var save = function() {
+    fs.open('backup.json', 'a', 0755, function (err, fd) {
+        if (err) {
+            debug(err);
+        }
+        else {
+            fs.write(fd, JSON.stringify(GLOBAL.files), 0, 'Binary', function () {
+                debug('saved!');
+            });
+        }
+    });
+};
+
+/**
+ * Make all vote counts 
+ */
+var resetVoteCount = GLOBAL.resetVoteCount = function() {
+
+    for (var key in GLOBAL.files) {
+        GLOBAL.files[key].votes = 0;
+    }
+
+    save();
+};

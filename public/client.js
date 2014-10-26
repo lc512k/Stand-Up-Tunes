@@ -177,6 +177,21 @@ socket.on('new vote', function (vote) {
     }
 });
 
+/**
+ * Server message listener
+ * The server emits 'vote reset' every morning after standup
+ * All votes are back to zero if the jingle played successfully
+ * @param {Object} vote
+ * @param {String} vote.tuneId
+ * @param {String} vote.count
+ */
+socket.on('votes reset', function (vote) {
+    var allScores = document.getElementsByClassName('tune-score');
+    for (var i = 0; i < allScores.length; i++ ) {
+        allScores[i].innerText = 0;   
+    }
+});
+
 var highlightIfWinner = function(rowItem, voteCount) {
 
     if (voteCount > highScore) {

@@ -10,8 +10,8 @@ var TEN_MB = ONE_MB * 10;
  * Write a 100KB chunk of a file to disk
  * Notify the client when done
  * so it can send the next chunk
- * @param  {Object} data
- * @param  {Socket} socket
+ * @param {Object} data
+ * @param {Socket} socket
  */
 exports.upload = function (data, socket) {
     var name = data.name;

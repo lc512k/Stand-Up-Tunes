@@ -1,5 +1,3 @@
-/* global files */
-
 var debug = require('debug')('timer');
 var exec = require('child_process').exec;
 var domain = require('domain').create();
@@ -12,7 +10,7 @@ var STANDUP_TIME = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9,
  * Play winning tune at STANDUP_TIME
  * Reset all counters and start over
  */
-exports.init = function () {
+exports.init = function (io) {
     debug('init');
 
     var millisTillStandup = STANDUP_TIME - now;
@@ -34,10 +32,10 @@ exports.init = function () {
 
             var highScore = 0;
 
-            for (var tuneId in files) {
+            for (var tuneId in GLOBAL.files) {
 
-                if (files.hasOwnProperty(tuneId)) {
-                    var thisCount = files[tuneId].votes;
+                if (GLOBAL.files.hasOwnProperty(tuneId)) {
+                    var thisCount = GLOBAL.files[tuneId].votes;
 
                     if (thisCount > highScore) {
                         highScore = thisCount;
@@ -61,7 +59,10 @@ exports.init = function () {
                     throw error;
                 }
                 debug('Played! Resetting vote count');
-                GLOBAL.files = {};
+                GLOBAL.resetVoteCount();
+
+                // Tell every client to reset their vote counts to zero
+                io.sockets.emit('votes reset');
             }
             exec('afplay ./public/tunes/' + findWinner(), play);
         });
