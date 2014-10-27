@@ -4,7 +4,7 @@ var fs = require('fs');
 var ONE_KB = 1024;
 var HUNDRED_KB = ONE_KB * 100;
 var ONE_MB = Math.pow(ONE_KB, 2);
-var TEN_MB = ONE_MB * 10;
+var FIVE_MB = ONE_MB * 5;
 
 /**
  * Write a 100KB chunk of a file to disk
@@ -20,22 +20,29 @@ exports.upload = function (data, socket) {
     thisFile.downloaded += data.data.length;
     thisFile.data += data.data;
 
-    // If file is done
+    // If this is the last chunk of the file
     if (thisFile.downloaded === thisFile.fileSize) {
+
         fs.write(thisFile.handler, thisFile.data, null, 'Binary', function () {
             socket.emit('done', name);
             socket.broadcast.emit('done', name);
             debug('done!');
         });
     }
-    else if (thisFile.data.length > TEN_MB) {
-        socket.emit('abort. file is over 10megs');
+    else if (thisFile.data.length > FIVE_MB) {
+
+        // TODO emit it
+        debug('File too big');
     }
     else {
+        
         var size = thisFile.fileSize;
         var marker = thisFile.downloaded / HUNDRED_KB;
         var percent = (thisFile.downloaded / GLOBAL.files[name].fileSize) * 100;
+        
         debug('progress ' + Math.round(percent) + '%');
+        
+        // Ask for more data
         socket.emit('more data', {
             marker: marker,
             percent: percent,

@@ -5,7 +5,6 @@ Pending
 - bug: overwriting backup file needs to clear entire file first
 - bug: spaces in file name break afplay
 - Forever monitor
-- Read votes from disk after restarting server
 - Proper README.md file
 - deploy strategy
 - Unit tests

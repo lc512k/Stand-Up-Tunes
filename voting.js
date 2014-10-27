@@ -1,10 +1,10 @@
 var debug = require('debug')('voting');
 
 /**
- * [send description]
- * @param  {[type]} tuneId [description]
- * @param  {[type]} socket [description]
- * @return {[type]}        [description]
+ * When a new vote is received
+ * find the tine in the global file list
+ * and increase its vote count by one.
+ * Tell all clients to update the vote count for this file 
  */
 exports.send = function (tuneId, socket) {
 
@@ -22,6 +22,4 @@ exports.send = function (tuneId, socket) {
         tuneId: tuneId,
         count: GLOBAL.files[tuneId].votes
     });
-
-    debug('tally', GLOBAL.files);
 };
