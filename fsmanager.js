@@ -1,0 +1,171 @@
+var debug = require('debug')('fsmanager');
+var fs = require('fs');
+
+var ONE_KB = 1024;
+var HUNDRED_KB = ONE_KB * 100;
+var ONE_MB = Math.pow(ONE_KB, 2);
+var FIVE_MB = ONE_MB * 5;
+
+/**
+ * Read the tunes folder and load all available file names
+ * Read the backup.json file for any previously backed up vote counts
+ */
+exports.init = function() {
+    debug('init');
+
+    fs.readdir('public/tunes', function (err, files) {
+
+        if (err) {
+            // TODO emit it
+            debug('error reading public tunes folder', err);
+            throw err;
+        }
+
+        // Load the file names into the global files object
+        // Filter out anything that's not an audio file
+        for (var i = 0; i < files.length; i++) {
+
+            var file = files[i];
+
+            if (file.indexOf('.mp3') > 0 || file.indexOf('.wav') > 0) {
+                GLOBAL.files[file] = {
+                    votes: 0
+                };
+            }
+        }
+
+        // Try to read the vote count previously saved to disk, if any
+        try {
+            var backupJSON = fs.readFileSync('backup.json', {encoding: 'utf8'});
+            var backup = JSON.parse(backupJSON);
+
+            // update any backed up vote counts
+            for (var tune in backup) {
+
+                GLOBAL.files[key].votes = tune.votes;
+            }
+        }
+        catch (e) {
+            debug('error parsing backup votes', e, backupJSON);
+            //TODO delete the corrupt file
+        }
+    });
+};
+
+/**
+ * Save the current vote count to disk
+ */
+exports.save = function() {
+
+    fs.open('backup.json', 'a', 0755, function (err, fd) {
+
+        if (err) {
+            debug(err);
+        }
+        else {
+            fs.write(fd, JSON.stringify(GLOBAL.files), 0, 'Binary', function () {
+                debug('Vote count saved!');
+            });
+        }
+    });
+};
+
+/**
+ * Write a 100KB chunk of a file to disk
+ * Notify the client when done
+ * so it can send the next chunk
+ * @param {Object} data
+ * @param {Socket} socket
+ */
+exports.upload = function (data, socket) {
+    var name = data.name;
+    var thisFile = GLOBAL.files[name];
+
+    thisFile.downloaded += data.data.length;
+    thisFile.data += data.data;
+
+    // If this is the last chunk of the file
+    if (thisFile.downloaded === thisFile.fileSize) {
+
+        fs.write(thisFile.handler, thisFile.data, null, 'Binary', function () {
+            socket.emit('done', name);
+            socket.broadcast.emit('done', name);
+            debug('done!');
+        });
+    }
+    else if (thisFile.data.length > FIVE_MB) {
+
+        // TODO emit it
+        debug('File too big');
+    }
+    else {
+        
+        var size = thisFile.fileSize;
+        var marker = thisFile.downloaded / HUNDRED_KB;
+        var percent = (thisFile.downloaded / GLOBAL.files[name].fileSize) * 100;
+        
+        debug('progress ' + Math.round(percent) + '%');
+        
+        // Ask for more data
+        socket.emit('more data', {
+            marker: marker,
+            percent: percent,
+            size: size
+        });
+    }
+};
+
+/**
+ * Init a file upload
+ * @param  {Object} data
+ * @param  {Socket} socket
+ */
+exports.startUpload = function (data, socket) {
+    var name = data.name;
+
+    // Add the file to the global file list
+    GLOBAL.files[name] = {
+        fileSize: data.size,
+        handler: '',
+        data: '',
+        downloaded: 0,
+        votes: 0
+    };
+
+    var marker = 0;
+
+    try {
+        var existingFile = fs.statSync('public/tunes/' + name);
+
+        // If the file exists in public/tunes/
+        // continue downloading where we left off
+        if (existingFile.isFile()) {
+            debug('Resuming upload...');
+            GLOBAL.files[name].downloaded = existingFile.size;
+            marker = existingFile.size / HUNDRED_KB;
+        }
+    }
+    catch (err) {
+        debug('Uploading new tune...');
+    }
+
+    /**
+     * If it's a new file we create it,
+     * if it's an existing file we open it.
+     * We ask the client to send more data.
+     */
+    fs.open('public/tunes/' + name, 'a', 0755, function (err, fd) {
+        if (err) {
+            debug(err);
+        }
+        else {
+            // Store the file handler so we can write to it later
+            GLOBAL.files[name].handler = fd;
+
+            socket.emit('more data', {
+                marker: marker,
+                percent: 0
+            });
+        }
+    });
+};

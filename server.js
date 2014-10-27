@@ -8,7 +8,7 @@ var fs = require('fs');
 
 var port = process.env.PORT || 3000;
 
-var uploader = require('./uploader');
+var fsManager = require('./fsmanager');
 var timer = require('./timer');
 var voting = require('./voting');
 
@@ -29,9 +29,8 @@ server.listen(port, function () {
 // Sets up the alarm every day to play the winning tune
 timer.init(io);
 
-// Read the tunes folder and load all available file names
-// Read the backup.json file for any previously backed up vote counts
-loadFileNamesAndVotes();
+// Load all available tunes and their votes
+fsManager.init();
 
 
 ///////////////////////////////// CLIENT CONNECTIONS /////////////////////////////////
@@ -63,39 +62,21 @@ io.sockets.on('connection', function (socket) {
         voting.send(tuneId, socket);
 
         // save new vote count to disk
-        save();
+        fsManager.save();
     });
 
     // Uploading: Start saving a new file or resuming a previous upload
     socket.on('start upload', function (data) {
-        uploader.startUpload(data, socket);
+        fsManager.startUpload(data, socket);
     });
 
     // Uploading: Save the chunk of the file send from the client
     socket.on('upload', function (data) {
-        uploader.upload(data, socket);
+        fsManager.upload(data, socket);
     });
 });
 
 ///////////////////////////////// UTIL /////////////////////////////////
-
-/**
- * Save the current vote count to disk
- */
-var save = function() {
-
-    fs.open('backup.json', 'a', 0755, function (err, fd) {
-
-        if (err) {
-            debug(err);
-        }
-        else {
-            fs.write(fd, JSON.stringify(GLOBAL.files), 0, 'Binary', function () {
-                debug('Vote count saved!');
-            });
-        }
-    });
-};
 
 /**
  * Reset all vote counts to zero
@@ -109,53 +90,5 @@ var resetVoteCount = GLOBAL.resetVoteCount = function() {
     }
 
     // Save to disk
-    save();
+    fsManager.save();
 };
-
-/**
- * Read the tunes folder and set up the global file list object
- */
-var loadFileNamesAndVotes = function() {
-
-    fs.readdir('public/tunes', function (err, files) {
-
-        if (err) {
-            // TODO emit it
-            debug('error reading public tunes folder', err);
-            throw err;
-        }
-
-        // Load the file names into the global files object
-        // Filter out anything that's not an audio file
-        for (var i = 0; i < files.length; i++) {
-
-            var file = files[i];
-
-            if (file.indexOf('.mp3') > 0 || file.indexOf('.wav') > 0) {
-
-                GLOBAL.files[file] = {
-                    votes: 0
-                };
-            }
-        }
-
-        // Try to read the vote count previously saved to disk, if any
-        try {
-
-            var backupJSON = fs.readFileSync('backup.json', {encoding: 'utf8'});
-
-            var backup = JSON.parse(backupJSON);
-
-            // update any backed up vote counts
-            for (var tune in backup) {
-
-                GLOBAL.files[key].votes = tune.votes;
-            }
-        }
-        catch (e) {
-            debug('error parsing backup votes', e, backupJSON);
-            //TODO delete the corrupt file
-        }
-    });
-};
-

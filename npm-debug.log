@@ -1,9 +1,9 @@
 0 info it worked if it ends with ok
-1 verbose cli [ 'node', '/usr/local/bin/npm', 'install', 'jshint', '-g' ]
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'install', '-g', 'mocha', '--save' ]
 2 info using npm@1.4.28
 3 info using node@v0.10.32
-4 verbose cache add [ 'jshint', null ]
-5 verbose cache add name=undefined spec="jshint" args=["jshint",null]
+4 verbose cache add [ 'mocha', null ]
+5 verbose cache add name=undefined spec="mocha" args=["mocha",null]
 6 verbose parsed url { protocol: null,
 6 verbose parsed url   slashes: null,
 6 verbose parsed url   auth: null,
@@ -13,211 +13,236 @@
 6 verbose parsed url   hash: null,
 6 verbose parsed url   search: null,
 6 verbose parsed url   query: null,
-6 verbose parsed url   pathname: 'jshint',
-6 verbose parsed url   path: 'jshint',
-6 verbose parsed url   href: 'jshint' }
-7 silly lockFile da5c03cb-jshint jshint
-8 verbose lock jshint /Users/laura/.npm/da5c03cb-jshint.lock
-9 silly lockFile da5c03cb-jshint jshint
-10 silly lockFile da5c03cb-jshint jshint
-11 verbose addNamed [ 'jshint', '' ]
+6 verbose parsed url   pathname: 'mocha',
+6 verbose parsed url   path: 'mocha',
+6 verbose parsed url   href: 'mocha' }
+7 silly lockFile a619da43-mocha mocha
+8 verbose lock mocha /Users/laura/.npm/a619da43-mocha.lock
+9 silly lockFile a619da43-mocha mocha
+10 silly lockFile a619da43-mocha mocha
+11 verbose addNamed [ 'mocha', '' ]
 12 verbose addNamed [ null, '*' ]
-13 silly lockFile a02a2468-jshint jshint@
-14 verbose lock jshint@ /Users/laura/.npm/a02a2468-jshint.lock
-15 silly addNameRange { name: 'jshint', range: '*', hasData: false }
-16 verbose request where is /jshint
+13 silly lockFile b9899f31-mocha mocha@
+14 verbose lock mocha@ /Users/laura/.npm/b9899f31-mocha.lock
+15 silly addNameRange { name: 'mocha', range: '*', hasData: false }
+16 verbose request where is /mocha
 17 verbose request registry https://registry.npmjs.org/
-18 verbose request id dae8a413b09aff9f
-19 verbose url raw /jshint
-20 verbose url resolving [ 'https://registry.npmjs.org/', './jshint' ]
-21 verbose url resolved https://registry.npmjs.org/jshint
-22 verbose request where is https://registry.npmjs.org/jshint
-23 info trying registry request attempt 1 at 19:24:02
-24 http GET https://registry.npmjs.org/jshint
-25 http 200 https://registry.npmjs.org/jshint
-26 silly registry.get cb [ 200,
-26 silly registry.get   { date: 'Sat, 25 Oct 2014 18:24:06 GMT',
-26 silly registry.get     server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
-26 silly registry.get     etag: '"DP6SX3AE4B2NHGJTM7AFEM4VR"',
-26 silly registry.get     'content-type': 'application/json',
-26 silly registry.get     'cache-control': 'max-age=60',
-26 silly registry.get     'content-length': '80206',
-26 silly registry.get     'accept-ranges': 'bytes',
-26 silly registry.get     via: '1.1 varnish',
-26 silly registry.get     age: '15',
-26 silly registry.get     'x-served-by': 'cache-ams4129-AMS',
-26 silly registry.get     'x-cache': 'HIT',
-26 silly registry.get     'x-cache-hits': '76',
-26 silly registry.get     'x-timer': 'S1414261446.709758,VS0,VE0',
-26 silly registry.get     vary: 'Accept',
-26 silly registry.get     'keep-alive': 'timeout=10, max=50',
-26 silly registry.get     connection: 'Keep-Alive' } ]
-27 silly addNameRange number 2 { name: 'jshint', range: '*', hasData: true }
-28 silly addNameRange versions [ 'jshint',
-28 silly addNameRange   [ '0.1.8',
-28 silly addNameRange     '0.1.9',
-28 silly addNameRange     '0.2.0',
-28 silly addNameRange     '0.2.1',
-28 silly addNameRange     '0.2.2',
-28 silly addNameRange     '0.2.3',
-28 silly addNameRange     '0.3.0',
-28 silly addNameRange     '0.3.1',
-28 silly addNameRange     '0.4.0',
-28 silly addNameRange     '0.5.0',
-28 silly addNameRange     '0.5.1',
-28 silly addNameRange     '0.5.2',
-28 silly addNameRange     '0.5.3',
-28 silly addNameRange     '0.5.4',
-28 silly addNameRange     '0.5.5',
-28 silly addNameRange     '0.5.6',
-28 silly addNameRange     '0.5.7',
-28 silly addNameRange     '0.5.8',
-28 silly addNameRange     '0.5.9',
-28 silly addNameRange     '0.6.0',
-28 silly addNameRange     '0.6.1',
-28 silly addNameRange     '0.6.2',
-28 silly addNameRange     '0.6.3',
-28 silly addNameRange     '0.7.0',
-28 silly addNameRange     '0.7.1',
-28 silly addNameRange     '0.7.2',
-28 silly addNameRange     '0.7.3',
-28 silly addNameRange     '0.8.0',
-28 silly addNameRange     '0.8.1',
-28 silly addNameRange     '0.8.2',
-28 silly addNameRange     '0.9.0',
-28 silly addNameRange     '0.9.1',
-28 silly addNameRange     '1.0.0',
-28 silly addNameRange     '1.1.0',
-28 silly addNameRange     '2.0.0',
-28 silly addNameRange     '2.0.1',
-28 silly addNameRange     '2.1.0',
-28 silly addNameRange     '2.1.1',
-28 silly addNameRange     '2.1.2',
-28 silly addNameRange     '2.1.3',
-28 silly addNameRange     '2.1.4',
-28 silly addNameRange     '2.1.5',
-28 silly addNameRange     '2.1.6',
-28 silly addNameRange     '2.1.7',
-28 silly addNameRange     '2.1.8',
-28 silly addNameRange     '2.1.9',
-28 silly addNameRange     '2.1.10',
-28 silly addNameRange     '2.1.11',
-28 silly addNameRange     '2.2.0',
-28 silly addNameRange     '2.3.0',
-28 silly addNameRange     '2.4.0',
-28 silly addNameRange     '2.4.1',
-28 silly addNameRange     '2.4.2',
-28 silly addNameRange     '2.4.3',
-28 silly addNameRange     '2.4.4',
-28 silly addNameRange     '2.5.0',
-28 silly addNameRange     '2.5.1',
-28 silly addNameRange     '2.5.2',
-28 silly addNameRange     '2.5.3',
-28 silly addNameRange     '2.5.4',
-28 silly addNameRange     '2.5.5',
-28 silly addNameRange     '2.5.6' ] ]
-29 verbose addNamed [ 'jshint', '2.5.6' ]
-30 verbose addNamed [ '2.5.6', '2.5.6' ]
-31 silly lockFile 4bfe2867-jshint-2-5-6 jshint@2.5.6
-32 verbose lock jshint@2.5.6 /Users/laura/.npm/4bfe2867-jshint-2-5-6.lock
-33 silly lockFile fe4d39cb-pmjs-org-jshint-jshint-2-5-6-tgz https://registry.npmjs.org/jshint/-/jshint-2.5.6.tgz
-34 verbose lock https://registry.npmjs.org/jshint/-/jshint-2.5.6.tgz /Users/laura/.npm/fe4d39cb-pmjs-org-jshint-jshint-2-5-6-tgz.lock
-35 verbose addRemoteTarball [ 'https://registry.npmjs.org/jshint/-/jshint-2.5.6.tgz',
-35 verbose addRemoteTarball   '1685ce1f9e1c74832375d83fe89728589bd9d8c7' ]
-36 info retry fetch attempt 1 at 19:24:05
-37 verbose fetch to= /var/folders/6f/_k4kzj157z30g1ydg_96pg400000gs/T/npm-4351-dXil9kD7/registry.npmjs.org/jshint/-/jshint-2.5.6.tgz
-38 http GET https://registry.npmjs.org/jshint/-/jshint-2.5.6.tgz
-39 http 200 https://registry.npmjs.org/jshint/-/jshint-2.5.6.tgz
-40 silly lockFile fe4d39cb-pmjs-org-jshint-jshint-2-5-6-tgz https://registry.npmjs.org/jshint/-/jshint-2.5.6.tgz
-41 silly lockFile fe4d39cb-pmjs-org-jshint-jshint-2-5-6-tgz https://registry.npmjs.org/jshint/-/jshint-2.5.6.tgz
-42 silly lockFile 4bfe2867-jshint-2-5-6 jshint@2.5.6
-43 silly lockFile 4bfe2867-jshint-2-5-6 jshint@2.5.6
-44 silly lockFile a02a2468-jshint jshint@
-45 silly lockFile a02a2468-jshint jshint@
-46 silly resolved [ { name: 'jshint',
-46 silly resolved     version: '2.5.6',
-46 silly resolved     homepage: 'http://jshint.com/',
-46 silly resolved     description: 'Static analysis tool for JavaScript',
-46 silly resolved     author:
-46 silly resolved      { name: 'Anton Kovalyov',
-46 silly resolved        email: 'anton@kovalyov.net',
-46 silly resolved        url: 'http://anton.kovalyov.net/' },
-46 silly resolved     repository: { type: 'git', url: 'https://github.com/jshint/jshint.git' },
-46 silly resolved     bugs: { url: 'https://github.com/jshint/jshint/issues' },
-46 silly resolved     bin: { jshint: './bin/jshint' },
-46 silly resolved     scripts:
-46 silly resolved      { data: 'node scripts/generate-identifier-data',
-46 silly resolved        build: 'node bin/build',
-46 silly resolved        test: 'nodeunit tests tests/regression tests/unit',
-46 silly resolved        pretest: 'jshint src' },
-46 silly resolved     main: './src/jshint.js',
-46 silly resolved     dependencies:
-46 silly resolved      { shelljs: '0.3.x',
-46 silly resolved        underscore: '1.6.x',
-46 silly resolved        cli: '0.6.x',
-46 silly resolved        minimatch: '1.0.x',
-46 silly resolved        htmlparser2: '3.7.x',
-46 silly resolved        'console-browserify': '1.1.x',
-46 silly resolved        exit: '0.1.x',
-46 silly resolved        'strip-json-comments': '1.0.x' },
-46 silly resolved     devDependencies:
-46 silly resolved      { jshint: '2.5.x',
-46 silly resolved        browserify: '5.x',
-46 silly resolved        coveraje: '0.2.x',
-46 silly resolved        nodeunit: '0.9.x',
-46 silly resolved        sinon: '1.10.x',
-46 silly resolved        'unicode-6.3.0': '0.1.x',
-46 silly resolved        regenerate: '0.6.x' },
-46 silly resolved     licenses: [ [Object] ],
-46 silly resolved     preferGlobal: true,
-46 silly resolved     files: [ 'bin', 'src', 'data', 'dist' ],
-46 silly resolved     gitHead: '17e9355cd27ef53c76c82e9c8514118eabe25ffe',
-46 silly resolved     _id: 'jshint@2.5.6',
-46 silly resolved     _shasum: '1685ce1f9e1c74832375d83fe89728589bd9d8c7',
-46 silly resolved     _from: 'jshint@',
-46 silly resolved     _npmVersion: '1.5.0-alpha-1',
-46 silly resolved     _npmUser: { name: 'rwaldron', email: 'waldron.rick@gmail.com' },
-46 silly resolved     maintainers: [ [Object], [Object] ],
-46 silly resolved     dist:
-46 silly resolved      { shasum: '1685ce1f9e1c74832375d83fe89728589bd9d8c7',
-46 silly resolved        tarball: 'http://registry.npmjs.org/jshint/-/jshint-2.5.6.tgz' },
-46 silly resolved     directories: {},
-46 silly resolved     _resolved: 'https://registry.npmjs.org/jshint/-/jshint-2.5.6.tgz' } ]
-47 info install jshint@2.5.6 into /usr/local/lib
-48 info installOne jshint@2.5.6
-49 verbose lib/node_modules/jshint unbuild
-50 verbose tar unpack /Users/laura/.npm/jshint/2.5.6/package.tgz
-51 silly lockFile 59dfcd45-sr-local-lib-node-modules-jshint tar:///usr/local/lib/node_modules/jshint
-52 verbose lock tar:///usr/local/lib/node_modules/jshint /Users/laura/.npm/59dfcd45-sr-local-lib-node-modules-jshint.lock
-53 silly lockFile f84d5e38-ura-npm-jshint-2-5-6-package-tgz tar:///Users/laura/.npm/jshint/2.5.6/package.tgz
-54 verbose lock tar:///Users/laura/.npm/jshint/2.5.6/package.tgz /Users/laura/.npm/f84d5e38-ura-npm-jshint-2-5-6-package-tgz.lock
-55 silly gunzTarPerm modes [ '755', '644' ]
-56 error Error: EACCES, mkdir '/usr/local/lib/node_modules/jshint'
-56 error  { [Error: EACCES, mkdir '/usr/local/lib/node_modules/jshint']
-56 error   errno: 3,
-56 error   code: 'EACCES',
-56 error   path: '/usr/local/lib/node_modules/jshint',
-56 error   fstream_type: 'Directory',
-56 error   fstream_path: '/usr/local/lib/node_modules/jshint',
-56 error   fstream_class: 'DirWriter',
-56 error   fstream_stack:
-56 error    [ '/usr/local/lib/node_modules/npm/node_modules/fstream/lib/dir-writer.js:36:23',
-56 error      '/usr/local/lib/node_modules/npm/node_modules/mkdirp/index.js:46:53',
-56 error      'Object.oncomplete (fs.js:107:15)' ] }
-57 error Please try running this command again as root/Administrator.
-58 error System Darwin 12.5.0
-59 error command "node" "/usr/local/bin/npm" "install" "jshint" "-g"
-60 error cwd /Users/laura/Stand-Up-Tunes
-61 error node -v v0.10.32
-62 error npm -v 1.4.28
-63 error path /usr/local/lib/node_modules/jshint
-64 error fstream_path /usr/local/lib/node_modules/jshint
-65 error fstream_type Directory
-66 error fstream_class DirWriter
-67 error code EACCES
-68 error errno 3
-69 error stack Error: EACCES, mkdir '/usr/local/lib/node_modules/jshint'
-70 error fstream_stack /usr/local/lib/node_modules/npm/node_modules/fstream/lib/dir-writer.js:36:23
-70 error fstream_stack /usr/local/lib/node_modules/npm/node_modules/mkdirp/index.js:46:53
-70 error fstream_stack Object.oncomplete (fs.js:107:15)
-71 verbose exit [ 3, true ]
+18 verbose request id 13baefdf5a9285f3
+19 verbose url raw /mocha
+20 verbose url resolving [ 'https://registry.npmjs.org/', './mocha' ]
+21 verbose url resolved https://registry.npmjs.org/mocha
+22 verbose request where is https://registry.npmjs.org/mocha
+23 info trying registry request attempt 1 at 21:19:26
+24 verbose etag "6N48W5JFOEO10EYEOWQB64JFR"
+25 http GET https://registry.npmjs.org/mocha
+26 http 200 https://registry.npmjs.org/mocha
+27 silly registry.get cb [ 200,
+27 silly registry.get   { date: 'Mon, 27 Oct 2014 21:19:26 GMT',
+27 silly registry.get     server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+27 silly registry.get     etag: '"1BHEAOO8DCWS4OCE6FT8A2NBG"',
+27 silly registry.get     'content-type': 'application/json',
+27 silly registry.get     'cache-control': 'max-age=60',
+27 silly registry.get     'content-length': '107658',
+27 silly registry.get     'accept-ranges': 'bytes',
+27 silly registry.get     via: '1.1 varnish',
+27 silly registry.get     age: '2',
+27 silly registry.get     'x-served-by': 'cache-lcy1126-LCY',
+27 silly registry.get     'x-cache': 'HIT',
+27 silly registry.get     'x-cache-hits': '1',
+27 silly registry.get     'x-timer': 'S1414444766.942846,VS0,VE0',
+27 silly registry.get     vary: 'Accept',
+27 silly registry.get     'keep-alive': 'timeout=10, max=50',
+27 silly registry.get     connection: 'Keep-Alive' } ]
+28 silly addNameRange number 2 { name: 'mocha', range: '*', hasData: true }
+29 silly addNameRange versions [ 'mocha',
+29 silly addNameRange   [ '0.0.1-alpha1',
+29 silly addNameRange     '0.0.1-alpha2',
+29 silly addNameRange     '0.0.1-alpha3',
+29 silly addNameRange     '0.0.1-alpha4',
+29 silly addNameRange     '0.0.1-alpha5',
+29 silly addNameRange     '0.0.1-alpha6',
+29 silly addNameRange     '0.0.1',
+29 silly addNameRange     '0.0.2',
+29 silly addNameRange     '0.0.3',
+29 silly addNameRange     '0.0.4',
+29 silly addNameRange     '0.0.5',
+29 silly addNameRange     '0.0.6',
+29 silly addNameRange     '0.0.7',
+29 silly addNameRange     '0.0.8',
+29 silly addNameRange     '0.1.0',
+29 silly addNameRange     '0.2.0',
+29 silly addNameRange     '0.3.0',
+29 silly addNameRange     '0.3.1',
+29 silly addNameRange     '0.3.2',
+29 silly addNameRange     '0.3.3',
+29 silly addNameRange     '0.3.4',
+29 silly addNameRange     '0.3.6',
+29 silly addNameRange     '0.4.0',
+29 silly addNameRange     '0.5.0',
+29 silly addNameRange     '0.6.0',
+29 silly addNameRange     '0.7.0',
+29 silly addNameRange     '0.7.1',
+29 silly addNameRange     '0.8.0',
+29 silly addNameRange     '0.8.1',
+29 silly addNameRange     '0.9.0',
+29 silly addNameRange     '0.10.0',
+29 silly addNameRange     '0.10.1',
+29 silly addNameRange     '0.10.2',
+29 silly addNameRange     '0.11.0',
+29 silly addNameRange     '0.12.0',
+29 silly addNameRange     '0.12.1',
+29 silly addNameRange     '0.13.0',
+29 silly addNameRange     '0.14.0',
+29 silly addNameRange     '0.14.1',
+29 silly addNameRange     '1.0.0',
+29 silly addNameRange     '1.0.1',
+29 silly addNameRange     '1.0.2',
+29 silly addNameRange     '1.0.3',
+29 silly addNameRange     '1.1.0',
+29 silly addNameRange     '1.2.0',
+29 silly addNameRange     '1.2.1',
+29 silly addNameRange     '1.2.2',
+29 silly addNameRange     '1.3.0',
+29 silly addNameRange     '1.3.1',
+29 silly addNameRange     '1.3.2',
+29 silly addNameRange     '1.4.0',
+29 silly addNameRange     '1.4.1',
+29 silly addNameRange     '1.4.2',
+29 silly addNameRange     '1.4.3',
+29 silly addNameRange     '1.5.0',
+29 silly addNameRange     '1.6.0',
+29 silly addNameRange     '1.7.0',
+29 silly addNameRange     '1.7.1',
+29 silly addNameRange     '1.7.2',
+29 silly addNameRange     '1.7.3',
+29 silly addNameRange     '1.7.4',
+29 silly addNameRange     '1.8.0',
+29 silly addNameRange     '1.8.1',
+29 silly addNameRange     '1.8.2',
+29 silly addNameRange     '1.9.0',
+29 silly addNameRange     '1.10.0',
+29 silly addNameRange     '1.11.0',
+29 silly addNameRange     '1.12.0',
+29 silly addNameRange     '1.12.1',
+29 silly addNameRange     '1.13.0',
+29 silly addNameRange     '1.14.0',
+29 silly addNameRange     '1.15.0',
+29 silly addNameRange     '1.15.1',
+29 silly addNameRange     '1.16.0',
+29 silly addNameRange     '1.16.1',
+29 silly addNameRange     '1.16.2',
+29 silly addNameRange     '1.17.0',
+29 silly addNameRange     '1.17.1',
+29 silly addNameRange     '1.18.0',
+29 silly addNameRange     '1.18.1',
+29 silly addNameRange     '1.18.2',
+29 silly addNameRange     '1.19.0',
+29 silly addNameRange     '1.20.0',
+29 silly addNameRange     '1.20.1',
+29 silly addNameRange     '1.21.0',
+29 silly addNameRange     '1.21.1',
+29 silly addNameRange     '1.21.2',
+29 silly addNameRange     '1.21.3',
+29 silly addNameRange     '1.21.4',
+29 silly addNameRange     '1.21.5',
+29 silly addNameRange     '2.0.0',
+29 silly addNameRange     '2.0.1' ] ]
+30 verbose addNamed [ 'mocha', '2.0.1' ]
+31 verbose addNamed [ '2.0.1', '2.0.1' ]
+32 silly lockFile 5f39746a-mocha-2-0-1 mocha@2.0.1
+33 verbose lock mocha@2.0.1 /Users/laura/.npm/5f39746a-mocha-2-0-1.lock
+34 silly lockFile 5f39746a-mocha-2-0-1 mocha@2.0.1
+35 silly lockFile 5f39746a-mocha-2-0-1 mocha@2.0.1
+36 silly lockFile b9899f31-mocha mocha@
+37 silly lockFile b9899f31-mocha mocha@
+38 silly resolved [ { name: 'mocha',
+38 silly resolved     version: '2.0.1',
+38 silly resolved     description: 'simple, flexible, fun test framework',
+38 silly resolved     keywords: [ 'mocha', 'test', 'bdd', 'tdd', 'tap' ],
+38 silly resolved     author: { name: 'TJ Holowaychuk', email: 'tj@vision-media.ca' },
+38 silly resolved     contributors:
+38 silly resolved      [ [Object],
+38 silly resolved        [Object],
+38 silly resolved        [Object],
+38 silly resolved        [Object],
+38 silly resolved        [Object],
+38 silly resolved        [Object],
+38 silly resolved        [Object],
+38 silly resolved        [Object] ],
+38 silly resolved     repository: { type: 'git', url: 'git://github.com/mochajs/mocha.git' },
+38 silly resolved     maintainers: [ [Object], [Object], [Object], [Object] ],
+38 silly resolved     main: './index',
+38 silly resolved     browser: './mocha.js',
+38 silly resolved     bin: { mocha: './bin/mocha', _mocha: './bin/_mocha' },
+38 silly resolved     engines: { node: '>= 0.8.x' },
+38 silly resolved     scripts: { test: 'make test-all' },
+38 silly resolved     dependencies:
+38 silly resolved      { commander: '2.3.0',
+38 silly resolved        debug: '2.0.0',
+38 silly resolved        diff: '1.0.8',
+38 silly resolved        'escape-string-regexp': '1.0.2',
+38 silly resolved        glob: '3.2.3',
+38 silly resolved        growl: '1.8.1',
+38 silly resolved        jade: '0.26.3',
+38 silly resolved        mkdirp: '0.5.0' },
+38 silly resolved     devDependencies: { 'coffee-script': '~1.8.0', should: '~4.0.0' },
+38 silly resolved     files:
+38 silly resolved      [ 'bin',
+38 silly resolved        'images',
+38 silly resolved        'lib',
+38 silly resolved        'index.js',
+38 silly resolved        'mocha.css',
+38 silly resolved        'mocha.js',
+38 silly resolved        'LICENSE' ],
+38 silly resolved     licenses: [ [Object] ],
+38 silly resolved     bugs: { url: 'https://github.com/mochajs/mocha/issues' },
+38 silly resolved     homepage: 'https://github.com/mochajs/mocha',
+38 silly resolved     _id: 'mocha@2.0.1',
+38 silly resolved     _shasum: '5a16e88b856d0c4145d8c6888c27ebd4fab13e90',
+38 silly resolved     _from: 'mocha@',
+38 silly resolved     _npmVersion: '1.4.9',
+38 silly resolved     _npmUser: { name: 'travisjeffery', email: 'tj@travisjeffery.com' },
+38 silly resolved     dist:
+38 silly resolved      { shasum: '5a16e88b856d0c4145d8c6888c27ebd4fab13e90',
+38 silly resolved        tarball: 'http://registry.npmjs.org/mocha/-/mocha-2.0.1.tgz' },
+38 silly resolved     directories: {},
+38 silly resolved     _resolved: 'https://registry.npmjs.org/mocha/-/mocha-2.0.1.tgz',
+38 silly resolved     readme: 'ERROR: No README data found!' } ]
+39 info install mocha@2.0.1 into /usr/local/lib
+40 info installOne mocha@2.0.1
+41 verbose lib/node_modules/mocha unbuild
+42 verbose tar unpack /Users/laura/.npm/mocha/2.0.1/package.tgz
+43 silly lockFile 746f3f6f-usr-local-lib-node-modules-mocha tar:///usr/local/lib/node_modules/mocha
+44 verbose lock tar:///usr/local/lib/node_modules/mocha /Users/laura/.npm/746f3f6f-usr-local-lib-node-modules-mocha.lock
+45 silly lockFile 19c4e79c-aura-npm-mocha-2-0-1-package-tgz tar:///Users/laura/.npm/mocha/2.0.1/package.tgz
+46 verbose lock tar:///Users/laura/.npm/mocha/2.0.1/package.tgz /Users/laura/.npm/19c4e79c-aura-npm-mocha-2-0-1-package-tgz.lock
+47 silly gunzTarPerm modes [ '755', '644' ]
+48 error Error: EACCES, mkdir '/usr/local/lib/node_modules/mocha'
+48 error  { [Error: EACCES, mkdir '/usr/local/lib/node_modules/mocha']
+48 error   errno: 3,
+48 error   code: 'EACCES',
+48 error   path: '/usr/local/lib/node_modules/mocha',
+48 error   fstream_type: 'Directory',
+48 error   fstream_path: '/usr/local/lib/node_modules/mocha',
+48 error   fstream_class: 'DirWriter',
+48 error   fstream_stack:
+48 error    [ '/usr/local/lib/node_modules/npm/node_modules/fstream/lib/dir-writer.js:36:23',
+48 error      '/usr/local/lib/node_modules/npm/node_modules/mkdirp/index.js:46:53',
+48 error      'Object.oncomplete (fs.js:107:15)' ] }
+49 error Please try running this command again as root/Administrator.
+50 error System Darwin 12.5.0
+51 error command "node" "/usr/local/bin/npm" "install" "-g" "mocha" "--save"
+52 error cwd /Users/laura/Stand-Up-Tunes
+53 error node -v v0.10.32
+54 error npm -v 1.4.28
+55 error path /usr/local/lib/node_modules/mocha
+56 error fstream_path /usr/local/lib/node_modules/mocha
+57 error fstream_type Directory
+58 error fstream_class DirWriter
+59 error code EACCES
+60 error errno 3
+61 error stack Error: EACCES, mkdir '/usr/local/lib/node_modules/mocha'
+62 error fstream_stack /usr/local/lib/node_modules/npm/node_modules/fstream/lib/dir-writer.js:36:23
+62 error fstream_stack /usr/local/lib/node_modules/npm/node_modules/mkdirp/index.js:46:53
+62 error fstream_stack Object.oncomplete (fs.js:107:15)
+63 verbose exit [ 3, true ]

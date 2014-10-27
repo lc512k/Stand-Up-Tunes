@@ -5,13 +5,17 @@ var socket = io();
 // FILE SIZE CONSTANTS
 var ONE_KB = 1024;
 var HUNDRED_KB = ONE_KB * 100;
+
+// Logger CSS
 var USER_LOG_STYLE = 'color: lime; background-color: black; padding: 4px;';
 var USER_WARN_STYLE = 'color: orange; background-color: black; padding: 4px;';
 var USER_ERROR_STYLE = 'color: red; background-color: black; padding: 4px;';
 var USER_INFO_STYLE = 'color: cyan; background-color: black; padding: 4px;';
 
+// Class to add to winning row
 var WINNER_STYLE = 'winner';
 
+// Current winning vote count
 var highScore = 0;
 
 ///////////////////////////////// DOM /////////////////////////////////

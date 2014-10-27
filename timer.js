@@ -8,7 +8,7 @@ var STANDUP_TIME = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9,
 
 /**
  * Play winning tune at STANDUP_TIME
- * Reset all counters and start over
+ * Reset all counters and wait for tomorrow
  */
 exports.init = function (io) {
     debug('init');
@@ -27,25 +27,6 @@ exports.init = function (io) {
     setTimeout(function () {
         debug('Standup time!');
 
-        function findWinner() {
-            var todaysWinner;
-
-            var highScore = 0;
-
-            for (var tuneId in GLOBAL.files) {
-
-                if (GLOBAL.files.hasOwnProperty(tuneId)) {
-                    var thisCount = GLOBAL.files[tuneId].votes;
-
-                    if (thisCount > highScore) {
-                        highScore = thisCount;
-                        todaysWinner = tuneId;
-                    }
-                }
-            }
-            return todaysWinner;
-        }
-
         // if playing a file failed, fallback to audio error message
         domain.on('error', function (err) {
             debug(err);
@@ -54,18 +35,49 @@ exports.init = function (io) {
 
         // try/catch for executing afplay on the command line
         domain.run(function () {
+
             function play(error) {
+                
                 if (error) {
                     throw error;
                 }
+
                 debug('Played! Resetting vote count');
                 GLOBAL.resetVoteCount();
 
                 // Tell every client to reset their vote counts to zero
                 io.sockets.emit('votes reset');
             }
+
+            // Play the tune!
             exec('afplay ./public/tunes/' + findWinner(), play);
         });
 
     }, millisTillStandup);
+};
+
+
+/**
+ * Search the global file list and find the tune with the most votes
+ * @return {String} todaysWinner - the tune to play today
+ */
+var findWinner = function() {
+
+    var todaysWinner;
+
+    var highScore = 0;
+
+    for (var tuneId in GLOBAL.files) {
+
+        if (GLOBAL.files.hasOwnProperty(tuneId)) {
+
+            var thisCount = GLOBAL.files[tuneId].votes;
+
+            if (thisCount > highScore) {
+                highScore = thisCount;
+                todaysWinner = tuneId;
+            }
+        }
+    }
+    return todaysWinner;
 };
