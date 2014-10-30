@@ -21,7 +21,7 @@ var highScore = 0;
 ///////////////////////////////// DOM /////////////////////////////////
 
 var DOM = {
-    
+
 };
 
 ///////////////////////////////// UI /////////////////////////////////
@@ -32,6 +32,8 @@ var UI = {
     nameBox: document.getElementById('name-box'),
     uploadButton: document.getElementById('upload-button'),
     winningRow: null,
+    countdown: document.getElementById('countdown'),
+    units: document.getElementById('units'),
 
     selectedFile: null,
 
@@ -46,8 +48,8 @@ var UI = {
             UI.resetUploadButton();
         }
         else {
-            UI.uploadButton.innerText = parseInt(percent) + '%';
-        }    
+            UI.uploadButton.innerText = parseInt(percent, 10) + '%';
+        }
     },
 
     cleanTunesList: function () {
@@ -102,7 +104,7 @@ var UI = {
         var tuneItem = this.createTuneItem(tuneId, 0);
         UI.tunesContainer.appendChild(tuneItem);
     },
-    resetUploadButton: function() {
+    resetUploadButton: function () {
         UI.uploadButton.innerText = 'Select File';
         UI.nameBox.value = '';
     }
@@ -118,9 +120,9 @@ socket.on('tunes list', function (files) {
         var thisVoteCount = files[fileId].votes;
 
         var tuneItem = UI.createTuneItem(fileId, thisVoteCount);
-        
+
         UI.tunesContainer.appendChild(tuneItem);
-        
+
         highlightIfWinner(tuneItem, thisVoteCount);
     }
 });
@@ -189,19 +191,19 @@ socket.on('new vote', function (vote) {
  * @param {String} vote.tuneId
  * @param {String} vote.count
  */
-socket.on('votes reset', function (vote) {
+socket.on('votes reset', function () {
     var allScores = document.getElementsByClassName('tune-score');
-    for (var i = 0; i < allScores.length; i++ ) {
-        allScores[i].innerText = 0;   
+    for (var i = 0; i < allScores.length; i++) {
+        allScores[i].innerText = 0;
     }
 });
 
-var highlightIfWinner = function(rowItem, voteCount) {
+var highlightIfWinner = function (rowItem, voteCount) {
 
     if (voteCount > highScore) {
-        
+
         highScore = voteCount;
-        
+
         // Demote previous winner
         if (UI.winningRow) {
             UI.winningRow.className = 'tune-item';
@@ -291,9 +293,38 @@ socket.on('done', function (newFileName) {
 });
 
 socket.on('loading file list', function () {
-    // TODO
-    console.info('Spinner...');
+    // TODO spinner
 });
+
+/////////////////////////////// UTIL ///////////////////////////////
+
+var countdown = function () {
+
+    var now = new Date();
+    var standup = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 21, 56, 0, 0);
+
+    var seconds = ((standup - now) / 1000);
+
+    if (now > standup) {
+        seconds += 60 * 60 * 24;
+    }
+
+    var minutes = seconds / 60;
+    var hours = minutes / 60;
+
+    if (hours > 1) {
+        UI.countdown.innerText = parseInt(hours, 10);
+        UI.units.innerText = 'h';
+    }
+    else if (minutes > 1) {
+        UI.countdown.innerText = parseInt(minutes, 10);
+        UI.units.innerText = 'm';
+    }
+    else if (seconds > 1) {
+        UI.countdown.innerText = parseInt(seconds, 10);
+        UI.units.innerText = 's';
+    }
+};
 
 /////////////////////////////// INIT ///////////////////////////////
 
@@ -308,6 +339,11 @@ function init() {
             UI.fileBox.click();
         });
     }
+
+    // Start the countdown
+    // TODO unbrutify
+    countdown();
+    setInterval(countdown, 1000);
 }
 
 window.addEventListener('load', init);

@@ -1,5 +1,6 @@
 var debug = require('debug')('fsmanager');
 var fs = require('fs');
+var domain = require('domain').create();
 
 var ONE_KB = 1024;
 var HUNDRED_KB = ONE_KB * 100;
@@ -10,13 +11,12 @@ var FIVE_MB = ONE_MB * 5;
  * Read the tunes folder and load all available file names
  * Read the backup.json file for any previously backed up vote counts
  */
-exports.init = function() {
+exports.init = function () {
     debug('init');
 
     fs.readdir('public/tunes', function (err, files) {
 
         if (err) {
-            // TODO emit it
             debug('error reading public tunes folder', err);
             throw err;
         }
@@ -34,41 +34,47 @@ exports.init = function() {
             }
         }
 
-        // Try to read the vote count previously saved to disk, if any
+        // Try to read the votes file synchronously
+        // (we don't want clients connecting until we've fully loaded this)
         try {
-            var backupJSON = fs.readFileSync('backup.json', {encoding: 'utf8'});
+
+            // read the contents of the file as a string
+            var backupJSON = fs.readFileSync('backup.json', {
+                encoding: 'utf8'
+            });
+
+            // parse it into an object
             var backup = JSON.parse(backupJSON);
 
-            // update any backed up vote counts
+            // read it and
+            // load the vote count into memory
             for (var tune in backup) {
-
-                GLOBAL.files[key].votes = tune.votes;
+                GLOBAL.files[tune].votes = backup[tune].votes;
             }
         }
-        catch (e) {
-            debug('error parsing backup votes', e, backupJSON);
-            //TODO delete the corrupt file
+        catch (error) {
+            // no backup file yet
+            // create one
+            fs.writeFileSync('backup.json', '');
         }
+
     });
 };
 
 /**
  * Save the current vote count to disk
  */
-exports.save = function() {
-
-    fs.open('backup.json', 'a', 0755, function (err, fd) {
-
-        if (err) {
-            debug(err);
-        }
-        else {
-            fs.write(fd, JSON.stringify(GLOBAL.files), 0, 'Binary', function () {
-                debug('Vote count saved!');
-            });
-        }
+exports.save = function () {
+    domain.run(function () {
+        fs.writeFile('backup.json', JSON.stringify(GLOBAL.files), function () {
+            debug('Vote count saved!');
+        });
     });
 };
+
+domain.on('error', function (e) {
+    debug('error in fsmanager', e);
+});
 
 /**
  * Write a 100KB chunk of a file to disk
@@ -99,13 +105,13 @@ exports.upload = function (data, socket) {
         debug('File too big');
     }
     else {
-        
+
         var size = thisFile.fileSize;
         var marker = thisFile.downloaded / HUNDRED_KB;
         var percent = (thisFile.downloaded / GLOBAL.files[name].fileSize) * 100;
-        
+
         debug('progress ' + Math.round(percent) + '%');
-        
+
         // Ask for more data
         socket.emit('more data', {
             marker: marker,
@@ -121,7 +127,7 @@ exports.upload = function (data, socket) {
  * @param  {Socket} socket
  */
 exports.startUpload = function (data, socket) {
-    var name = data.name;
+    var name = safeifyString(data.name);
 
     // Add the file to the global file list
     GLOBAL.files[name] = {
@@ -168,4 +174,13 @@ exports.startUpload = function (data, socket) {
             });
         }
     });
+};
+
+/**
+ * Remove unsafe characters from a string
+ * afplay can't handle spaces
+ * TODO remove other characters as needed
+ */
+var safeifyString = function (unsafeString) {
+    return unsafeString.replace(' ', '');
 };

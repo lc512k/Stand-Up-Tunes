@@ -4,7 +4,6 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var debug = require('debug')('server');
-var fs = require('fs');
 
 var port = process.env.PORT || 3000;
 
@@ -31,7 +30,6 @@ timer.init(io);
 
 // Load all available tunes and their votes
 fsManager.init();
-
 
 ///////////////////////////////// CLIENT CONNECTIONS /////////////////////////////////
 
@@ -83,7 +81,7 @@ io.sockets.on('connection', function (socket) {
  * Vote counts are reset every morning after standup
  * (except on playback error)
  */
-var resetVoteCount = GLOBAL.resetVoteCount = function() {
+var resetVoteCount = GLOBAL.resetVoteCount = function () {
 
     for (var key in GLOBAL.files) {
         GLOBAL.files[key].votes = 0;

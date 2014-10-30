@@ -6,6 +6,12 @@ var domain = require('domain').create();
 var now = new Date();
 var STANDUP_TIME = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 40, 0, 0);
 
+var ONE_DAY = 1000 * 60 * 60 * 24;
+var TEN_SEC = 1000 * 20;
+
+// play this if no votes
+var DEFAULT_TUNE = 'mario_death.wav';
+
 /**
  * Play winning tune at STANDUP_TIME
  * Reset all counters and wait for tomorrow
@@ -18,13 +24,10 @@ exports.init = function (io) {
     if (millisTillStandup < 0) {
         // Stand up time has passed
         // try again tomorrow
-        millisTillStandup += 60 * 60 * 1000 * 24;
+        millisTillStandup += ONE_DAY;
     }
 
-    // testing
-    millisTillStandup = 10000;
-
-    setTimeout(function () {
+    setInterval(function () {
         debug('Standup time!');
 
         // if playing a file failed, fallback to audio error message
@@ -33,11 +36,11 @@ exports.init = function (io) {
             exec('say Oh no! The mobile web jingle is broken.');
         });
 
-        // try/catch for executing afplay on the command line
+        // Try to afplay the winning tune in the terminal
         domain.run(function () {
 
-            function play(error) {
-                
+            function play (error) {
+
                 if (error) {
                     throw error;
                 }
@@ -56,12 +59,11 @@ exports.init = function (io) {
     }, millisTillStandup);
 };
 
-
 /**
  * Search the global file list and find the tune with the most votes
- * @return {String} todaysWinner - the tune to play today
+ * @return {String} todaysWinner - the tune to play or the default when no winner
  */
-var findWinner = function() {
+var findWinner = function () {
 
     var todaysWinner;
 
@@ -79,5 +81,5 @@ var findWinner = function() {
             }
         }
     }
-    return todaysWinner;
+    return todaysWinner || DEFAULT_TUNE;
 };
