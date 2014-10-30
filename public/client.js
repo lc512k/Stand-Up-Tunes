@@ -303,7 +303,7 @@ socket.on('loading file list', function () {
 var countdown = function () {
 
     var now = new Date();
-    var standup = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 21, 56, 0, 0);
+    var standup = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 40, 0, 0);
 
     var seconds = ((standup - now) / 1000);
 
