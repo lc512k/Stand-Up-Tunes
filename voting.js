@@ -4,7 +4,7 @@ var debug = require('debug')('voting');
  * When a new vote is received
  * find the tine in the global file list
  * and increase its vote count by one.
- * Tell all clients to update the vote count for this file 
+ * Tell all clients to update the vote count for this file
  */
 exports.send = function (tuneId, socket) {
 

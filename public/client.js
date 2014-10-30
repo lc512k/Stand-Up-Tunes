@@ -107,6 +107,7 @@ var UI = {
     resetUploadButton: function () {
         UI.uploadButton.innerText = 'Select File';
         UI.nameBox.value = '';
+        UI.fileBox.value = '';
     }
 };
 
@@ -136,9 +137,7 @@ socket.on('new user', function (ip) {
 });
 
 /////////////////////////////// PLAYBACK ///////////////////////////////
-// TODO hide the default audio ui, make small play button that when you .on('click', play)
-// var v = document.getElementsByTagName('video')[0];
-// v.play();
+//TODO
 
 /////////////////////////////// VOTING ///////////////////////////////
 
@@ -228,7 +227,7 @@ function fileChosen(e) {
 
 function startUpload() {
     fileName = UI.fileBox.value;
-
+//debugger
     // User hasn't selected a file yet,
     // trigger the file-box and abort
     if (!fileName) {
