@@ -17,3 +17,4 @@ Future improvements
 - mini proto
 - read standup time from config file on init
 - watch config file for changes to re-init
+- watch tunes folder and re-init

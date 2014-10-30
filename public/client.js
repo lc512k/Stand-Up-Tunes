@@ -227,7 +227,7 @@ function fileChosen(e) {
 
 function startUpload() {
     fileName = UI.fileBox.value;
-//debugger
+
     // User hasn't selected a file yet,
     // trigger the file-box and abort
     if (!fileName) {
@@ -237,6 +237,9 @@ function startUpload() {
 
     // Remove HTML5 fakepath
     fileName = fileName.replace('C:\\fakepath\\', '');
+
+    // Clean it up
+    fileName = safeifyString(fileName);
 
     // File is not .mp3 or .wav, abort
     if (fileName.indexOf('.mp3') < 0 && fileName.indexOf('.wav') < 0) {
@@ -323,6 +326,15 @@ var countdown = function () {
         UI.countdown.innerText = parseInt(seconds, 10);
         UI.units.innerText = 's';
     }
+};
+
+/**
+ * Remove unsafe characters from a string
+ * afplay can't handle spaces
+ * TODO remove other characters as needed
+ */
+var safeifyString = function (unsafeString) {
+    return unsafeString.replace(' ', '');
 };
 
 /////////////////////////////// INIT ///////////////////////////////

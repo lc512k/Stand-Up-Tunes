@@ -49,6 +49,16 @@ exports.init = function () {
             // read it and
             // load the vote count into memory
             for (var tune in backup) {
+
+                if (!GLOBAL.files[tune]) {
+                    // The file was once voted on
+                    // but has since been deleted from disk
+                    // Ignore it
+                    // will disappear from vote backup on next write
+                    debug(tune, 'has been deleted');
+                    continue;
+                }
+
                 GLOBAL.files[tune].votes = backup[tune].votes;
             }
         }
@@ -127,7 +137,7 @@ exports.upload = function (data, socket) {
  * @param  {Socket} socket
  */
 exports.startUpload = function (data, socket) {
-    var name = safeifyString(data.name);
+    var name = data.name;
 
     // Add the file to the global file list
     GLOBAL.files[name] = {
@@ -174,13 +184,4 @@ exports.startUpload = function (data, socket) {
             });
         }
     });
-};
-
-/**
- * Remove unsafe characters from a string
- * afplay can't handle spaces
- * TODO remove other characters as needed
- */
-var safeifyString = function (unsafeString) {
-    return unsafeString.replace(' ', '');
 };
