@@ -26,7 +26,7 @@ exports.init = function (io) {
         millisTillStandup += ONE_DAY;
     }
 
-    debug('next interval', millisTillStandup);
+    debug('next interval', (millisTillStandup / 1000) / 60);
 
     setInterval(function () {
         debug('Standup time!');
