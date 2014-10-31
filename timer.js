@@ -7,7 +7,6 @@ var now = new Date();
 var STANDUP_TIME = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 40, 0, 0);
 
 var ONE_DAY = 1000 * 60 * 60 * 24;
-var TEN_SEC = 1000 * 20;
 
 // play this if no votes
 var DEFAULT_TUNE = 'mario_death.wav';
@@ -26,6 +25,8 @@ exports.init = function (io) {
         // try again tomorrow
         millisTillStandup += ONE_DAY;
     }
+
+    debug('next interval', millisTillStandup);
 
     setInterval(function () {
         debug('Standup time!');
