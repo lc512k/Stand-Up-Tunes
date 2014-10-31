@@ -26,7 +26,7 @@ exports.init = function (io) {
         millisTillStandup += ONE_DAY;
     }
 
-    debug('next interval', (millisTillStandup / 1000) / 60);
+    debug('next jingle in ', (millisTillStandup / 1000) / 60 / 60, 'hours');
 
     setInterval(function () {
         debug('Standup time!');
