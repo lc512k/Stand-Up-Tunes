@@ -7,14 +7,18 @@ var debug = require('debug')('server');
 
 var port = process.env.PORT || 3000;
 
-var fsManager = require('./fsmanager');
-var timer = require('./timer');
+var uploader = require('./uploader');
 var voting = require('./voting');
+var cron = require('./cron');
+var util = require('./util');
 
 ///////////////////////////////// SERVER SETUP /////////////////////////////////
 
 // List of tunes and their vote counts
 GLOBAL.files = {};
+
+// Sockets for this server
+GLOBAL.io = io;
 
 // Host static files
 app.use(express.static(__dirname + '/public')); //jshint ignore:line
@@ -24,12 +28,13 @@ server.listen(port, function () {
     debug('Server listening at port %d', port);
 });
 
-// Initialize the timer module
+// Initialize the cron module
 // Sets up the alarm every day to play the winning tune
-timer.init(io);
+// resets the vote count after cron executes
+cron.init(util.playTune);
 
 // Load all available tunes and their votes
-fsManager.init();
+uploader.init();
 
 ///////////////////////////////// CLIENT CONNECTIONS /////////////////////////////////
 
@@ -42,7 +47,11 @@ io.sockets.on('connection', function (socket) {
         debug('New client connected ', clientIp);
 
         // Give the client the list of tunes
-        socket.emit('tunes list', GLOBAL.files);
+        // and the time the next jingle will play
+        socket.emit('startup', {
+            files: GLOBAL.files,
+            playTime: cron.getPlayTime()
+        });
 
         // Say Hi!
         socket.emit('welcome', clientIp);
@@ -60,33 +69,16 @@ io.sockets.on('connection', function (socket) {
         voting.send(tuneId, socket);
 
         // save new vote count to disk
-        fsManager.save();
+        util.saveVoteCount();
     });
 
     // Uploading: Start saving a new file or resuming a previous upload
     socket.on('start upload', function (data) {
-        fsManager.startUpload(data, socket);
+        uploader.startUpload(data, socket);
     });
 
     // Uploading: Save the chunk of the file send from the client
     socket.on('upload', function (data) {
-        fsManager.upload(data, socket);
+        uploader.upload(data, socket);
     });
 });
-
-///////////////////////////////// UTIL /////////////////////////////////
-
-/**
- * Reset all vote counts to zero
- * Vote counts are reset every morning after standup
- * (except on playback error)
- */
-var resetVoteCount = GLOBAL.resetVoteCount = function () {
-
-    for (var key in GLOBAL.files) {
-        GLOBAL.files[key].votes = 0;
-    }
-
-    // Save to disk
-    fsManager.save();
-};

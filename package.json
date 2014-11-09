@@ -5,6 +5,7 @@
   "main": "server.js",
   "author": "Laura Carvajal",
   "dependencies": {
+    "cron": "^1.0.5",
     "debug": "*",
     "domain": "*",
     "express": "*",
@@ -12,7 +13,8 @@
     "mocha": "^2.0.1",
     "node-static": "*",
     "socket.io": "*",
-    "socket.io-client": "^1.2.0"
+    "socket.io-client": "^1.2.0",
+    "time": "^0.11.0"
   },
   "repository": {
     "type": "git",

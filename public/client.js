@@ -1,4 +1,4 @@
-/* global window, document, FileReader, io */
+/* global UI, util, io, document, window */
 
 var socket = io();
 
@@ -6,114 +6,18 @@ var socket = io();
 var ONE_KB = 1024;
 var HUNDRED_KB = ONE_KB * 100;
 
-// Logger CSS
-var USER_LOG_STYLE = 'color: lime; background-color: black; padding: 4px;';
-var USER_WARN_STYLE = 'color: orange; background-color: black; padding: 4px;';
-var USER_ERROR_STYLE = 'color: red; background-color: black; padding: 4px;';
-var USER_INFO_STYLE = 'color: cyan; background-color: black; padding: 4px;';
-
-// Class to add to winning row
-var WINNER_STYLE = 'winner';
-
 // Current winning vote count
 var highScore = 0;
 
-///////////////////////////////// DOM /////////////////////////////////
-
-var DOM = {
-
-};
-
-///////////////////////////////// UI /////////////////////////////////
-
-var UI = {
-    tunesContainer: document.getElementById('tunes-container'),
-    fileBox: document.getElementById('file-box'),
-    nameBox: document.getElementById('name-box'),
-    uploadButton: document.getElementById('upload-button'),
-    winningRow: null,
-    countdown: document.getElementById('countdown'),
-    units: document.getElementById('units'),
-
-    selectedFile: null,
-
-    updateProgressBar: function (percent) {
-
-        if (!this.selectedFile) {
-            console.error('%cNo file selected', USER_ERROR_STYLE);
-            return;
-        }
-
-        if (percent >= 100) {
-            UI.resetUploadButton();
-        }
-        else {
-            UI.uploadButton.innerText = parseInt(percent, 10) + '%';
-        }
-    },
-
-    cleanTunesList: function () {
-        while (this.tunesContainer.firstChild) {
-            this.tunesContainer.removeChild(this.tunesContainer.firstChild);
-        }
-    },
-
-    createTuneItem: function (tuneId, votes) {
-
-        // Score container
-        var scoreContainer = document.createElement('span');
-        var scoreText = document.createTextNode(votes);
-        scoreContainer.className = 'tune-score';
-        scoreContainer.appendChild(scoreText);
-
-        // Vote button with label for each tune
-        var voteBtn = document.createElement('a');
-        voteBtn.addEventListener('click', onCastVote);
-
-        // Tune name
-        var tuneNameContainer = document.createElement('span');
-        tuneNameContainer.className = 'tune-name';
-        var tuneName = document.createTextNode(tuneId);
-        tuneNameContainer.appendChild(tuneName);
-
-        // Tune audio
-        var tuneAudioContainer = document.createElement('div');
-        var tuneAudio = document.createElement('audio');
-        var tuneSource = document.createElement('source');
-        tuneSource.setAttribute('src', 'tunes/' + tuneId);
-        tuneSource.setAttribute('type', 'audio/mpeg');
-        tuneAudio.appendChild(tuneSource);
-        tuneAudio.setAttribute('controls', '');
-        tuneAudio.setAttribute('style', 'display');
-        tuneAudioContainer.appendChild(tuneAudio);
-        tuneAudioContainer.className = 'tune-audio';
-
-        // Container for each tune
-        var tuneItem = document.createElement('li');
-        tuneItem.setAttribute('data-tune-id', tuneId);
-        tuneItem.className = 'tune-item';
-
-        tuneItem.appendChild(scoreContainer);
-        tuneItem.appendChild(tuneNameContainer);
-        tuneItem.appendChild(tuneAudioContainer);
-        tuneItem.appendChild(voteBtn);
-
-        return tuneItem;
-    },
-    addRow: function (tuneId) {
-        var tuneItem = this.createTuneItem(tuneId, 0);
-        UI.tunesContainer.appendChild(tuneItem);
-    },
-    resetUploadButton: function () {
-        UI.uploadButton.innerText = 'Select File';
-        UI.nameBox.value = '';
-        UI.fileBox.value = '';
-    }
-};
-
 // INIT
+socket.on('startup', function (message) {
 
-socket.on('tunes list', function (files) {
+    var files = message.files;
+
+    var playTime = message.playTime;
+
+    UI.playTime.innerText = playTime;
+
     UI.cleanTunesList();
 
     for (var fileId in files) {
@@ -129,15 +33,12 @@ socket.on('tunes list', function (files) {
 });
 
 socket.on('welcome', function (ip) {
-    console.log('%cWelcome,%s', USER_LOG_STYLE, ip);
+    console.log('%cWelcome,%s', UI.USER_LOG_STYLE, ip);
 });
 
 socket.on('new user', function (ip) {
-    console.log('%cYour friend%shas joined!', USER_LOG_STYLE, ip);
+    console.log('%cYour friend%shas joined!', UI.USER_LOG_STYLE, ip);
 });
-
-/////////////////////////////// PLAYBACK ///////////////////////////////
-//TODO
 
 /////////////////////////////// VOTING ///////////////////////////////
 
@@ -191,9 +92,18 @@ socket.on('new vote', function (vote) {
  * @param {String} vote.count
  */
 socket.on('votes reset', function () {
+
     var allScores = document.getElementsByClassName('tune-score');
+
     for (var i = 0; i < allScores.length; i++) {
         allScores[i].innerText = 0;
+    }
+
+    highScore = 0;
+
+    // Remove badge from previous winner
+    if (UI.winningRow) {
+        UI.winningRow.className = 'tune-item';
     }
 });
 
@@ -203,14 +113,12 @@ var highlightIfWinner = function (rowItem, voteCount) {
 
         highScore = voteCount;
 
-        // Demote previous winner
-        if (UI.winningRow) {
-            UI.winningRow.className = 'tune-item';
-        }
+        // Remove badge from previous winner
+        util.makeStandard(UI.winningRow);
 
         // Crown new winner
-        rowItem.className = rowItem.className + ' ' + WINNER_STYLE;
-        UI.winningRow = rowItem;
+        util.makeWinner(rowItem);
+
     }
 };
 
@@ -239,18 +147,18 @@ function startUpload() {
     fileName = fileName.replace('C:\\fakepath\\', '');
 
     // Clean it up
-    fileName = safeifyString(fileName);
+    fileName = util.safeifyString(fileName);
 
     // File is not .mp3 or .wav, abort
     if (fileName.indexOf('.mp3') < 0 && fileName.indexOf('.wav') < 0) {
-        console.log('%cThat ain\'t no audio file. Try again.', USER_WARN_STYLE);
+        console.log('%cThat ain\'t no audio file. Try again.', UI.USER_WARN_STYLE);
         UI.resetUploadButton();
         return;
     }
 
     fileReader = new FileReader();
 
-    console.log('%cFile size is%iKB', USER_INFO_STYLE, Math.round(UI.selectedFile.size / ONE_KB));
+    console.log('%cFile size is%iKB', UI.USER_INFO_STYLE, Math.round(UI.selectedFile.size / ONE_KB));
 
     UI.uploadButton.innerText = '0%';
 
@@ -298,45 +206,6 @@ socket.on('loading file list', function () {
     // TODO spinner
 });
 
-/////////////////////////////// UTIL ///////////////////////////////
-
-var countdown = function () {
-
-    var now = new Date();
-    var standup = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 40, 0, 0);
-
-    var seconds = ((standup - now) / 1000);
-
-    if (now > standup) {
-        seconds += 60 * 60 * 24;
-    }
-
-    var minutes = seconds / 60;
-    var hours = minutes / 60;
-
-    if (hours > 1) {
-        UI.countdown.innerText = parseInt(hours, 10);
-        UI.units.innerText = 'h';
-    }
-    else if (minutes > 1) {
-        UI.countdown.innerText = parseInt(minutes, 10);
-        UI.units.innerText = 'm';
-    }
-    else if (seconds > 1) {
-        UI.countdown.innerText = parseInt(seconds, 10);
-        UI.units.innerText = 's';
-    }
-};
-
-/**
- * Remove unsafe characters from a string
- * afplay can't handle spaces
- * TODO remove other characters as needed
- */
-var safeifyString = function (unsafeString) {
-    return unsafeString.replace(' ', '');
-};
-
 /////////////////////////////// INIT ///////////////////////////////
 
 function init() {
@@ -350,11 +219,6 @@ function init() {
             UI.fileBox.click();
         });
     }
-
-    // Start the countdown
-    // TODO unbrutify
-    countdown();
-    setInterval(countdown, 1000);
 }
 
 window.addEventListener('load', init);

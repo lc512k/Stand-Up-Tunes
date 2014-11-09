@@ -35,6 +35,12 @@ p {
     font-weight:        none;
 }
 
+.tiny {
+    font-size:          0.5em;
+    font-weight:        lighter;
+    color:              #aaa;
+}
+
 #tunes-container {
 
     padding:            0;
@@ -199,17 +205,19 @@ a:active {
     background-color:   rgba(15, 92, 160, 1);
 }
 
+/* MISC */
+
 .winner > .tune-name::after {
 
-    content: '♕ wins';
+    content:        '♕ wins';
 
-    float: right;
+    float:          right;
 
-    padding-left: 10px;
+    padding-left:   10px;
 
-    color: orange;
+    color:          orange;
 }
 
-.countdown {
-    transition:        display 0.3s ease;
+.play-time {
+    color: green;
 }

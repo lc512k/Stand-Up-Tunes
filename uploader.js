@@ -1,6 +1,5 @@
-var debug = require('debug')('fsmanager');
+var debug = require('debug')('uploader');
 var fs = require('fs');
-var domain = require('domain').create();
 
 var ONE_KB = 1024;
 var HUNDRED_KB = ONE_KB * 100;
@@ -70,21 +69,6 @@ exports.init = function () {
 
     });
 };
-
-/**
- * Save the current vote count to disk
- */
-exports.save = function () {
-    domain.run(function () {
-        fs.writeFile('backup.json', JSON.stringify(GLOBAL.files), function () {
-            debug('Vote count saved!');
-        });
-    });
-};
-
-domain.on('error', function (e) {
-    debug('error in fsmanager', e);
-});
 
 /**
  * Write a 100KB chunk of a file to disk
