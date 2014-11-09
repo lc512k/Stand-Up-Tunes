@@ -10,7 +10,6 @@
     "domain": "*",
     "express": "*",
     "forever-monitor": "*",
-    "mocha": "^2.0.1",
     "node-static": "*",
     "socket.io": "*",
     "socket.io-client": "^1.2.0",
@@ -27,6 +26,8 @@
     "url": "https://github.com/lauracarvajal/Stand-Up-Tunes/issues"
   },
   "homepage": "https://github.com/lauracarvajal/Stand-Up-Tunes",
-  "devDependencies": {},
+  "devDependencies": {
+    "qunitjs": "^1.15.0"
+  },
   "license": "ISC"
 }

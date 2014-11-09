@@ -28,9 +28,11 @@ var util = {
     /**
      * Remove unsafe characters from a string
      * afplay can't handle spaces
-     * TODO remove other characters as needed
      */
     safeifyString: function (unsafeString) {
-        return unsafeString.replace(' ', '');
+        var find = '[ :/]';
+        var pattern = new RegExp(find, 'g');
+        var safe = unsafeString.replace(pattern, '');
+        return safe;
     }
 };

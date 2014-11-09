@@ -23,6 +23,10 @@ GLOBAL.io = io;
 // Host static files
 app.use(express.static(__dirname + '/public')); //jshint ignore:line
 
+// Host tests
+// TODO don't
+app.use('/test', express.static(__dirname + '/test'));   //jshint ignore:line
+
 // Start listening on defined port
 server.listen(port, function () {
     debug('Server listening at port %d', port);
