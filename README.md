@@ -2,10 +2,10 @@ Stand-Up-Tunes
 ==============
 
 Future improvements
-- DOM functions
 - This file, but nice
+- grunt ssh/sftp deploy
+- DOM functions
 - Forever monitor
-- grunt/gulp
 - Unit tests
 - Delete strategy
 - Spinner on first load
