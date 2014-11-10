@@ -16,7 +16,15 @@ QUnit.test('Util safeifyString both', function (assert) {
 
 QUnit.test('Util makeStandard', function (assert) {
     var fakeRow = UI.createTuneItem('test-id', '1');
-    util.makeWinner(fakeRow);
+    fakeRow.className += 'something and winner';
+    util.makeStandard(fakeRow);
     var newClass = fakeRow.className;
     assert.equal(newClass, 'tune-item');
+});
+
+QUnit.test('Util makeWinner', function (assert) {
+    var fakeRow = UI.createTuneItem('test-id', '1');
+    util.makeWinner(fakeRow);
+    var newClass = fakeRow.className;
+    assert.equal(newClass, 'tune-item winner');
 });

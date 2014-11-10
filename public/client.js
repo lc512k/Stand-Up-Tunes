@@ -24,7 +24,7 @@ socket.on('startup', function (message) {
 
         var thisVoteCount = files[fileId].votes;
 
-        var tuneItem = UI.createTuneItem(fileId, thisVoteCount);
+        var tuneItem = UI.createTuneItem(fileId, thisVoteCount, onCastVote);
 
         UI.tunesContainer.appendChild(tuneItem);
 

@@ -18,26 +18,31 @@ var UI = {
 
     updateProgressBar: function (percent) {
 
+        if (percent < 0) {
+            throw 'negative percent';
+        }
+
         if (!this.selectedFile) {
             console.error('%cNo file selected', this.USER_ERROR_STYLE);
             return;
         }
 
         if (percent >= 100) {
-            UI.resetUploadButton();
+            this.resetButton();
         }
         else {
-            UI.uploadButton.innerText = parseInt(percent, 10) + '%';
+            this.uploadButton.innerText = parseInt(percent, 10) + '%';
         }
     },
 
     cleanTunesList: function () {
         while (this.tunesContainer.firstChild) {
+            alert('first')
             this.tunesContainer.removeChild(this.tunesContainer.firstChild);
         }
     },
 
-    createTuneItem: function (tuneId, votes) {
+    createTuneItem: function (tuneId, votes, listener) {
 
         // Score container
         var scoreContainer = document.createElement('span');
@@ -47,7 +52,7 @@ var UI = {
 
         // Vote button with label for each tune
         var voteBtn = document.createElement('a');
-        voteBtn.addEventListener('click', onCastVote);
+        voteBtn.addEventListener('click', listener);
 
         // Tune name
         var tuneNameContainer = document.createElement('span');
@@ -81,11 +86,11 @@ var UI = {
     },
     addRow: function (tuneId) {
         var tuneItem = this.createTuneItem(tuneId, 0);
-        UI.tunesContainer.appendChild(tuneItem);
+        this.tunesContainer.appendChild(tuneItem);
     },
-    resetUploadButton: function () {
-        UI.uploadButton.innerText = 'Select File';
-        UI.nameBox.value = '';
-        UI.fileBox.value = '';
+    resetButton: function () {
+        this.uploadButton.innerText = 'Select File';
+        this.nameBox.value = '';
+        this.fileBox.value = '';
     }
 };
