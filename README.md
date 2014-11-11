@@ -1,6 +1,9 @@
 Stand-Up-Tunes
 ==============
 
+![Readme]
+(readme/readme.jpg)
+
 Future improvements
 - This file, but nice
 - grunt ssh/sftp deploy
