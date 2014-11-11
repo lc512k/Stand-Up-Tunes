@@ -37,7 +37,6 @@ var UI = {
 
     cleanTunesList: function () {
         while (this.tunesContainer.firstChild) {
-            alert('first')
             this.tunesContainer.removeChild(this.tunesContainer.firstChild);
         }
     },

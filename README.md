@@ -6,7 +6,7 @@ Future improvements
 - grunt ssh/sftp deploy
 - DOM functions
 - Forever monitor
-- Unit tests
+- Server-side unit tests
 - Delete strategy
 - Spinner on first load
 - CSS-only progress bar for upload
