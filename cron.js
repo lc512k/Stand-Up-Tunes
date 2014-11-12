@@ -1,7 +1,7 @@
 var debug = require('debug')('cron');
 var CronJob = require('cron').CronJob;
 
-var standupTime = '0 38 9 * * 1-5';
+var standupTime = '0 50 9 * * 1-5';
 
 // Test vars
 var everyMinute = '0 * * * * *';
@@ -24,5 +24,5 @@ exports.getPlayTime = function () {
 var expresionToTime = function (cronExpression) {
 
     // TODO don't cheat :P
-    return '9:38 am';
+    return '9:50 am';
 };
