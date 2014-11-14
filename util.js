@@ -70,3 +70,24 @@ exports.playTune = function () {
         GLOBAL.io.sockets.emit('votes reset');
     });
 };
+
+/**
+ * Return true if array is empty or only has empty votes
+ * @return {Boolean} is empty?
+ */
+exports.isEmptyVotes = function (voteArray) {
+
+    if (!voteArray) {
+        return true;
+    }
+
+    // It's not empty if we find at least one element with non-zero vote
+    for (var tune in voteArray) {
+        if (voteArray[tune].votes > 0) {
+            return false;
+        }
+    }
+
+    // All votes were zero. It's empty.
+    return true;
+};

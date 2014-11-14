@@ -4,6 +4,10 @@
 var WINNER_STYLE = 'winner';
 
 var util = {
+
+    // When was the last vote fired?
+    lastTimestamp: Date.now(),
+
     /**
      * Make any row a standard row
      * @param  {DOM node} row
@@ -34,5 +38,20 @@ var util = {
         var pattern = new RegExp(find, 'g');
         var safe = unsafeString.replace(pattern, '');
         return safe;
+    },
+
+    /**
+     * Drop a vote that happened too soon after the last one
+     */
+    shouldDrop: function () {
+
+        var timestamp = Date.now();
+
+        if (timestamp - this.lastTimestamp < 100) {
+            return true;
+        }
+
+        this.lastTimestamp = timestamp;
+        return false;
     }
 };
