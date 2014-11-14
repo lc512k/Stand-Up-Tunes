@@ -81,9 +81,13 @@ exports.isEmptyVotes = function (voteArray) {
         return true;
     }
 
+    debug('checking', voteArray);
+
     // It's not empty if we find at least one element with non-zero vote
     for (var tune in voteArray) {
+        debug('checking', voteArray[tune]);
         if (voteArray[tune].votes > 0) {
+            debug('not empty!');
             return false;
         }
     }
