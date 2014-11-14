@@ -80,6 +80,7 @@ exports.init = function () {
         catch (error) {
             // no backup file yet
             // create one
+            debug(error);
             debug('resetting backup.json');
             fs.writeFileSync('backup.json', '');
         }
