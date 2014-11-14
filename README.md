@@ -4,20 +4,10 @@ Stand-Up-Tunes
 ![Readme]
 (readme/readme.jpg)
 
-Future improvements
-- This file, but nice
-- grunt ssh/sftp deploy
-- DOM functions
-- Forever monitor
-- Server-side unit tests
-- Delete strategy
-- Spinner on first load
-- CSS-only progress bar for upload
-- Hide HTML5 audio, replace with progress-aware play button
-- Emit file server errors to the client
-- full-on responsive
-- remove default input highlight
-- mini proto
-- read standup time from config file on init
-- watch config file for changes to re-init
-- watch tunes folder and re-init
+Release History
+---------------
+
+v0.3
+Throttle votes on the client
+Reset votes backup file on the server if corrupted
+Flexible vote count box

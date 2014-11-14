@@ -78,15 +78,20 @@ p {
     background-color:   #fff;
 }
 
+.tune-item > * {
+    margin: 0 5px 0 5px;
+}
+
 .tune-item .tune-score {
 
     order:              1;
     border:             1px solid #ccc;
     height:             40px;
-    width:              40px;
+    min-width:              40px;
     border-radius:      4px;
     margin-right:       20px;
     box-shadow:         inset 0 0 2px 0 #ccc;
+    padding:            ;
 
     text-align:         center;
     font-weight:        normal;
@@ -146,20 +151,27 @@ p {
 .tune-item .tune-audio {
 
     order:              3;
+<<<<<<< HEAD
 
     -webkit-flex-grow:  3;
     flex-grow:          3;
 
+=======
+>>>>>>> ec3a99b7272ec1e3fdd9e1fdd37cc56cace920c2
     text-align:         center;
+    flex-basis:         350px;
 }
 
 .tune-item > a {
 
     order:              4;
+<<<<<<< HEAD
     -webkit-flex-grow:  1;
     flex-grow:          1;
+=======
+>>>>>>> ec3a99b7272ec1e3fdd9e1fdd37cc56cace920c2
     border-radius:      4px;
-    padding:            6px 3px;
+    padding:            6px 3%;
 }
 
 .tune-item > a::after {

@@ -49,6 +49,11 @@ socket.on('new user', function (ip) {
  * @param  {Event} e [description]
  */
 function onCastVote(e) {
+
+    if (util.shouldDrop()) {
+        return;
+    }
+
     var voteButton = e.currentTarget;
     var tuneContainer = voteButton.parentNode;
     var chosenTuneId = tuneContainer.dataset.tuneId;

@@ -1,5 +1,6 @@
 var debug = require('debug')('uploader');
 var fs = require('fs');
+var util = require('./util');
 
 var ONE_KB = 1024;
 var HUNDRED_KB = ONE_KB * 100;
@@ -38,12 +39,14 @@ exports.init = function () {
         try {
 
             // read the contents of the file as a string
-            var backupJSON = fs.readFileSync('backup.json', {
-                encoding: 'utf8'
-            });
+            var backupJSON = fs.readFileSync('backup.json');
+
+            debug('read backup', backupJSON);
 
             // parse it into an object
             var backup = JSON.parse(backupJSON);
+
+            debug('parsed backup', backup);
 
             // read it and
             // load the vote count into memory
@@ -60,10 +63,23 @@ exports.init = function () {
 
                 GLOBAL.files[tune].votes = backup[tune].votes;
             }
+
+            // If no votes were loaded it's either:
+            //  - the first run
+            //  - the file's broken enough to not load stuff
+            //    but not enough to throw an error
+            // Nuke it
+            if (util.isEmptyVotes(GLOBAL.files)) {
+                debug('bad format: resetting backup.json');
+                fs.writeFileSync('backup.json', '');
+            }
+
         }
         catch (error) {
             // no backup file yet
             // create one
+            debug(error);
+            debug('resetting backup.json');
             fs.writeFileSync('backup.json', '');
         }
 

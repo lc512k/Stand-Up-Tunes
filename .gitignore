@@ -9,3 +9,4 @@ ehthumbs.db
 Thumbs.db
 npm-debug.log
 backup.json
+public/tunes/*
