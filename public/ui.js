@@ -56,7 +56,7 @@ var UI = {
         // Tune name
         var tuneNameContainer = document.createElement('span');
         tuneNameContainer.className = 'tune-name';
-        var tuneName = document.createTextNode(tuneId);
+        var tuneName = document.createTextNode(tuneId.substring(0, tuneId.lastIndexOf('.')));
         tuneNameContainer.appendChild(tuneName);
 
         // Tune audio
@@ -64,12 +64,34 @@ var UI = {
         var tuneAudio = document.createElement('audio');
         var tuneSource = document.createElement('source');
         tuneSource.setAttribute('src', 'tunes/' + tuneId);
-        tuneSource.setAttribute('type', 'audio/mpeg');
+        tuneSource.setAttribute('accept', 'audio/*');
         tuneAudio.appendChild(tuneSource);
         tuneAudio.setAttribute('controls', '');
-        tuneAudio.setAttribute('style', 'display');
+        tuneAudio.setAttribute('style', 'display:none');
         tuneAudioContainer.appendChild(tuneAudio);
         tuneAudioContainer.className = 'tune-audio';
+
+        // Vote button with label for each tune
+        var playButton = document.createElement('div');
+        playButton.setAttribute('class', 'play-button');
+        playButton.addEventListener('click', function() {
+            playButton.setAttribute('style', 'display:none');
+            pauseButton.setAttribute('style', 'display:block');
+            tuneAudio.play()
+        });
+
+        var pauseButton = document.createElement('div');
+        pauseButton.setAttribute('class', 'pause-button');
+        pauseButton.addEventListener('click', function() {
+            pauseButton.setAttribute('style', 'display:none');
+            playButton.setAttribute('style', 'display:block');
+            tuneAudio.pause();
+        });
+
+        tuneAudio.addEventListener('ended', function() {
+            pauseButton.setAttribute('style', 'display:none');
+            playButton.setAttribute('style', 'display:block');
+        });
 
         // Container for each tune
         var tuneItem = document.createElement('li');
@@ -79,6 +101,8 @@ var UI = {
         tuneItem.appendChild(scoreContainer);
         tuneItem.appendChild(tuneNameContainer);
         tuneItem.appendChild(tuneAudioContainer);
+        tuneItem.appendChild(playButton);
+        tuneItem.appendChild(pauseButton);
         tuneItem.appendChild(voteBtn);
 
         return tuneItem;
