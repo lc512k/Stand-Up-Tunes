@@ -39,9 +39,7 @@ exports.init = function () {
         try {
 
             // read the contents of the file as a string
-            var backupJSON = fs.readFileSync('backup.json', {
-                encoding: 'utf8'
-            });
+            var backupJSON = fs.readFileSync('backup.json');
 
             debug('read backup', backupJSON);
 
