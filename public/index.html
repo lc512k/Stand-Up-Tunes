@@ -1,8 +1,9 @@
 <!doctype html>
 <html lang="en" class>
 <head>
-  <link rel="stylesheet" href="/styles/style.css">
-  <title>Stand-Up Tunes</title>
+    <link rel="stylesheet" href="/styles/style.css">
+    <title>Stand-Up Tunes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 </head>
 <body>
 
@@ -15,7 +16,7 @@
       <span id='upload-area'>
           <input type="file" id="file-box">
           <input type="text" id="name-box" placeholder="Upload your own jingle! (mp3 and wav accepted - no change given)">
-          <a id='upload-button'>Select File</a>
+          <div id='upload-button'>Select File</div>
       </span>
   </div>
 
@@ -23,6 +24,7 @@
   <script src="/UI.js"></script>
   <script src="/util.js"></script>
   <script src="/client.js"></script>
+  <script src="/lib/fastclick.js"></script>
 
 </body>
 </html>
