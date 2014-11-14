@@ -78,10 +78,6 @@ p {
     background-color:   #fff;
 }
 
-.tune-item > * {
-    margin: 0 5px 0 5px;
-}
-
 .tune-item .tune-score {
 
     order:              1;
