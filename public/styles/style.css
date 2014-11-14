@@ -75,6 +75,7 @@ p {
 }
 
 .tune-item > * {
+    border: 1px solid red;
     margin: 0 5px 0 5px;
 }
 
@@ -119,6 +120,7 @@ p {
 
     order:              3;
     text-align:         center;
+    flex-basis:         350px;
 }
 
 .tune-item > a {
@@ -216,7 +218,7 @@ a:active {
 
     float:          right;
 
-    padding-left:   10px;
+    padding-right:   10%;
 
     color:          orange;
 }
