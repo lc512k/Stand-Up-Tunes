@@ -10,3 +10,4 @@ Release History
 v0.3
 Throttle votes on the client
 Reset votes backup file on the server if corrupted
+Flexible vote count box
