@@ -148,28 +148,12 @@ p {
     display:            none;
 }
 
-.tune-item .tune-audio {
-
-    order:              3;
-<<<<<<< HEAD
-
-    -webkit-flex-grow:  3;
-    flex-grow:          3;
-
-=======
->>>>>>> ec3a99b7272ec1e3fdd9e1fdd37cc56cace920c2
-    text-align:         center;
-    flex-basis:         350px;
-}
-
 .tune-item > a {
 
     order:              4;
-<<<<<<< HEAD
+
     -webkit-flex-grow:  1;
     flex-grow:          1;
-=======
->>>>>>> ec3a99b7272ec1e3fdd9e1fdd37cc56cace920c2
     border-radius:      4px;
     padding:            6px 3%;
 }
