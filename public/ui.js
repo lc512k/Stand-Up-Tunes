@@ -76,7 +76,7 @@ var UI = {
         var tuneAudio = document.createElement('audio');
         var tuneSource = document.createElement('source');
         tuneSource.setAttribute('src', 'tunes/' + tuneId);
-        tuneSource.setAttribute('accept', 'audio/*');
+        tuneSource.setAttribute('type', 'audio/mpeg');
         tuneAudio.appendChild(tuneSource);
         tuneAudio.setAttribute('controls', '');
         tuneAudio.setAttribute('style', 'display:none');
