@@ -41,6 +41,18 @@ var UI = {
         }
     },
 
+    playJingle: function(e, playButton, pauseButton, audioPlayer) {
+        playButton.setAttribute('style', 'display:none');
+        pauseButton.setAttribute('style', 'display:block');
+        audioPlayer.play()
+    },
+
+    pauseJingle: function(e, playButton, pauseButton, audioPlayer) {
+        pauseButton.setAttribute('style', 'display:none');
+        playButton.setAttribute('style', 'display:block');
+        audioPlayer.pause();
+    },
+
     createTuneItem: function (tuneId, votes, listener) {
 
         // Score container
@@ -56,7 +68,7 @@ var UI = {
         // Tune name
         var tuneNameContainer = document.createElement('span');
         tuneNameContainer.className = 'tune-name';
-        var tuneName = document.createTextNode(tuneId);
+        var tuneName = document.createTextNode(tuneId.substring(0, tuneId.lastIndexOf('.')));
         tuneNameContainer.appendChild(tuneName);
 
         // Tune audio
@@ -67,9 +79,21 @@ var UI = {
         tuneSource.setAttribute('type', 'audio/mpeg');
         tuneAudio.appendChild(tuneSource);
         tuneAudio.setAttribute('controls', '');
-        tuneAudio.setAttribute('style', 'display');
+        tuneAudio.setAttribute('style', 'display:none');
         tuneAudioContainer.appendChild(tuneAudio);
         tuneAudioContainer.className = 'tune-audio';
+
+        // Play/ pause button with label for each tune
+        var playButton = document.createElement('div');
+        var pauseButton = document.createElement('div');
+
+        playButton.setAttribute('class', 'play-button');
+        pauseButton.setAttribute('class', 'pause-button');
+
+        playButton.addEventListener('click', this.playJingle.bind(null, event, playButton, pauseButton, tuneAudio));
+        pauseButton.addEventListener('click', this.pauseJingle.bind(null, event, playButton, pauseButton, tuneAudio));
+
+        tuneAudio.addEventListener('ended', this.pauseJingle.bind(null, event, playButton, pauseButton, tuneAudio));
 
         // Container for each tune
         var tuneItem = document.createElement('li');
@@ -79,6 +103,8 @@ var UI = {
         tuneItem.appendChild(scoreContainer);
         tuneItem.appendChild(tuneNameContainer);
         tuneItem.appendChild(tuneAudioContainer);
+        tuneItem.appendChild(playButton);
+        tuneItem.appendChild(pauseButton);
         tuneItem.appendChild(voteBtn);
 
         return tuneItem;
