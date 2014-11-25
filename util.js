@@ -8,11 +8,11 @@ var DEFAULT_TUNE = 'mario_death.wav';
 
 /**
  * Search the global file list and find the tune with the most votes
- * @return {String} todaysWinner - the tune to play or the default when no winner
+ * @return {String} winningTune - the tune to play or the default when no winner
  */
 var findWinner = function () {
 
-    var todaysWinner;
+    var winningTune;
 
     var highScore = 0;
 
@@ -24,23 +24,23 @@ var findWinner = function () {
 
             if (thisCount > highScore) {
                 highScore = thisCount;
-                todaysWinner = tuneId;
+                winningTune = tuneId;
             }
         }
     }
 
     // If no winner found, crown the default tune as the winner
-    todaysWinner = todaysWinner || DEFAULT_TUNE;
+    winningTune = winningTune || DEFAULT_TUNE;
 
-    debug(todaysWinner);
+    debug(winningTune);
 
-    return todaysWinner;
+    return winningTune;
 };
 
 /**
  * Save the current vote count to disk
  */
-var saveVoteCount = exports.saveVoteCount = function () {
+var saveVoteCount = function () {
     domain.run(function () {
         fs.writeFile('backup.json', JSON.stringify(GLOBAL.files), function () {
             debug('Vote count saved!');
@@ -53,10 +53,36 @@ domain.on('error', function (e) {
 });
 
 /**
+ * Save the current user count to disk
+ */
+var saveUserCount = function () {
+    domain.run(function () {
+        fs.writeFile('users.json', JSON.stringify(GLOBAL.users), function () {
+            debug('User count saved!');
+        });
+    });
+};
+
+/**
+ * Save a snapshot of the current state to disk
+ */
+exports.saveCounts = function () {
+    saveVoteCount();
+    saveUserCount();
+};
+
+domain.on('error', function (e) {
+    debug('error saving vote count', e);
+});
+
+/**
  * Play the winning tune with afplay on the mac terminal
  */
 exports.playTune = function () {
-    exec('afplay -v 10 ./public/tunes/' + findWinner(), function () {
+
+    var winningTune = findWinner();
+
+    exec('afplay -v 10 ./public/tunes/' + winningTune, function () {
         debug('played!');
 
         // Reset vote count
@@ -66,8 +92,18 @@ exports.playTune = function () {
         // Save to disk
         saveVoteCount();
 
+        // Hand out prizes
+        var winners = declareWinners(winningTune);
+
+        // Top up votes for tomorrow
+        topUp();
+
+        // Say who won
+        GLOBAL.io.sockets.emit('winners', winners);
+
         // Tell every client to reset their vote counts to zero
         GLOBAL.io.sockets.emit('votes reset');
+
     });
 };
 
@@ -94,4 +130,46 @@ exports.isEmptyVotes = function (voteArray) {
 
     // All votes were zero. It's empty.
     return true;
+};
+
+/**
+ * From all the users who connected today
+ * find the ones who voted exactly once AND
+ * voted for the winning tune
+ * to give them an extra vote for tomorrow
+ */
+var declareWinners = function (winningTune) {
+
+    var winners = {};
+
+    for (var ip in GLOBAL.users) {
+
+        var user = GLOBAL.users[ip];
+
+        if (user.votesToday !== 1) {
+            // Looser!
+            continue;
+        }
+
+        if (user.votedFor === winningTune) {
+            // Winner!
+            user.votes++;
+        }
+
+        // Reset today's stuff
+        user.votesToday = 0;
+        user.votedFor = null;
+
+        // Cache winner
+        winners[ip] = user;
+    }
+
+    return winners;
+};
+
+var topUp = function () {
+
+    for (var ip in GLOBAL.users) {
+        GLOBAL.users[ip].votesLeft += 3;
+    }
 };

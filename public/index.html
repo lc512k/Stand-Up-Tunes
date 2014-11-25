@@ -6,8 +6,16 @@
 </head>
 <body>
 
-<h2>Stand-up Tunes® <span class='tiny'>v0.3</span></h2>
-<p>Vote for your favorite Mobile Web jingle and hear it play at <span id="play-time"></span></p>
+<h2>Stand-up Tunes® <span class='tiny lookit'>v0.5</span></h2>
+<p>Vote for your favorite Mobile Web jingle and hear it play at <span id="play-time"></span>. <a href="#" id="rules">The rules</a></p>
+
+<ul class="rules hidden">
+  <li class="small">You get three votes every day</li>
+  <li class="small">Unused votes carry over to the next day</li>
+  <li class="small">Getting a jingle to win today by spending just one vote earns you an extra vote for tomorrow</li>
+  <li class="small">You are your IP</li>
+  <li class="small">The console tells you things</li>
+</ul>
 
   <ul id="tunes-container"></ul>
 
@@ -15,7 +23,7 @@
       <span id='upload-area'>
           <input type="file" id="file-box">
           <input type="text" id="name-box" placeholder="Upload your own jingle! (mp3 and wav accepted - no change given)">
-          <a id='upload-button'>Select File</a>
+          <a id="upload-button" class="button">Select File</a>
       </span>
   </div>
 

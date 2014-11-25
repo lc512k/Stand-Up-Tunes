@@ -13,6 +13,7 @@ var UI = {
     uploadButton: document.getElementById('upload-button'),
     winningRow: null,
     playTime: document.getElementById('play-time'),
+    rules: document.getElementById('rules'),
 
     selectedFile: null,
 
@@ -51,6 +52,7 @@ var UI = {
 
         // Vote button with label for each tune
         var voteBtn = document.createElement('a');
+        voteBtn.className = 'button';
         voteBtn.addEventListener('click', listener);
 
         // Tune name

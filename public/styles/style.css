@@ -25,6 +25,11 @@
     src:                url(lato/Lato-Thin.ttf);
 }
 
+h3 {
+    font-size:          1em;
+    margin: 0;
+}
+
 body {
 
     font-family:        Lato, courier, Arial, sans-serif;
@@ -35,11 +40,31 @@ p {
     font-weight:        none;
 }
 
+.hidden {
+    display: none;
+}
+
 .tiny {
     font-size:          0.5em;
     font-weight:        lighter;
     color:              #aaa;
 }
+
+.small {
+    font-size:          0.8em;
+    font-weight:        lighter;
+}
+
+.lookit {
+    color:              orange;
+}
+
+ul.rules {
+    list-style-type:    binary;
+    margin:             5px 0;
+}
+
+/* TABLE */
 
 #tunes-container {
 
@@ -129,7 +154,7 @@ p {
     padding:            6px 3%;
 }
 
-.tune-item > a::after {
+.tune-item > .button::after {
 
     content:            'Vote';
 }
@@ -146,7 +171,7 @@ p {
     padding:            0;
 }
 
-#upload-area > a {
+#upload-area > .button {
 
     position:           absolute;
     right:              0;
@@ -183,7 +208,7 @@ p {
 
 /* BUTTONS */
 
-a {
+.button {
 
     border-style:       solid;
     border-width:       1px;
@@ -199,12 +224,12 @@ a {
     transition:         background-color 0.3s ease;
 }
 
-a:hover {
+.button:hover {
 
     background-color:   rgba(35, 112, 180, 0.7);
 }
 
-a:active {
+.button:active {
 
     background-color:   rgba(15, 92, 160, 1);
 }

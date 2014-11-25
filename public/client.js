@@ -32,8 +32,12 @@ socket.on('startup', function (message) {
     }
 });
 
-socket.on('welcome', function (ip) {
-    console.log('%cWelcome,%s', UI.USER_LOG_STYLE, ip);
+socket.on('welcome', function (ip, votes, returning) {
+    var greeting = returning ? 'Welcome back' : 'Welcome';
+    var advice = votes > 0 ? 'use them wisely...' : 'try again tomorrow...';
+
+    console.log('%c%s%s', UI.USER_LOG_STYLE, greeting, ip);
+    console.log('%c You have%svotes left today,%s', UI.USER_LOG_STYLE, votes, advice);
 });
 
 socket.on('new user', function (ip) {
@@ -109,6 +113,12 @@ socket.on('votes reset', function () {
     // Remove badge from previous winner
     if (UI.winningRow) {
         UI.winningRow.className = 'tune-item';
+    }
+});
+
+socket.on('winner', function (winners) {
+    for (var winnerIp in winners) {
+        console.log('%c%s wins!', winnerIp);
     }
 });
 

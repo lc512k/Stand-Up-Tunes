@@ -1,4 +1,4 @@
-var debug = require('debug')('uploader');
+var debug = require('debug')('fs');
 var fs = require('fs');
 var util = require('./util');
 
@@ -13,6 +13,11 @@ var FIVE_MB = ONE_MB * 5;
  */
 exports.init = function () {
     debug('init');
+
+    // TODO catch 22. fix
+    // init GLOBAL.users with the contents of backup
+    // thassit
+    loadFile('users.json', GLOBAL.users);
 
     fs.readdir('public/tunes', function (err, files) {
 
@@ -34,56 +39,45 @@ exports.init = function () {
             }
         }
 
-        // Try to read the votes file synchronously
-        // (we don't want clients connecting until we've fully loaded this)
-        try {
-
-            // read the contents of the file as a string
-            var backupJSON = fs.readFileSync('backup.json');
-
-            debug('read backup', backupJSON);
-
-            // parse it into an object
-            var backup = JSON.parse(backupJSON);
-
-            debug('parsed backup', backup);
-
-            // read it and
-            // load the vote count into memory
-            for (var tune in backup) {
-
-                if (!GLOBAL.files[tune]) {
-                    // The file was once voted on
-                    // but has since been deleted from disk
-                    // Ignore it
-                    // will disappear from vote backup on next write
-                    debug(tune, 'has been deleted');
-                    continue;
-                }
-
-                GLOBAL.files[tune].votes = backup[tune].votes;
-            }
-
-            // If no votes were loaded it's either:
-            //  - the first run
-            //  - the file's broken enough to not load stuff
-            //    but not enough to throw an error
-            // Nuke it
-            if (util.isEmptyVotes(GLOBAL.files)) {
-                debug('bad format: resetting backup.json');
-                fs.writeFileSync('backup.json', '');
-            }
-
-        }
-        catch (error) {
-            // no backup file yet
-            // create one
-            debug(error);
-            debug('resetting backup.json');
-            fs.writeFileSync('backup.json', '');
-        }
-
+        loadFile('backup.json', GLOBAL.files);
     });
+
+};
+
+var loadFile = function (fileName, destination) {
+    // Try to read the file synchronously
+    // (we don't want clients connecting until we've fully loaded this)
+    try {
+
+        // read the contents of the file as a string
+        var fileJSON = fs.readFileSync(fileName);
+
+        // parse it into an object
+        var file = JSON.parse(fileJSON);
+
+        debug('parsed file', file);
+
+        // read it and
+        // load the vote count into memory
+        for (var key in file) {
+
+            debug('this key', key, destination[key]);
+
+            if (!destination[key]) {
+                debug(key, 'is new');
+                continue;
+            }
+
+            destination[key].votes = file[key].votes;
+        }
+
+    }
+    catch (error) {
+        // no backup file yet
+        // create one
+        debug('creating new', fileName);
+        fs.writeFileSync(fileName, '');
+    }
 };
 
 /**

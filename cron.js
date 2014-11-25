@@ -3,9 +3,6 @@ var CronJob = require('cron').CronJob;
 
 var standupTime = '0 50 9 * * 1-5';
 
-// Test vars
-var everyMinute = '0 * * * * *';
-
 exports.init = function (command, playTime) {
 
     var onComplete = null;
