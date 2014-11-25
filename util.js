@@ -82,28 +82,40 @@ exports.playTune = function () {
 
     var winningTune = findWinner();
 
-    exec('afplay -v 10 ./public/tunes/' + winningTune, function () {
-        debug('played!');
+    domain.run(function () {
+        exec('afplay -v 10 ./public/tunes/' + winningTune, function (error) {
 
-        // Reset vote count
-        for (var key in GLOBAL.files) {
-            GLOBAL.files[key].votes = 0;
-        }
-        // Save to disk
-        saveVoteCount();
+            if (error) {
+                throw error;
+            }
 
-        // Hand out prizes
-        var winners = declareWinners(winningTune);
+            debug('played!');
 
-        // Top up votes for tomorrow
-        topUp();
+            // Reset vote count
+            for (var key in GLOBAL.files) {
+                GLOBAL.files[key].votes = 0;
+            }
+            // Save to disk
+            saveVoteCount();
 
-        // Say who won
-        GLOBAL.io.sockets.emit('winners', winners);
+            // Hand out prizes
+            var winners = declareWinners(winningTune);
 
-        // Tell every client to reset their vote counts to zero
-        GLOBAL.io.sockets.emit('votes reset');
+            // Top up votes for tomorrow
+            topUp();
 
+            // Say who won
+            GLOBAL.io.sockets.emit('winners', winners);
+
+            // Tell every client to reset their vote counts to zero
+            GLOBAL.io.sockets.emit('votes reset');
+
+        });
+    });
+
+    domain.on('error', function (err) {
+        debug(err);
+        exec('say Oh no! The mobile web jingle is broken.');
     });
 };
 
