@@ -1,13 +1,18 @@
 <!doctype html>
 <html lang="en" class>
 <head>
-  <link rel="stylesheet" href="/styles/style.css">
-  <title>Stand-Up Tunes</title>
+    <link rel="stylesheet" href="/styles/style.css">
+    <title>Stand-Up Tunes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="apple-touch-icon" href="images/touch-icon-iphone.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="images/touch-icon-ipad.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="images/touch-icon-iphone-retina.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="images/touch-icon-ipad-retina.png">
 </head>
 <body>
 
 <h2>Stand-up Tunes® <span class='tiny lookit'>v0.5</span></h2>
-<p>Vote for your favorite Mobile Web jingle and hear it play at <span id="play-time"></span>. <a href="#" id="rules">The rules</a></p>
+<p>Vote for your favorite Mobile Web jingle and hear it play at <span id="play-time"></span>. <a href="#" class="hidden" id="rules">The rules</a></p>
 
 <ul class="rules hidden">
   <li class="small">You get three votes every day</li>
@@ -17,20 +22,23 @@
   <li class="small">The console tells you things</li>
 </ul>
 
-  <ul id="tunes-container"></ul>
+<ul id="tunes-container"></ul>
 
-  <div id="upload-box">
-      <span id='upload-area'>
-          <input type="file" id="file-box">
-          <input type="text" id="name-box" placeholder="Upload your own jingle! (mp3 and wav accepted - no change given)">
-          <a id="upload-button" class="button">Select File</a>
-      </span>
-  </div>
+<div id="upload-box">
+    <div id="upload-area">
+        <input type="file" id="file-box" accept="audio/*" style="display:none">
+        <input type="text" id="name-box" placeholder="Upload your own jingle! (mp3 and wav accepted - no change given)">
+    </div>
+    <div class="button" id="upload-button">
+        Select File
+    </div>
+</div>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/UI.js"></script>
-  <script src="/util.js"></script>
-  <script src="/client.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/UI.js"></script>
+<script src="/util.js"></script>
+<script src="/client.js"></script>
+<script src="/lib/fastclick.js"></script>
 
 </body>
 </html>
