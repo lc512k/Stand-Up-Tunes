@@ -13,7 +13,6 @@ var UI = {
     uploadButton: document.getElementById('upload-button'),
     winningRow: null,
     playTime: document.getElementById('play-time'),
-    rules: document.getElementById('rules'),
 
     selectedFile: null,
 
@@ -42,13 +41,13 @@ var UI = {
         }
     },
 
-    playJingle: function(e, playButton, pauseButton, audioPlayer) {
+    playJingle: function (e, playButton, pauseButton, audioPlayer) {
         playButton.setAttribute('style', 'display:none');
         pauseButton.setAttribute('style', 'display:block');
-        audioPlayer.play()
+        audioPlayer.play();
     },
 
-    pauseJingle: function(e, playButton, pauseButton, audioPlayer) {
+    pauseJingle: function (e, playButton, pauseButton, audioPlayer) {
         pauseButton.setAttribute('style', 'display:none');
         playButton.setAttribute('style', 'display:block');
         audioPlayer.pause();
@@ -63,9 +62,11 @@ var UI = {
         scoreContainer.appendChild(scoreText);
 
         // Vote button with label for each tune
-        var voteBtn = document.createElement('a');
-        voteBtn.className = 'button';
-        voteBtn.addEventListener('click', listener);
+        var voteCheck = document.createElement('input');
+        voteCheck.type = 'radio';
+        voteCheck.name = 'tunes';
+        voteCheck.value = tuneId;
+        voteCheck.addEventListener('click', listener);
 
         // Tune name
         var tuneNameContainer = document.createElement('span');
@@ -107,7 +108,7 @@ var UI = {
         tuneItem.appendChild(tuneAudioContainer);
         tuneItem.appendChild(playButton);
         tuneItem.appendChild(pauseButton);
-        tuneItem.appendChild(voteBtn);
+        tuneItem.appendChild(voteCheck);
 
         return tuneItem;
     },

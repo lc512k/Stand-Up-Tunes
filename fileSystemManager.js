@@ -1,6 +1,5 @@
 var debug = require('debug')('fs');
 var fs = require('fs');
-var util = require('./util');
 
 var ONE_KB = 1024;
 var HUNDRED_KB = ONE_KB * 100;
@@ -13,11 +12,6 @@ var FIVE_MB = ONE_MB * 5;
  */
 exports.init = function () {
     debug('init');
-
-    // TODO catch 22. fix
-    // init GLOBAL.users with the contents of backup
-    // thassit
-    loadFile('users.json', GLOBAL.users);
 
     fs.readdir('public/tunes', function (err, files) {
 
@@ -32,13 +26,13 @@ exports.init = function () {
 
             var file = files[i];
 
-            if (file.indexOf('.mp3') > 0 || file.indexOf('.wav') > 0) {
-                GLOBAL.files[file] = {
-                    votes: 0
-                };
+            // TODO extract isAudioFormat()
+            if (file.indexOf('.mp3') > 0 || file.indexOf('.wav') > 0 || file.indexOf('.m4v') > 0) {
+                GLOBAL.files[file] = null;
             }
         }
 
+        // TODO store in DB
         loadFile('backup.json', GLOBAL.files);
     });
 
@@ -68,7 +62,7 @@ var loadFile = function (fileName, destination) {
                 continue;
             }
 
-            destination[key].votes = file[key].votes;
+            //destination[key].votes = file[key].votes;
         }
 
     }

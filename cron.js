@@ -16,13 +16,3 @@ exports.init = function (command, playTime) {
 
     debug('Job set: ' + cronJob.cronTime.source);
 };
-
-exports.getPlayTime = function () {
-    return expresionToTime(standupTime);
-};
-
-var expresionToTime = function (cronExpression) {
-
-    // TODO don't cheat :P
-    return '9:50 am';
-};

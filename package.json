@@ -9,6 +9,7 @@
     "debug": "*",
     "domain": "*",
     "express": "*",
+    "express-force-ssl": "^0.2.9",
     "forever-monitor": "*",
     "node-static": "*",
     "socket.io": "*",

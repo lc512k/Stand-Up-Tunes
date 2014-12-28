@@ -11,7 +11,7 @@ var highScore = 0;
 
 // INIT
 socket.on('startup', function (message) {
-
+debugger;
     var files = message.files;
 
     var playTime = message.playTime;
@@ -32,12 +32,8 @@ socket.on('startup', function (message) {
     }
 });
 
-socket.on('welcome', function (ip, votes, returning) {
-    var greeting = returning ? 'Welcome back' : 'Welcome';
-    var advice = votes > 0 ? 'use them wisely...' : 'try again tomorrow...';
-
-    console.log('%c%s%s', UI.USER_LOG_STYLE, greeting, ip);
-    console.log('%c You have%svotes left today,%s', UI.USER_LOG_STYLE, votes, advice);
+socket.on('welcome', function (ip) {
+    console.log('%c%s%s', UI.USER_LOG_STYLE, 'welcome', ip);
 });
 
 socket.on('new user', function (ip) {
@@ -232,6 +228,15 @@ function init() {
         UI.fileBox.addEventListener('change', fileChosen);
         UI.nameBox.addEventListener('click', function () {
             UI.fileBox.click();
+        });
+    }
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+        .then(function (reg) {
+            console.log('◕‿◕', reg);
+        }, function (err) {
+            console.log('ಠ_ಠ', err);
         });
     }
 }

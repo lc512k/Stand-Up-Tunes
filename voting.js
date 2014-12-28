@@ -1,7 +1,5 @@
 var debug = require('debug')('voting');
 
-exports.DEFAULT_VOTES = 3;
-
 /**
  * When a new vote is received
  * find the tune in the global file list
@@ -13,11 +11,12 @@ exports.save = function (tuneId, socket) {
     // Increase the vote count by one
     GLOBAL.files[tuneId].votes++;
 
+    // TODO do in single emit
+
     // Update the client (voter) with the new vote
     socket.emit('new vote', {
         tuneId: tuneId,
         count: GLOBAL.files[tuneId].votes
-        // TODO tell the owner how many votes left
     });
 
     // Update the client (everyone else) with the new vote

@@ -16,6 +16,14 @@ var findWinner = function () {
 
     var highScore = 0;
 
+    for (var user in GLOBAL.tally) {
+
+        if (GLOBAL.tally.hasOwnProperty(user)) {
+            var tune = GLOBAL.tally[user];
+            GLOBAL.iles[tune].votes++;
+        }
+    }
+
     for (var tuneId in GLOBAL.files) {
 
         if (GLOBAL.files.hasOwnProperty(tuneId)) {
@@ -37,38 +45,19 @@ var findWinner = function () {
     return winningTune;
 };
 
-/**
- * Save the current vote count to disk
- */
-var saveVoteCount = function () {
-    domain.run(function () {
-        fs.writeFile('backup.json', JSON.stringify(GLOBAL.files), function () {
-            debug('Vote count saved!');
-        });
-    });
-};
-
 domain.on('error', function (e) {
     debug('error saving vote count', e);
 });
 
 /**
- * Save the current user count to disk
- */
-var saveUserCount = function () {
-    domain.run(function () {
-        fs.writeFile('users.json', JSON.stringify(GLOBAL.users), function () {
-            debug('User count saved!');
-        });
-    });
-};
-
-/**
  * Save a snapshot of the current state to disk
  */
 exports.saveCounts = function () {
-    saveVoteCount();
-    saveUserCount();
+    domain.run(function () {
+        fs.writeFile('backup.json', JSON.stringify(GLOBAL.tally), function () {
+            debug('Vote count saved!');
+        });
+    });
 };
 
 domain.on('error', function (e) {
@@ -96,16 +85,7 @@ exports.playTune = function () {
                 GLOBAL.files[key].votes = 0;
             }
             // Save to disk
-            saveVoteCount();
-
-            // Hand out prizes
-            var winners = declareWinners(winningTune);
-
-            // Top up votes for tomorrow
-            topUp();
-
-            // Say who won
-            GLOBAL.io.sockets.emit('winners', winners);
+            this.saveCounts();
 
             // Tell every client to reset their vote counts to zero
             GLOBAL.io.sockets.emit('votes reset');
@@ -142,46 +122,4 @@ exports.isEmptyVotes = function (voteArray) {
 
     // All votes were zero. It's empty.
     return true;
-};
-
-/**
- * From all the users who connected today
- * find the ones who voted exactly once AND
- * voted for the winning tune
- * to give them an extra vote for tomorrow
- */
-var declareWinners = function (winningTune) {
-
-    var winners = {};
-
-    for (var ip in GLOBAL.users) {
-
-        var user = GLOBAL.users[ip];
-
-        if (user.votesToday !== 1) {
-            // Looser!
-            continue;
-        }
-
-        if (user.votedFor === winningTune) {
-            // Winner!
-            user.votes++;
-        }
-
-        // Reset today's stuff
-        user.votesToday = 0;
-        user.votedFor = null;
-
-        // Cache winner
-        winners[ip] = user;
-    }
-
-    return winners;
-};
-
-var topUp = function () {
-
-    for (var ip in GLOBAL.users) {
-        GLOBAL.users[ip].votesLeft += 3;
-    }
 };

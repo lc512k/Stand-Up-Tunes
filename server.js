@@ -1,24 +1,30 @@
-var express = require('express');
-var app = express();
+var express     = require('express');
+var app         = express();
+var http        = require('http');
+var debug       = require('debug')('server');
+var server      = http.createServer(app).listen(3000);
+var io          = require('socket.io')(server);
 
-var server = require('http').createServer(app);
-var io = require('socket.io')(server);
-var debug = require('debug')('server');
-
-var port = process.env.PORT || 3000;
-
-var fsManager = require('./fileSystemManager');
-var voting = require('./voting');
-var cron = require('./cron');
-var util = require('./util');
+var fsManager   = require('./fileSystemManager');
+var voting      = require('./voting');
+var cron        = require('./cron');
+var util        = require('./util');
 
 ///////////////////////////////// SERVER SETUP /////////////////////////////////
+
+var PLAY_TIME = '9:50 am';
 
 // List of tunes and their vote counts
 GLOBAL.files = {};
 
-// List of users who have connected today
-GLOBAL.users = {};
+// tally: {
+//  laura: one.mp3,
+//  alex: two.mp3,
+//  other: one.mp3,
+//  someOther: null
+// }
+
+GLOBAL.tally = {};
 
 // Sockets for this server
 GLOBAL.io = io;
@@ -26,20 +32,16 @@ GLOBAL.io = io;
 // Host static files
 app.use(express.static(__dirname + '/public')); //jshint ignore:line
 
-// Host tests
-// TODO don't
-app.use('/test', express.static(__dirname + '/test')); //jshint ignore:line
-
-// Start listening on defined port
-server.listen(port, function () {
-    debug('Server listening at port %d', port);
+// Start the http server
+server.listen(3000, function () {
+    debug('Server listening at port %d', 3000);
 });
 
 // Load all available tunes and their votes
 fsManager.init();
 
 debug('files', GLOBAL.files);
-debug('users', GLOBAL.users);
+debug('tally', GLOBAL.tally);
 
 // Initialize the cron module
 // Sets up the alarm every day to play the winning tune
@@ -51,6 +53,7 @@ cron.init(util.playTune);
 io.sockets.on('connection', function (socket) {
 
     // A client connected
+    // TODO dont need init, connection enough
     socket.on('init', function () {
 
         var clientIp = socket.client.conn.remoteAddress;
@@ -60,32 +63,32 @@ io.sockets.on('connection', function (socket) {
         // and the time the next jingle will play
         socket.emit('startup', {
             files: GLOBAL.files,
-            playTime: cron.getPlayTime()
+            playTime: PLAY_TIME
         });
 
         // add their IP to the list
-        var returningUser = GLOBAL.users[clientIp];
+        // var returningUser = GLOBAL.users[clientIp];
 
-        var returning = false;
+        // var returning = false;
 
-        if (returningUser) {
-            // We've met before
-            returning = true;
-            debug('returning user', clientIp);
-        }
-        else {
-            // Add user with defaults
-            GLOBAL.users[clientIp] = {
-                votesLeft: voting.DEFAULT_VOTES,
-                votesToday: 0
-            };
-            debug('new user', clientIp);
-        }
+        // if (returningUser) {
+        //     // We've met before
+        //     returning = true;
+        //     debug('returning user', clientIp);
+        // }
+        // else {
+        //     // Add user with defaults
+        //     GLOBAL.users[clientIp] = {
+        //         votesLeft: voting.DEFAULT_VOTES,
+        //         votesToday: 0
+        //     };
+        //     debug('new user', clientIp);
+        // }
 
-        debug('user info', GLOBAL.users[clientIp]);
+        //debug('user info', GLOBAL.users[clientIp]);
 
         // Say Hi!
-        socket.emit('welcome', clientIp, GLOBAL.users[clientIp].votesLeft, returning);
+        socket.emit('welcome', clientIp);
 
         // Tell everyone else this client joined
         socket.broadcast.emit('new user', clientIp);
@@ -98,24 +101,8 @@ io.sockets.on('connection', function (socket) {
 
         debug('vote received for ' + tuneId + ' by ' + votingClientIp);
 
-        if (!GLOBAL.users[votingClientIp]) {
-            debug('Don\'t know you ', votingClientIp);
-            return;
-        }
-
-        if (GLOBAL.users[votingClientIp].votesLeft === 0) {
-            debug('No votes left for ', votingClientIp);
-            return;
-        }
-
-        debug('vote accepted for ' + tuneId + ' by ' + votingClientIp);
-
-        GLOBAL.users[votingClientIp].votesLeft--;
-        GLOBAL.users[votingClientIp].votesToday++;
-        GLOBAL.users[votingClientIp].votedFor = tuneId;
-
         // Store the vote and broadcast the new vote counts to all clients
-        voting.save(tuneId, socket);
+        voting.save(tuneId, socket, votingClientIp);
 
         // save new vote count to disk
         util.saveCounts();
