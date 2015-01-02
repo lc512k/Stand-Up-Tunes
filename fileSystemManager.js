@@ -28,7 +28,7 @@ exports.init = function () {
 
             // TODO extract isAudioFormat()
             if (file.indexOf('.mp3') > 0 || file.indexOf('.wav') > 0 || file.indexOf('.m4v') > 0) {
-                GLOBAL.files[file] = null;
+                GLOBAL.files[file] = 0;
             }
         }
 

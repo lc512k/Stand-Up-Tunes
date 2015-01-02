@@ -22,7 +22,7 @@ debugger;
 
     for (var fileId in files) {
 
-        var thisVoteCount = files[fileId].votes;
+        var thisVoteCount = files[fileId];
 
         var tuneItem = UI.createTuneItem(fileId, thisVoteCount, onCastVote);
 
@@ -231,6 +231,27 @@ function init() {
         });
     }
 
+    // Custom elements
+    var Tune = document.registerElement('standup-tune');
+
+    // var tune = document.createElement('standup-tune', {
+    //     prototype: Object.create(HTMLInputElement.prototype, {
+
+    //     });
+    // });
+
+    // tune.addEventListener('click', function () {
+    //     alert('clicked!');
+    // });
+
+    document.body.appendChild(new Tune());
+
+    // var Tune = document.registerElement('standup-tune', {
+    //     'prototype': Object.create(HTMLInputElement.prototype),
+    //     'extends': 'input'
+    // });
+
+    // Service worker
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js')
         .then(function (reg) {
