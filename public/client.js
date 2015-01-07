@@ -11,7 +11,7 @@ var highScore = 0;
 
 // INIT
 socket.on('startup', function (message) {
-debugger;
+
     var files = message.files;
 
     var playTime = message.playTime;
@@ -54,15 +54,14 @@ function onCastVote(e) {
         return;
     }
 
-    var voteButton = e.currentTarget;
-    var tuneContainer = voteButton.parentNode;
+    var tuneContainer = e.currentTarget;
     var chosenTuneId = tuneContainer.dataset.tuneId;
 
     if (chosenTuneId) {
         socket.emit('vote', chosenTuneId);
     }
     else {
-        console.error('><');
+        console.error('no tune id in ', e);
     }
 }
 
@@ -83,7 +82,7 @@ socket.on('new vote', function (vote) {
 
         if (thisItem.dataset.tuneId === vote.tuneId) {
             highlightIfWinner(thisItem, vote.count);
-            thisItem.childNodes[0].innerText = vote.count;
+            thisItem.querySelector('.voters').innerText = vote.count;
         }
     }
 });
@@ -98,7 +97,7 @@ socket.on('new vote', function (vote) {
  */
 socket.on('votes reset', function () {
 
-    var allScores = document.getElementsByClassName('tune-score');
+    var allScores = document.getElementsByClassName('voters');
 
     for (var i = 0; i < allScores.length; i++) {
         allScores[i].innerText = 0;
@@ -217,6 +216,8 @@ socket.on('loading file list', function () {
     // TODO spinner
 });
 
+
+
 /////////////////////////////// INIT ///////////////////////////////
 
 function init() {
@@ -231,25 +232,7 @@ function init() {
         });
     }
 
-    // Custom elements
-    var Tune = document.registerElement('standup-tune');
-
-    // var tune = document.createElement('standup-tune', {
-    //     prototype: Object.create(HTMLInputElement.prototype, {
-
-    //     });
-    // });
-
-    // tune.addEventListener('click', function () {
-    //     alert('clicked!');
-    // });
-
-    document.body.appendChild(new Tune());
-
-    // var Tune = document.registerElement('standup-tune', {
-    //     'prototype': Object.create(HTMLInputElement.prototype),
-    //     'extends': 'input'
-    // });
+    UI.registerCustomElements();
 
     // Service worker
     if ('serviceWorker' in navigator) {

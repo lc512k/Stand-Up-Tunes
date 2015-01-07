@@ -53,62 +53,93 @@ var UI = {
         audioPlayer.pause();
     },
 
-    createTuneItem: function (tuneId, votes, listener) {
+    createTuneItemOld: function (tuneId, votes, listener) {
 
-        // Score container
-        var scoreContainer = document.createElement('span');
-        var scoreText = document.createTextNode(votes);
-        scoreContainer.className = 'tune-score';
-        scoreContainer.appendChild(scoreText);
-
-        // Vote button with label for each tune
-        var voteCheck = document.createElement('input');
-        voteCheck.type = 'radio';
-        voteCheck.name = 'tunes';
-        voteCheck.value = tuneId;
-        voteCheck.addEventListener('click', listener);
-
-        // Tune name
-        var tuneNameContainer = document.createElement('span');
-        tuneNameContainer.className = 'tune-name';
-        var tuneName = document.createTextNode(tuneId.substring(0, tuneId.lastIndexOf('.')));
-        tuneNameContainer.appendChild(tuneName);
-
-        // Tune audio
-        var tuneAudioContainer = document.createElement('div');
-        var tuneAudio = document.createElement('audio');
-        var tuneSource = document.createElement('source');
-        tuneSource.setAttribute('src', 'tunes/' + tuneId);
-        tuneSource.setAttribute('type', 'audio/mpeg');
-        tuneAudio.appendChild(tuneSource);
-        tuneAudio.setAttribute('controls', '');
-        tuneAudio.setAttribute('style', 'display:none');
-        tuneAudioContainer.appendChild(tuneAudio);
-        tuneAudioContainer.className = 'tune-audio';
-
-        // Play/ pause button with label for each tune
-        var playButton = document.createElement('div');
-        var pauseButton = document.createElement('div');
-
-        playButton.setAttribute('class', 'play-button');
-        pauseButton.setAttribute('class', 'pause-button');
-
-        playButton.addEventListener('click', this.playJingle.bind(null, event, playButton, pauseButton, tuneAudio));
-        pauseButton.addEventListener('click', this.pauseJingle.bind(null, event, playButton, pauseButton, tuneAudio));
-
-        tuneAudio.addEventListener('ended', this.pauseJingle.bind(null, event, playButton, pauseButton, tuneAudio));
-
-        // Container for each tune
+        // Tune container
         var tuneItem = document.createElement('li');
         tuneItem.setAttribute('data-tune-id', tuneId);
         tuneItem.className = 'tune-item';
 
-        tuneItem.appendChild(scoreContainer);
+        // Tune image
+        var tuneImageContainer = document.createElement('div');
+        tuneImageContainer.className = 'tune-image';
+
+        // Tune name
+        var tuneNameContainer = document.createElement('div');
+        tuneNameContainer.className = 'tune-name';
+        var tuneName = document.createTextNode(tuneId.substring(0, tuneId.lastIndexOf('.')));
+        tuneNameContainer.appendChild(tuneName);
+
+        // Vote button with label for each tune
+        // var voteCheck = document.createElement('input');
+        // voteCheck.type = 'radio';
+        // voteCheck.name = 'tunes';
+        // voteCheck.value = tuneId;
+        // voteCheck.addEventListener('click', listener);
+
+        // tuneItem.appendChild(voteCheck);
+
+        // // Score container
+        var scoreContainer = document.createElement('div');
+        scoreContainer.className = 'voters';
+        scoreContainer.innerText = 3;
+
+        tuneItem.appendChild(tuneImageContainer);
         tuneItem.appendChild(tuneNameContainer);
-        tuneItem.appendChild(tuneAudioContainer);
-        tuneItem.appendChild(playButton);
-        tuneItem.appendChild(pauseButton);
-        tuneItem.appendChild(voteCheck);
+        tuneItem.appendChild(scoreContainer);
+
+        tuneItem.setAttribute('data-tune-id', tuneId);
+
+        tuneItem.addEventListener('click', listener);
+
+        // // Vote button with label for each tune
+        // var voteCheck = document.createElement('input');
+        // voteCheck.type = 'radio';
+        // voteCheck.name = 'tunes';
+        // voteCheck.value = tuneId;
+        // voteCheck.addEventListener('click', listener);
+
+        // // Tune name
+        // var tuneNameContainer = document.createElement('span');
+        // tuneNameContainer.className = 'tune-name';
+        // var tuneName = document.createTextNode(tuneId.substring(0, tuneId.lastIndexOf('.')));
+        // tuneNameContainer.appendChild(tuneName);
+
+        // // Tune audio
+        // var tuneAudioContainer = document.createElement('div');
+        // var tuneAudio = document.createElement('audio');
+        // var tuneSource = document.createElement('source');
+        // tuneSource.setAttribute('src', 'tunes/' + tuneId);
+        // tuneSource.setAttribute('type', 'audio/mpeg');
+        // tuneAudio.appendChild(tuneSource);
+        // tuneAudio.setAttribute('controls', '');
+        // tuneAudio.setAttribute('style', 'display:none');
+        // tuneAudioContainer.appendChild(tuneAudio);
+        // tuneAudioContainer.className = 'tune-audio';
+
+        // // Play/ pause button with label for each tune
+        // var playButton = document.createElement('div');
+        // var pauseButton = document.createElement('div');
+
+        // playButton.setAttribute('class', 'play-button');
+        // pauseButton.setAttribute('class', 'pause-button');
+
+        // playButton.addEventListener('click', this.playJingle.bind(null, event, playButton, pauseButton, tuneAudio));
+        // pauseButton.addEventListener('click', this.pauseJingle.bind(null, event, playButton, pauseButton, tuneAudio));
+
+        // tuneAudio.addEventListener('ended', this.pauseJingle.bind(null, event, playButton, pauseButton, tuneAudio));
+
+        // // Container for each tune
+        // var tuneItem = document.createElement('li');
+        // tuneItem.setAttribute('data-tune-id', tuneId);
+        // tuneItem.className = 'tune-item';
+
+        // tuneItem.appendChild(scoreContainer);
+        // tuneItem.appendChild(tuneNameContainer);
+        // tuneItem.appendChild(tuneAudioContainer);
+        // tuneItem.appendChild(playButton);
+        // tuneItem.appendChild(pauseButton);
+        // tuneItem.appendChild(voteCheck);
 
         return tuneItem;
     },
@@ -120,5 +151,33 @@ var UI = {
         this.uploadButton.innerText = 'Select File';
         this.nameBox.value = '';
         this.fileBox.value = '';
+    },
+    registerCustomElements: function () {
+
+        var TuneProto = Object.create(HTMLElement.prototype);
+
+        TuneProto.createdCallback = function () {
+            this.innerHTML =
+                '<div class="name"></div>' +
+                '<div class="voters"></div>' ;
+
+            var shadow = this.createShadowRoot();
+            var importLink = document.querySelector('link[rel="import"]').import;
+            var template = importLink.querySelector('template');
+            var clone = document.importNode(template.content, true);
+            shadow.appendChild(clone);
+        };
+
+        this.StandupTune = document.registerElement('standup-tune', {
+            prototype: TuneProto
+        });
+    },
+    createTuneItem: function (tuneId, votes, listener) {
+        var tuneElement = new this.StandupTune();
+        tuneElement.getElementsByClassName('name')[0].innerText = tuneId;
+        tuneElement.getElementsByClassName('voters')[0].innerText = votes;
+        tuneElement.setAttribute('data-tune-id', tuneId);
+        tuneElement.addEventListener('click', listener);
+        return tuneElement;
     }
 };
