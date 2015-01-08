@@ -24,7 +24,7 @@ socket.on('startup', function (message) {
 
         var thisVoteCount = files[fileId];
 
-        var tuneItem = UI.createTuneItem(fileId, thisVoteCount, onCastVote);
+        var tuneItem = UI.createTuneItem(fileId, thisVoteCount, onSelectTune);
 
         UI.tunesContainer.appendChild(tuneItem);
 
@@ -48,11 +48,7 @@ socket.on('new user', function (ip) {
  * send the tuneId to the server
  * @param  {Event} e [description]
  */
-function onCastVote(e) {
-
-    if (util.shouldDrop()) {
-        return;
-    }
+function onSelectTune(e) {
 
     var tuneContainer = e.currentTarget;
     var chosenTuneId = tuneContainer.dataset.tuneId;

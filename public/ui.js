@@ -113,14 +113,13 @@ var UI = {
         });
     },
 
-    createTuneItem: function (tuneId, votes, listener) {
+    createTuneItem: function (tuneId, votes, listener, background) {
         var tuneElement = new this.StandupTune();
         tuneElement.getElementsByTagName('tune-name')[0].innerText = tuneId;
         tuneElement.getElementsByTagName('tune-voters')[0].innerText = votes;
-        //tuneElement.getElementsByTagName('source')[0].src = 'tunes/' + tuneId;
 
         // poke the shadow to style the background
-        tuneElement.shadowRoot.getElementsByClassName('image')[0].style.backgroundImage = 'url(http://www.psdgraphics.com/file/colorful-triangles-background.jpg)';
+        tuneElement.shadowRoot.getElementsByClassName('image')[0].style.backgroundImage = 'url(images/tunes/' + tuneId + '.png)';
         tuneElement.shadowRoot.getElementsByTagName('source')[0].src = 'tunes/' + tuneId;
 
         tuneElement.setAttribute('data-tune-id', tuneId);
