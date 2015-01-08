@@ -82,7 +82,7 @@ socket.on('new vote', function (vote) {
 
         if (thisItem.dataset.tuneId === vote.tuneId) {
             highlightIfWinner(thisItem, vote.count);
-            thisItem.querySelector('.voters').innerText = vote.count;
+            thisItem.getElementsByTagName('tune-voters')[0].innerText = vote.count;
         }
     }
 });

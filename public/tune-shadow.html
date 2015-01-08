@@ -35,12 +35,46 @@
       border-right: 1px solid #ddd;
       height: 100%;
       box-shadow: 0 0 5px 1px rgba(0,0,0,0.1);
+      position: relative;
+  }
+
+  .play {
+      background-color: lightgray;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      background-size: 32px;
+      position: absolute;
+      margin: auto;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+  }
+
+  .play::before {
+      content: "►";
+      color: gray;
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      line-height: 12px;
+      margin: auto;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
   }
 
 </style>
 <div class="tune">
-    <div class="voters"><content select=".voters"></content></div>
-    <div class="name"><content select=".name"></content></div>
-    <div class="image"></div>
+    <div class="voters"><content select="tune-voters"></content></div>
+    <div class="name"><content select="tune-name"></content></div>
+    <div class="image">
+      <content select="audio"></content>
+      <content select="tune-controls"></content>
+      <div class="play"></div>
+      <div class="pause"></div>
+    </div>
 </div>
 </template>
