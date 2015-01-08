@@ -66,11 +66,18 @@ var UI = {
 
         var TuneProto = Object.create(HTMLElement.prototype);
         var NameProto = Object.create(HTMLElement.prototype);
+        var ImageProto = Object.create(HTMLElement.prototype);
         var VotersProto = Object.create(HTMLElement.prototype);
 
         VotersProto.createdCallback = function () {
             this.StandupTune = document.registerElement('tune-voters', {
                 prototype: VotersProto
+            });
+        };
+
+        ImageProto.createdCallback = function () {
+            this.StandupTune = document.registerElement('tune-image', {
+                prototype: ImageProto
             });
         };
 
@@ -81,10 +88,12 @@ var UI = {
         };
 
         TuneProto.createdCallback = function () {
+
+            // TODO template this
             this.innerHTML =
-                '<tune-voters></tune-voters>'  +
-                '<tune-name></tune-name>' +
-                '<audio style="display: none" controls><source src="tunes/test.mp3" type="audio/mpeg"></source></audio>';
+                '<tune-name></tune-name>'  +
+                '<tune-voters></tune-voters>';
+                // '<audio style="display: none" controls><source src="tunes/test.mp3" type="audio/mpeg"></source></audio>';
 
             var shadow = this.createShadowRoot();
             var importLink = document.querySelector('link[rel="import"]').import;
@@ -95,9 +104,8 @@ var UI = {
 
             var audioElement = this.getElementsByTagName('audio')[0];
 
-            shadow.getElementsByClassName('play')[0].addEventListener('click', function (e) {
+            shadow.getElementsByClassName('play')[0].addEventListener('click', function () {
                 audioElement.play();
-                console.log(audioElement);
             });
         };
 
@@ -105,11 +113,17 @@ var UI = {
             prototype: TuneProto
         });
     },
+
     createTuneItem: function (tuneId, votes, listener) {
         var tuneElement = new this.StandupTune();
         tuneElement.getElementsByTagName('tune-name')[0].innerText = tuneId;
         tuneElement.getElementsByTagName('tune-voters')[0].innerText = votes;
-        tuneElement.getElementsByTagName('source')[0].src = 'tunes/' + tuneId;
+        //tuneElement.getElementsByTagName('source')[0].src = 'tunes/' + tuneId;
+
+        // poke the shadow to style the background
+        tuneElement.shadowRoot.getElementsByClassName('image')[0].style.backgroundImage = 'url(http://www.psdgraphics.com/file/colorful-triangles-background.jpg)';
+        tuneElement.shadowRoot.getElementsByTagName('source')[0].src = 'tunes/' + tuneId;
+
         tuneElement.setAttribute('data-tune-id', tuneId);
         tuneElement.addEventListener('click', listener);
         return tuneElement;
