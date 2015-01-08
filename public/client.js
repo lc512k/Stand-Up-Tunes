@@ -24,7 +24,7 @@ socket.on('startup', function (message) {
 
         var thisVoteCount = files[fileId];
 
-        var tuneItem = UI.createTuneItem(fileId, thisVoteCount, onSelectTune);
+        var tuneItem = UI.createTuneItem(fileId, thisVoteCount);
 
         UI.tunesContainer.appendChild(tuneItem);
 
@@ -41,25 +41,6 @@ socket.on('new user', function (ip) {
 });
 
 /////////////////////////////// VOTING ///////////////////////////////
-
-/**
- * Event handler for Vote button
- * When the user clicks a vote button for a tune
- * send the tuneId to the server
- * @param  {Event} e [description]
- */
-function onSelectTune(e) {
-
-    var tuneContainer = e.currentTarget;
-    var chosenTuneId = tuneContainer.dataset.tuneId;
-
-    if (chosenTuneId) {
-        socket.emit('vote', chosenTuneId);
-    }
-    else {
-        console.error('no tune id in ', e);
-    }
-}
 
 /**
  * Server message listener
@@ -204,7 +185,7 @@ socket.on('more data', function (data) {
 });
 
 socket.on('done', function (newFileName) {
-    UI.addRow(newFileName, onSelectTune);
+    UI.addRow(newFileName);
     UI.updateProgressBar(100);
 });
 

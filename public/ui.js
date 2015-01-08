@@ -95,6 +95,19 @@ var UI = {
             shadow.getElementsByClassName('play')[0].addEventListener('click', function () {
                 audioElement.play();
             });
+
+            shadow.getElementsByClassName('tune')[0].addEventListener('click', function (e) {
+
+                var chosenTuneId = this.dataset.tuneId;
+
+                if (chosenTuneId) {
+                    socket.emit('vote', chosenTuneId);
+                }
+                else {
+                    console.error('no tune id in ', e);
+                }
+
+            });
         };
 
         this.StandupTune = document.registerElement('standup-tune', {
@@ -102,17 +115,19 @@ var UI = {
         });
     },
 
-    createTuneItem: function (tuneId, votes, listener) {
+    createTuneItem: function (tuneId, votes) {
         var tuneElement = new this.StandupTune();
+
+        // set the values in the light DOM
         tuneElement.getElementsByTagName('tune-name')[0].innerText = tuneId;
         tuneElement.getElementsByTagName('tune-voters')[0].innerText = votes;
+        tuneElement.setAttribute('data-tune-id', tuneId);
 
-        // poke the shadow to style the background
+        // poke the shadow DOM to set the tuneId where needed
         tuneElement.shadowRoot.getElementsByClassName('image')[0].style.backgroundImage = 'url(images/tunes/' + tuneId + '.png)';
         tuneElement.shadowRoot.getElementsByTagName('source')[0].src = 'tunes/' + tuneId;
+        tuneElement.shadowRoot.getElementsByClassName('tune')[0].setAttribute('data-tune-id', tuneId);
 
-        tuneElement.setAttribute('data-tune-id', tuneId);
-        tuneElement.addEventListener('click', listener);
         return tuneElement;
     }
 };
