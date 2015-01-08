@@ -113,7 +113,7 @@ var UI = {
         });
     },
 
-    createTuneItem: function (tuneId, votes, listener, background) {
+    createTuneItem: function (tuneId, votes, listener) {
         var tuneElement = new this.StandupTune();
         tuneElement.getElementsByTagName('tune-name')[0].innerText = tuneId;
         tuneElement.getElementsByTagName('tune-voters')[0].innerText = votes;
