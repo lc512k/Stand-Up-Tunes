@@ -17,13 +17,6 @@ var PLAY_TIME = '9:50 am';
 // List of tunes and their vote counts
 GLOBAL.files = {};
 
-// tally: {
-//  laura: one.mp3,
-//  alex: two.mp3,
-//  other: one.mp3,
-//  someOther: null
-// }
-
 GLOBAL.tally = {};
 
 // Sockets for this server

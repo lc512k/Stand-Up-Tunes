@@ -41,22 +41,11 @@ var UI = {
         }
     },
 
-    playJingle: function (e, playButton, pauseButton, audioPlayer) {
-        playButton.setAttribute('style', 'display:none');
-        pauseButton.setAttribute('style', 'display:block');
-        audioPlayer.play();
-    },
-
-    pauseJingle: function (e, playButton, pauseButton, audioPlayer) {
-        pauseButton.setAttribute('style', 'display:none');
-        playButton.setAttribute('style', 'display:block');
-        audioPlayer.pause();
-    },
-
     addRow: function (tuneId, listener) {
         var tuneItem = this.createTuneItem(tuneId, 0, listener);
         this.tunesContainer.appendChild(tuneItem);
     },
+
     resetButton: function () {
         this.uploadButton.innerText = 'Select File';
         this.nameBox.value = '';

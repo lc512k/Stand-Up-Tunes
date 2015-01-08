@@ -1,10 +1,6 @@
 <template>
 <style>
 
-/*  :host {
-    border: 1px solid red!important;
-  }*/
-
   .tune {
       position: relative;
       border-radius: 5px;
@@ -14,6 +10,7 @@
       background-color: #fff;
       overflow: hidden;
       width: 230px;
+      cursor: pointer;
   }
 
   .voters {
@@ -22,7 +19,6 @@
       bottom: 8px;
       right: 10px;
       font-size: 0.8rem;
-
   }
 
   .name {
@@ -87,15 +83,16 @@
       font-size: 16px;
   }
 
+  :host {
+  }
+
 </style>
 <div class="tune">
     <div class="voters"><content select="tune-voters"></content></div>
     <div class="name"><content select="tune-name"></content></div>
     <div class="image">
       <audio style="display: none" controls><source src="tunes/test.mp3" type="audio/mpeg"></source></audio>
-      <content select="tune-controls"></content>
       <div class="play"></div>
-      <div class="pause"></div>
     </div>
 </div>
 </template>
