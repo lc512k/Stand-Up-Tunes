@@ -216,8 +216,6 @@ socket.on('loading file list', function () {
     // TODO spinner
 });
 
-
-
 /////////////////////////////// INIT ///////////////////////////////
 
 function init() {
