@@ -204,7 +204,7 @@ socket.on('more data', function (data) {
 });
 
 socket.on('done', function (newFileName) {
-    UI.addRow(newFileName);
+    UI.addRow(newFileName, onSelectTune);
     UI.updateProgressBar(100);
 });
 

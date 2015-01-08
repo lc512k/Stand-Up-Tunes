@@ -53,8 +53,8 @@ var UI = {
         audioPlayer.pause();
     },
 
-    addRow: function (tuneId) {
-        var tuneItem = this.createTuneItem(tuneId, 0);
+    addRow: function (tuneId, listener) {
+        var tuneItem = this.createTuneItem(tuneId, 0, listener);
         this.tunesContainer.appendChild(tuneItem);
     },
     resetButton: function () {

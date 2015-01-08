@@ -61,8 +61,6 @@ var loadFile = function (fileName, destination) {
                 debug(key, 'is new');
                 continue;
             }
-
-            //destination[key].votes = file[key].votes;
         }
 
     }
@@ -92,13 +90,14 @@ exports.upload = function (data, socket) {
     if (thisFile.downloaded === thisFile.fileSize) {
 
         fs.write(thisFile.handler, thisFile.data, null, 'Binary', function () {
+            //TODO put .votes back in
+            GLOBAL.files[name] = 0;
             socket.emit('done', name);
             socket.broadcast.emit('done', name);
             debug('done!');
         });
     }
     else if (thisFile.data.length > FIVE_MB) {
-
         // TODO emit it
         debug('File too big');
     }
@@ -132,8 +131,7 @@ exports.startUpload = function (data, socket) {
         fileSize: data.size,
         handler: '',
         data: '',
-        downloaded: 0,
-        votes: 0
+        downloaded: 0
     };
 
     var marker = 0;

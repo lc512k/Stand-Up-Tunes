@@ -66,25 +66,6 @@ io.sockets.on('connection', function (socket) {
             playTime: PLAY_TIME
         });
 
-        // add their IP to the list
-        // var returningUser = GLOBAL.users[clientIp];
-
-        // var returning = false;
-
-        // if (returningUser) {
-        //     // We've met before
-        //     returning = true;
-        //     debug('returning user', clientIp);
-        // }
-        // else {
-        //     // Add user with defaults
-        //     GLOBAL.users[clientIp] = {
-        //         votesLeft: voting.DEFAULT_VOTES,
-        //         votesToday: 0
-        //     };
-        //     debug('new user', clientIp);
-        // }
-
         //debug('user info', GLOBAL.users[clientIp]);
 
         // Say Hi!
