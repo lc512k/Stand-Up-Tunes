@@ -93,7 +93,6 @@ var UI = {
             this.innerHTML =
                 '<tune-name></tune-name>'  +
                 '<tune-voters></tune-voters>';
-                // '<audio style="display: none" controls><source src="tunes/test.mp3" type="audio/mpeg"></source></audio>';
 
             var shadow = this.createShadowRoot();
             var importLink = document.querySelector('link[rel="import"]').import;
@@ -102,7 +101,7 @@ var UI = {
 
             shadow.appendChild(clone);
 
-            var audioElement = this.getElementsByTagName('audio')[0];
+            var audioElement = shadow.getElementsByTagName('audio')[0];
 
             shadow.getElementsByClassName('play')[0].addEventListener('click', function () {
                 audioElement.play();
