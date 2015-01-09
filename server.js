@@ -49,6 +49,7 @@ io.sockets.on('connection', function (socket) {
     // TODO dont need init, connection enough
     socket.on('init', function () {
         debug('Headers',  socket.client.conn._header);
+        debug('Headers',  socket.client.request.headers);
 
         var clientIp = socket.client.conn.remoteAddress;
         debug('New client connected ', clientIp);
