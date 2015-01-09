@@ -7,6 +7,7 @@ var UI = {
     USER_ERROR_STYLE: 'color: red; background-color: black; padding: 4px;',
     USER_INFO_STYLE: 'color: cyan; background-color: black; padding: 4px;',
 
+    // light blue
     SELECTED_COLOR: 'rgba(35, 112, 180, 0.2)',
 
     tunesContainer: document.getElementById('tunes-container'),
@@ -99,6 +100,11 @@ var UI = {
             });
 
             shadow.getElementsByClassName('tune')[0].addEventListener('click', function (e) {
+
+                // If clicked play button, ignore
+                if (e.target.getAttribute('class') === 'play') {
+                    return;
+                }
 
                 var otherElements = document.getElementsByTagName('standup-tune');
 
