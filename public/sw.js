@@ -10,5 +10,5 @@ self.addEventListener('activate', function (event) {
 
 self.addEventListener('fetch', function (event) {
     console.log('Caught a fetch!');
-    event.respondWith(new Response('Oops, you\'ve been service worked\n\n⌘ + ⇧ + refresh'));
+    event.respondWith(new Response('Oops, you\'ve been service worked\n\n⌘ + ⇧ + R'));
 });
