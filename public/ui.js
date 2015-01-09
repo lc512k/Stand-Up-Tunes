@@ -7,6 +7,8 @@ var UI = {
     USER_ERROR_STYLE: 'color: red; background-color: black; padding: 4px;',
     USER_INFO_STYLE: 'color: cyan; background-color: black; padding: 4px;',
 
+    SELECTED_COLOR: 'rgba(35, 112, 180, 0.2)',
+
     tunesContainer: document.getElementById('tunes-container'),
     fileBox: document.getElementById('file-box'),
     nameBox: document.getElementById('name-box'),
@@ -98,6 +100,16 @@ var UI = {
 
             shadow.getElementsByClassName('tune')[0].addEventListener('click', function (e) {
 
+                var otherElements = document.getElementsByTagName('standup-tune');
+
+                // TODO find alternative to poking shadow root of other elements
+                for (var i = 0; i < otherElements.length; i++) {
+                    var element = otherElements[i];
+                    element.shadowRoot.getElementsByClassName('tune')[0].style.backgroundColor = '';
+                }
+
+                this.style.backgroundColor = UI.SELECTED_COLOR;
+
                 var chosenTuneId = this.dataset.tuneId;
 
                 if (chosenTuneId) {
@@ -123,7 +135,8 @@ var UI = {
         tuneElement.getElementsByTagName('tune-voters')[0].innerText = votes;
         tuneElement.setAttribute('data-tune-id', tuneId);
 
-        // poke the shadow DOM to set the tuneId where needed
+        // TODO find alternative to poking the shadow DOM
+        // Setting the tuneId where needed
         tuneElement.shadowRoot.getElementsByClassName('image')[0].style.backgroundImage = 'url(images/tunes/' + tuneId + '.png)';
         tuneElement.shadowRoot.getElementsByTagName('source')[0].src = 'tunes/' + tuneId;
         tuneElement.shadowRoot.getElementsByClassName('tune')[0].setAttribute('data-tune-id', tuneId);
