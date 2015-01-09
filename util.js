@@ -20,7 +20,7 @@ var findWinner = function () {
 
         if (GLOBAL.tally.hasOwnProperty(user)) {
             var tune = GLOBAL.tally[user];
-            GLOBAL.iles[tune].votes++;
+            GLOBAL.files[tune].votes++;
         }
     }
 
