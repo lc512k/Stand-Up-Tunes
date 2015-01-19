@@ -81,7 +81,7 @@ io.sockets.on('connection', function (socket) {
         voting.save(tuneId, socket, votingClientIp);
 
         // save new vote count to disk
-        util.saveCounts();
+        //util.saveCounts();
     });
 
     // Uploading: Start saving a new file or resuming a previous upload

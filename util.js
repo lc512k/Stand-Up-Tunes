@@ -4,7 +4,7 @@ var fs = require('fs');
 var domain = require('domain').create();
 
 // play this if no votes
-var DEFAULT_TUNE = 'mario_death.wav';
+var DEFAULT_TUNE = 'mario.mp3';
 
 /**
  * Search the global file list and find the tune with the most votes
@@ -20,7 +20,7 @@ var findWinner = function () {
 
         if (GLOBAL.tally.hasOwnProperty(user)) {
             var tune = GLOBAL.tally[user];
-            GLOBAL.files[tune].votes++;
+            GLOBAL.files[tune]++;
         }
     }
 
@@ -28,7 +28,7 @@ var findWinner = function () {
 
         if (GLOBAL.files.hasOwnProperty(tuneId)) {
 
-            var thisCount = GLOBAL.files[tuneId].votes;
+            var thisCount = GLOBAL.files[tuneId];
 
             if (thisCount > highScore) {
                 highScore = thisCount;
@@ -45,14 +45,11 @@ var findWinner = function () {
     return winningTune;
 };
 
-domain.on('error', function (e) {
-    debug('error saving vote count', e);
-});
-
 /**
  * Save a snapshot of the current state to disk
  */
 exports.saveCounts = function () {
+    debug(GLOBAL.tally);
     domain.run(function () {
         fs.writeFile('backup.json', JSON.stringify(GLOBAL.tally), function () {
             debug('Vote count saved!');
@@ -82,10 +79,10 @@ exports.playTune = function () {
 
             // Reset vote count
             for (var key in GLOBAL.files) {
-                GLOBAL.files[key].votes = 0;
+                GLOBAL.files[key] = 0;
             }
             // Save to disk
-            this.saveCounts();
+            //this.saveCounts();
 
             // Tell every client to reset their vote counts to zero
             GLOBAL.io.sockets.emit('votes reset');
@@ -114,7 +111,7 @@ exports.isEmptyVotes = function (voteArray) {
     // It's not empty if we find at least one element with non-zero vote
     for (var tune in voteArray) {
         debug('checking', voteArray[tune]);
-        if (voteArray[tune].votes > 0) {
+        if (voteArray[tune] > 0) {
             debug('not empty!');
             return false;
         }

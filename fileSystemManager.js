@@ -33,7 +33,7 @@ exports.init = function () {
         }
 
         // TODO store in DB
-        loadFile('backup.json', GLOBAL.files);
+        //loadFile('backup.json', GLOBAL.files);
     });
 
 };
