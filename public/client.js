@@ -59,6 +59,7 @@ socket.on('new vote', function (vote) {
 
         if (thisItem.dataset.tuneId === vote.tuneId) {
             highlightIfWinner(thisItem, vote.count);
+            // append all user images. server sends photo urls
             thisItem.getElementsByTagName('tune-voters')[0].innerText = vote.count;
         }
     }

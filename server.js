@@ -12,7 +12,7 @@ var util        = require('./util');
 
 ///////////////////////////////// SERVER SETUP /////////////////////////////////
 
-var PLAY_TIME = '9:50 am';
+var PLAY_TIME = '9:40 am';
 
 // List of tunes and their vote counts
 GLOBAL.files = {};

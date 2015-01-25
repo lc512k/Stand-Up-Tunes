@@ -14,7 +14,8 @@
     "node-static": "*",
     "socket.io": "*",
     "socket.io-client": "^1.2.0",
-    "time": "^0.11.0"
+    "time": "^0.11.0",
+    "webcomponents.js": "^0.5.2"
   },
   "repository": {
     "type": "git",

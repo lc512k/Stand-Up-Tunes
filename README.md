@@ -6,6 +6,13 @@ Stand-Up-Tunes
 
 Release History
 ---------------
+v0.9.1
+Polyfilled
+
+v0.9
+Redesign. One vote per person.
+Web components
+
 v0.5
 3 votes per user every day
 
