@@ -10,7 +10,7 @@
     "domain": "*",
     "express": "*",
     "express-force-ssl": "^0.2.9",
-    "forever-monitor": "*",
+    "forever-monitor": "^1.5.2",
     "node-static": "*",
     "socket.io": "*",
     "socket.io-client": "^1.2.0",
