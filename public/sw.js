@@ -51,7 +51,7 @@ self.addEventListener('activate', function (event) {
 
 self.addEventListener('fetch', function (event) {
     console.log('fetch. caches: ', caches);
-    event.respondWith(new Response('Oops, you\'ve been service\n\n⌘ + ⇧ + R'));
+    // event.respondWith(new Response('Oops, you\'ve been service worked\n\n⌘ + ⇧ + R'));
 
 
     // event.respondWith(
