@@ -17,6 +17,20 @@
 
 <h2>Stand-up Tunes® <span class='tiny'>v0.9.1</span></h2>
 
+<div id="fbbutton" class="userpic"></div>
+
+
+<p>Vote for your favorite jingle. Stand-up at <span id="play-time"></span>.</p>
+<!-- <div class="fb-login-button" data-max-rows="1" data-size="small" data-show-faces="true" data-auto-logout-link="true"></div>
+<fb:login-button scope="public_profile" onlogin="checkLoginState();">
+</fb:login-button> -->
+
+<div id="status">
+</div>
+
+
+<div id="status">
+</div>
 
 <ul id="tunes-container"></ul>
 
@@ -30,11 +44,15 @@
     </div>
 </div>
 
+
+
 <script src="/socket.io/socket.io.js"></script>
-<script src="/UI.js"></script>
+<script src="/fb.js"></script>
+<script src="/ui.js"></script>
 <script src="/util.js"></script>
 <script src="/client.js"></script>
 <script src="/lib/fastclick.js"></script>
+
 
 </body>
 </html>
