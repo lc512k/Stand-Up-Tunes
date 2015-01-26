@@ -1,4 +1,3 @@
-alert('wc0.5.2')
 /**
  * @license
  * Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
