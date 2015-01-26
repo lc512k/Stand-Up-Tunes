@@ -10,6 +10,7 @@ var voting      = require('./voting');
 var cron        = require('./cron');
 var util        = require('./util');
 
+
 ///////////////////////////////// SERVER SETUP /////////////////////////////////
 
 var PLAY_TIME = '9:40 am';
@@ -27,6 +28,7 @@ app.use(express.static(__dirname + '/public')); //jshint ignore:line
 
 // Start the http server
 server.listen(3000, function () {
+    console.log('debug be ded');
     debug('Server listening at port %d', 3000);
 });
 
@@ -45,29 +47,40 @@ cron.init(util.playTune);
 
 io.sockets.on('connection', function (socket) {
 
+    var authenticated = false;
+    var name;
+
     // A client connected
-    // TODO dont need init, connection enough
     socket.on('init', function () {
-        debug('Headers',  socket.client.conn._header);
         debug('Headers',  socket.client.request.headers);
 
         var clientIp = socket.client.conn.remoteAddress;
         debug('New client connected ', clientIp);
 
-        // Give the client the list of tunes
-        // and the time the next jingle will play
-        socket.emit('startup', {
-            files: GLOBAL.files,
-            playTime: PLAY_TIME
-        });
+        if (authenticated) {
+            // Give the client the list of tunes
+            // and the time the next jingle will play
+            socket.emit('startup', {
+                files: GLOBAL.files,
+                playTime: PLAY_TIME
+            });
 
-        //debug('user info', GLOBAL.users[clientIp]);
+            // Say Hi!
+            socket.emit('welcome', name);
 
-        // Say Hi!
-        socket.emit('welcome', clientIp);
+            // Tell everyone else this client joined
+            socket.broadcast.emit('new user', name);
+        }
+        else {
+            debug('not authenticated');
+            socket.emit('authenticate');
+        }
+    });
 
-        // Tell everyone else this client joined
-        socket.broadcast.emit('new user', clientIp);
+    socket.on('login', function (loginData) {
+        debug('logged in with ', loginData);
+        authenticated = loginData.name ? true : false;
+        name = loginData.name;
     });
 
     // Handle a vote

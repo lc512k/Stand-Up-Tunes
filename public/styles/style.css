@@ -54,6 +54,15 @@ p {
     color:              orange;
 }
 
+.userpic {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}
+
 /* TABLE */
 
 #tunes-container {

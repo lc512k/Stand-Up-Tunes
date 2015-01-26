@@ -32,8 +32,16 @@ socket.on('startup', function (message) {
     }
 });
 
-socket.on('welcome', function (ip) {
-    console.log('%c%s%s', UI.USER_LOG_STYLE, 'welcome', ip);
+socket.on('welcome', function (name) {
+    console.log('%c%s%s', UI.USER_LOG_STYLE, 'welcome', name);
+});
+
+
+socket.on('authenticate', function () {
+    // tell them to login via fb
+
+    socket.emit('login', {name: 'offline'});
+    socket.emit('init');
 });
 
 socket.on('new user', function (ip) {
