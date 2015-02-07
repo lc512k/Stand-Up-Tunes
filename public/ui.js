@@ -1,4 +1,4 @@
-/* global document, UI, util */
+/* global document, UI, HTMLElement, socket */
 
 var UI = {
 
@@ -54,6 +54,7 @@ var UI = {
         this.nameBox.value = '';
         this.fileBox.value = '';
     },
+
     registerCustomElements: function () {
 
         var TuneProto = Object.create(HTMLElement.prototype);

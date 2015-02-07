@@ -1,4 +1,4 @@
-/* global UI, util, io, document, window */
+/* global UI, SW, util, io, document, window */
 
 var socket = io();
 
@@ -35,7 +35,6 @@ socket.on('startup', function (message) {
 socket.on('welcome', function (name) {
     console.log('%c%s%s', UI.USER_LOG_STYLE, 'welcome', name);
 });
-
 
 socket.on('authenticate', function () {
     // tell them to login via fb
@@ -146,8 +145,8 @@ function startUpload() {
     fileName = util.safeifyString(fileName);
 
     // File is not .mp3 or .wav, abort
-    if (fileName.indexOf('.mp3') < 0 && fileName.indexOf('.wav') < 0) {
-        console.log('%cThat ain\'t no audio file. Try again.', UI.USER_WARN_STYLE);
+    if (fileName.indexOf('.mp3') < 0 && fileName.indexOf('.wav') < 0 && fileName.indexOf('.m4v') < 0) {
+        alert('Wrong file type for '+ fileName);
         UI.resetUploadButton();
         return;
     }
@@ -216,15 +215,16 @@ function init() {
         });
     }
 
+    // Web
     UI.registerCustomElements();
 
-    // Service worker
+    // Service Worker
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js')
         .then(function (reg) {
-            console.log('◕‿◕', reg);
+            console.log('Service worker registered! ◕‿◕', reg);
         }, function (err) {
-            console.log('ಠ_ಠ', err);
+            console.log('Sevice worker failed to register ಠ_ಠ', err);
         });
     }
 }

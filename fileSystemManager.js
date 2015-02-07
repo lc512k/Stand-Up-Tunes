@@ -31,45 +31,8 @@ exports.init = function () {
                 GLOBAL.files[file] = 0;
             }
         }
-
-        // TODO store in DB
-        //loadFile('backup.json', GLOBAL.files);
     });
 
-};
-
-var loadFile = function (fileName, destination) {
-    // Try to read the file synchronously
-    // (we don't want clients connecting until we've fully loaded this)
-    try {
-
-        // read the contents of the file as a string
-        var fileJSON = fs.readFileSync(fileName);
-
-        // parse it into an object
-        var file = JSON.parse(fileJSON);
-
-        debug('parsed file', file);
-
-        // read it and
-        // load the vote count into memory
-        for (var key in file) {
-
-            debug('this key', key, destination[key]);
-
-            if (!destination[key]) {
-                debug(key, 'is new');
-                continue;
-            }
-        }
-
-    }
-    catch (error) {
-        // no backup file yet
-        // create one
-        debug('creating new', fileName);
-        fs.writeFileSync(fileName, '');
-    }
 };
 
 /**

@@ -1,6 +1,5 @@
 var debug = require('debug')('util');
 var exec = require('child_process').exec;
-var fs = require('fs');
 var domain = require('domain').create();
 
 // play this if no votes
@@ -46,22 +45,6 @@ var findWinner = function () {
 };
 
 /**
- * Save a snapshot of the current state to disk
- */
-exports.saveCounts = function () {
-    debug(GLOBAL.tally);
-    domain.run(function () {
-        fs.writeFile('backup.json', JSON.stringify(GLOBAL.tally), function () {
-            debug('Vote count saved!');
-        });
-    });
-};
-
-domain.on('error', function (e) {
-    debug('error saving vote count', e);
-});
-
-/**
  * Play the winning tune with afplay on the mac terminal
  */
 exports.playTune = function () {
@@ -69,20 +52,19 @@ exports.playTune = function () {
     var winningTune = findWinner();
 
     domain.run(function () {
-        exec('afplay -v 10 ./public/tunes/' + winningTune, function (error) {
+        exec('afplay -t 15 -v 10 ./public/tunes/' + winningTune, function (error) { // -r 2 twice as fast lol
 
             if (error) {
+                debug('error playing', winningTune);
                 throw error;
             }
 
-            debug('played!');
+            debug('played ' + winningTune + '!');
 
             // Reset vote count
             for (var key in GLOBAL.files) {
                 GLOBAL.files[key] = 0;
             }
-            // Save to disk
-            //this.saveCounts();
 
             // Tell every client to reset their vote counts to zero
             GLOBAL.io.sockets.emit('votes reset');
@@ -92,31 +74,6 @@ exports.playTune = function () {
 
     domain.on('error', function (err) {
         debug(err);
-        exec('say Oh no! The mobile web jingle is broken.');
+        exec('say Hi! I am your mobile web jingle.');
     });
-};
-
-/**
- * Return true if array is empty or only has empty votes
- * @return {Boolean} is empty?
- */
-exports.isEmptyVotes = function (voteArray) {
-
-    if (!voteArray) {
-        return true;
-    }
-
-    debug('checking', voteArray);
-
-    // It's not empty if we find at least one element with non-zero vote
-    for (var tune in voteArray) {
-        debug('checking', voteArray[tune]);
-        if (voteArray[tune] > 0) {
-            debug('not empty!');
-            return false;
-        }
-    }
-
-    // All votes were zero. It's empty.
-    return true;
 };

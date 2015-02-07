@@ -10,7 +10,6 @@ var voting      = require('./voting');
 var cron        = require('./cron');
 var util        = require('./util');
 
-
 ///////////////////////////////// SERVER SETUP /////////////////////////////////
 
 var PLAY_TIME = '9:40 am';
@@ -92,9 +91,6 @@ io.sockets.on('connection', function (socket) {
 
         // Store the vote and broadcast the new vote counts to all clients
         voting.save(tuneId, socket, votingClientIp);
-
-        // save new vote count to disk
-        //util.saveCounts();
     });
 
     // Uploading: Start saving a new file or resuming a previous upload

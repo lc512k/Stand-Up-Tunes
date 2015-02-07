@@ -1,31 +1,40 @@
+/* global importScripts, Request, caches, self */
+
+importScripts('/lib/serviceworker-cache-polyfill.js');
+
 self.addEventListener('install', function (event) {
     console.log('installing...', event);
     event.waitUntil(
-        caches.open('v0.9.1').then(function (cache) {
+        caches.open('v1').then(function (cache) {
 
-            // some less important stuff
-            // cache.addAll([
-            //     '/lib/fastclick.js',
-            //     '/css/lato/Lato-Bold.ttf',
-            //     '/css/lato/Lato-Hairline.ttf',
-            //     '/css/lato/Lato-Light.ttf',
-            //     '/css/lato/Lato-Regular.ttf',
-            //     '/css/lato/Lato-Thin.ttf'
-            // ]);
+            // non vital stuff
+            cache.addAll([
+                '/tunes/mario.mp3',
+                '/images/tunes/mario.mp3.png'
+                ]);
 
-            // the core stuff - if any of this fails, install fails
-            // return cache.addAll([
-            //     //'/fb.js',
-            //     '/client.js'
-            //     // '/index.html',
-            //     // '/tune-shadow.html',
-            //     // '/ui.js',
-            //     // '/util.js',
-            //     // '/lib/webcomponents.js',
-            //     // '/css/styes.css'
-            // ]);
+            //the core stuff - if any of this fails, install fails
+            var result = cache.addAll([
+                '/lib/webcomponents.js',
+                '/lib/fastclick.js',
+                '/lib/fb/sdk.js',
+                '/styles/lato/Lato-Bold.ttf',
+                '/styles/lato/Lato-Hairline.ttf',
+                '/styles/lato/Lato-Light.ttf',
+                '/styles/lato/Lato-Regular.ttf',
+                '/styles/lato/Lato-Thin.ttf',
+                '/styles/style.css',
+                '/client.js',
+                '/fb.js',
+                '/ui.js',
+                '/util.js',
+                '/index.html',
+                '/tune-shadow.html'
+                ]);
+
+            return result;
         })
-    );
+     );
 });
 
 self.addEventListener('activate', function (event) {
@@ -40,30 +49,52 @@ self.addEventListener('activate', function (event) {
     //                 // the whole origin
     //                 // don't remove the one you're expecting, 0.9.1
     //             }).map(function (cacheName) {
-
     //                 //return caches.delete(cacheName);
     //             })
     //         );
-
     //     })
     // );
 });
 
 self.addEventListener('fetch', function (event) {
-    console.log('fetch. caches: ', caches);
-    // event.respondWith(new Response('Oops, you\'ve been service worked\n\n⌘ + ⇧ + R'));
+    event.respondWith(
+        caches.match(event.request).then(function (response) {
 
+            var newResponse = fetch(event.request);
 
-    // event.respondWith(
-    //     caches.match(event.request).then(function (response) {
-    //         console.log('responding');
-    //         return response || fetch(event.request);
-    //     }).catch(function () {
-    //         // If both fail, show a generic fallback:
-    //         return caches.match('/offline.html');
-    //         // However, in reality you'd have many different
-    //         // fallbacks, depending on URL & headers.
-    //         // Eg, a fallback silhouette image for avatars.
-    //     })
-    // );
+            if (!response) {
+                console.log('no cache for ', event.request);
+            }
+
+            return response || newResponse;
+        })
+    );
 });
+
+// self.addEventListener('push', function (event) {
+//     debugger
+//     if (event.data.text() === 'new-email') {
+//         event.waitUntil(
+//             caches.open('mysite-dynamic').then(function (cache) {
+//                 return fetch('/inbox.json').then(function (response) {
+//                     cache.put('/inbox.json', response.clone());
+//                     return response.json();
+//                 });
+//             }).then(function (emails) {
+//                 registration.showNotification('New email', {
+//                     body: 'From ' + emails[0].from.name,
+//                     tag: 'new-email'
+//                 });
+//             })
+//         );
+//     }
+// });
+
+// self.addEventListener('notificationclick', function (event) {
+//     if (event.notification.tag === 'new-email') {
+//         // Assume that all of the resources needed to render
+//         // /inbox/ have previously been cached, e.g. as part
+//         // of the install handler.
+//         new WindowClient('/inbox/');
+//     }
+// });

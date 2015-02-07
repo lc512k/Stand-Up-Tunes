@@ -6,6 +6,11 @@ Stand-Up-Tunes
 
 Release History
 ---------------
+v0.9.2
+Service Worker with cache
+Limit jingles to 15s
+Allow .m4v files
+
 v0.9.1
 Polyfilled
 
