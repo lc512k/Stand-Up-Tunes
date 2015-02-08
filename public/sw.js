@@ -5,7 +5,9 @@ importScripts('/lib/serviceworker-cache-polyfill.js');
 self.addEventListener('install', function (event) {
     console.log('installing...', event);
     event.waitUntil(
-        caches.open('v1').then(function (cache) {
+        caches.open('v0.9.3').then(function (cache) {
+
+            // TODO cache audio and images on init and upload in client...
 
             // non vital stuff
             cache.addAll([

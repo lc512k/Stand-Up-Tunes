@@ -1,4 +1,4 @@
-/* global UI, SW, util, io, document, window */
+/* global UI, navigator, util, io, document, window */
 
 var socket = io();
 
@@ -225,6 +225,52 @@ function init() {
             console.log('Service worker registered! ◕‿◕', reg);
         }, function (err) {
             console.log('Sevice worker failed to register ಠ_ಠ', err);
+        });
+
+        // chrome://flags/#enable-experimental-web-platform-features
+        navigator.serviceWorker.ready.then(function (serviceWorkerRegistration) {
+
+            //Check if this service worker supports push
+            if (!serviceWorkerRegistration.pushManager) {
+                console.warn('Ooops Push Isn\'t Supported', 'This is most likely ' +
+                'down to the current browser doesn\'t have support for push. ' +
+                'Try Chrome M41.');
+                return;
+            }
+
+            serviceWorkerRegistration.pushManager.subscribe().then(function (pushSubscription) {
+                console.log('Suscribed!', e);
+                debugger;
+                //sendSubscription(pushSubscription);
+            }).catch(function (e) {
+                console.log('Unable to register for push', e);
+            });
+
+
+            // Check if we have permission for push messages already
+            serviceWorkerRegistration.pushManager.hasPermission().then(
+            function (pushPermissionStatus) {
+
+                // If we don't have permission then set the UI accordingly
+                if (pushPermissionStatus !== 'granted') {
+                    console.log('no push permissions yet');
+                    return;
+                }
+                // We have permission,
+                // so let's update the subscription
+                // just to be safe
+                serviceWorkerRegistration.pushManager.getSubscription().then(
+                function (pushSubscription) {
+                    // Check if we have an existing pushSubscription
+                    if (pushSubscription) {
+                        // sendSubscription(pushSubscription);
+                        // changeState(STATE_ALLOW_PUSH_SEND);
+                    }
+                    else {
+                        //changeState(STATE_NOTIFICATION_PERMISSION);
+                    }
+                });
+            });
         });
     }
 }

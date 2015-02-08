@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "short_name": "Stand-up-Tunes",
+  "name": "Stand-up Tunes",
+  "start_url": "/",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "images/touch-icon-ipad-retina.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    }
+  ],
+  "developer": {
+    "name": "Laura Carvajal",
+    "url": "http://www.laura-carvajal.com/"
+  },
+  "gcm_sender_id": "319443077885",
+  "gcm_user_visible_only": true
+}
