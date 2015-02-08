@@ -239,9 +239,7 @@ function init() {
             }
 
             serviceWorkerRegistration.pushManager.subscribe().then(function (pushSubscription) {
-                console.log('Suscribed!', e);
-                debugger;
-                //sendSubscription(pushSubscription);
+                socket.emit('pushSubscription', pushSubscription);
             }).catch(function (e) {
                 console.log('Unable to register for push', e);
             });

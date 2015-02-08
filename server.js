@@ -1,14 +1,15 @@
-var express     = require('express');
-var app         = express();
-var http        = require('http');
-var debug       = require('debug')('server');
-var server      = http.createServer(app).listen(3000);
-var io          = require('socket.io')(server);
+var express = require('express');
+var app = express();
+var http = require('http');
+var debug = require('debug')('server');
+var server = http.createServer(app).listen(3000);
+var io = require('socket.io')(server);
 
-var fsManager   = require('./fileSystemManager');
-var voting      = require('./voting');
-var cron        = require('./cron');
-var util        = require('./util');
+var fsManager = require('./fileSystemManager');
+var voting = require('./voting');
+var cron = require('./cron');
+var util = require('./util');
+var pushManager = require('./pushManager');
 
 ///////////////////////////////// SERVER SETUP /////////////////////////////////
 
@@ -101,5 +102,9 @@ io.sockets.on('connection', function (socket) {
     // Uploading: Save the chunk of the file send from the client
     socket.on('upload', function (data) {
         fsManager.upload(data, socket);
+    });
+
+    socket.on('pushSubscription', function (pushSubscription) {
+        pushManager.subscribe(pushSubscription);
     });
 });
