@@ -5,7 +5,7 @@ importScripts('/lib/serviceworker-cache-polyfill.js');
 self.addEventListener('install', function (event) {
     console.log('installing...', event);
     event.waitUntil(
-        caches.open('v0.9.3').then(function (cache) {
+        caches.open('v0.9.4').then(function (cache) {
 
             // TODO cache audio and images on init and upload in client...
 
@@ -25,13 +25,13 @@ self.addEventListener('install', function (event) {
                 '/styles/lato/Lato-Light.ttf',
                 '/styles/lato/Lato-Regular.ttf',
                 '/styles/lato/Lato-Thin.ttf',
-                '/styles/style.css',
-                '/client.js',
-                '/fb.js',
-                '/ui.js',
-                '/util.js',
-                '/index.html',
-                '/tune-shadow.html'
+                '/styles/style.css'
+                // '/client.js',
+                // '/fb.js',
+                // '/ui.js',
+                // '/util.js',
+                // '/index.html',
+                // '/tune-shadow.html'
                 ]);
 
             return result;
@@ -73,30 +73,20 @@ self.addEventListener('fetch', function (event) {
     );
 });
 
-// self.addEventListener('push', function (event) {
-//     debugger
-//     if (event.data.text() === 'new-email') {
-//         event.waitUntil(
-//             caches.open('mysite-dynamic').then(function (cache) {
-//                 return fetch('/inbox.json').then(function (response) {
-//                     cache.put('/inbox.json', response.clone());
-//                     return response.json();
-//                 });
-//             }).then(function (emails) {
-//                 registration.showNotification('New email', {
-//                     body: 'From ' + emails[0].from.name,
-//                     tag: 'new-email'
-//                 });
-//             })
-//         );
-//     }
-// });
+self.addEventListener('push', function (event) {
+    console.log('THIS BE THE PUSH', event);
+    console.log('WHY YOU NO DATA?!', event.data);
 
-// self.addEventListener('notificationclick', function (event) {
-//     if (event.notification.tag === 'new-email') {
-//         // Assume that all of the resources needed to render
-//         // /inbox/ have previously been cached, e.g. as part
-//         // of the install handler.
-//         new WindowClient('/inbox/');
-//     }
-// });
+    registration.showNotification('Mobile web stand-up', {
+        body: 'Vote for your favorite stand-up tune',
+        tag: 'vote',
+        icon: 'images/touch-icon-iphone-retina.png'
+    });
+});
+
+self.addEventListener('notificationclick', function (event) {
+    debugger
+    if (event.notification.tag === 'vote') {
+        new WindowClient('/test/');
+    }
+});
