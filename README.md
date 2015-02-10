@@ -6,6 +6,10 @@ Stand-Up-Tunes
 
 Release History
 ---------------
+
+v0.9.3
+Facebook Login
+
 v0.9.2
 Service Worker with cache
 Limit jingles to 15s

@@ -11,6 +11,7 @@
     "express": "*",
     "express-force-ssl": "^0.2.9",
     "forever-monitor": "^1.5.2",
+    "mongodb": "^1.4.30",
     "node-gcm": "^0.9.14",
     "node-static": "*",
     "socket.io": "*",

@@ -77,7 +77,7 @@ self.addEventListener('push', function (event) {
     console.log('THIS BE THE PUSH', event);
     console.log('WHY YOU NO DATA?!', event.data);
 
-    registration.showNotification('Mobile web stand-up', {
+    registration.showNotification('Mobile web stand-up at 9:40', {
         body: 'Vote for your favorite stand-up tune',
         tag: 'vote',
         icon: 'images/touch-icon-iphone-retina.png'
@@ -87,6 +87,19 @@ self.addEventListener('push', function (event) {
 self.addEventListener('notificationclick', function (event) {
     debugger
     if (event.notification.tag === 'vote') {
-        new WindowClient('/test/');
+
+        //chrome://flags/#enable-javascript-harmony
+        var test = clients;
+        var client = new ServiceWorkerClient('/');
+        client.focus();
+
+        // clients.getAll().then(function(clients) {
+        //   // look for relevent window, or make a new one
+        //   var client = clients.find(c => new URL(c.url).pathname.indexof('/chat/') === 0 && c.type == 'window')
+        //     || new Client('/chat/');
+
+        //   // focus it
+        //   client.focus();
+        // });
     }
 });

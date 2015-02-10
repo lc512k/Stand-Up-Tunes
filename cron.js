@@ -1,18 +1,17 @@
 var debug = require('debug')('cron');
 var CronJob = require('cron').CronJob;
 
-var standupTime = '0 40 9 * * 1-5';
-
-// Test var: jingle every minute
-// var standupTime = '0 * * * * *';
-
-exports.init = function (command, playTime) {
+exports.set = function (command, playTime, type) {
 
     var onComplete = null;
     var startNow = true;
     var timezone = 'Europe/London';
 
-    var cronJob = new CronJob(playTime || standupTime, command, onComplete, startNow, timezone);
+    var cronJob = new CronJob(playTime, command, onComplete, startNow, timezone);
 
-    debug('Job set: ' + cronJob.cronTime.source);
+    var message = 'Cron job set at ' + playTime;
+
+    message += type ? ' for ' + type : '';
+
+    debug(message, cronJob.cronTime.source);
 };
