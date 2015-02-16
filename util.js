@@ -52,7 +52,7 @@ exports.playTune = function () {
     var winningTune = findWinner();
 
     domain.run(function () {
-        exec('afplay -t 10 -v 10 ./public/tunes/' + winningTune, function (error) { // -r 2 twice as fast lol
+        exec('afplay -t 15 -v 10 ./public/tunes/' + winningTune, function (error) { // -r 2 twice as fast lol
 
             if (error) {
                 debug('error playing', winningTune);

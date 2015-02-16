@@ -15,7 +15,7 @@ var pushManager = require('./pushManager');
 var PLAY_TIME = '9:40 am';
 var STANDUP_TIME = '0 40 9 * * 1-5';
 var PUSH_ITME = '0 30 9 * * 1-5';
-var EVERY_MINUTE = '0 * * * * *';
+//var EVERY_MINUTE = '0 * * * * *';
 
 ///////////////////////////////////// MONGO //////////////////////////////////
 
@@ -60,7 +60,7 @@ debug('tally', GLOBAL.tally);
 cron.set(util.playTune, STANDUP_TIME, 'playback');
 
 // Set cron to send push notifications
-cron.set(pushManager.sendPushNotifications, EVERY_MINUTE, 'push');
+cron.set(pushManager.sendPushNotifications, PUSH_ITME, 'push');
 
 ///////////////////////////////// CLIENT CONNECTIONS /////////////////////////////////
 
