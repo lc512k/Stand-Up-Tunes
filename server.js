@@ -1,3 +1,5 @@
+//screen node server -L &
+
 var express = require('express');
 var app = express();
 var http = require('http');
@@ -43,7 +45,7 @@ GLOBAL.io = io;
 
 // Host static files
 app.use(express.static(__dirname + '/public')); //jshint ignore:line
-app.use(express.static(__dirname + '/docs')); //jshint ignore:line
+app.use('/docs', express.static(__dirname + '/docs')); //jshint ignore:line
 
 // Start the http server
 server.listen(3000, function () {
