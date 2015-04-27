@@ -145,7 +145,7 @@ function startUpload() {
     fileName = util.safeifyString(fileName);
 
     // File is not .mp3 or .wav, abort
-    if (fileName.indexOf('.mp3') < 0 && fileName.indexOf('.wav') < 0 && fileName.indexOf('.m4v') < 0) {
+    if (fileName.indexOf('.mp3') < 0 && fileName.indexOf('.wav') < 0 && fileName.indexOf('.m4v') < 0 && fileName.indexOf('.m4a') < 0) {
         alert('Wrong file type for '+ fileName);
         UI.resetUploadButton();
         return;

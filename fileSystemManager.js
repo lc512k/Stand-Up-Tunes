@@ -27,7 +27,7 @@ exports.init = function () {
             var file = files[i];
 
             // TODO extract isAudioFormat()
-            if (file.indexOf('.mp3') > 0 || file.indexOf('.wav') > 0 || file.indexOf('.m4v') > 0) {
+            if (file.indexOf('.mp3') > 0 || file.indexOf('.wav') > 0 || file.indexOf('.m4v') > 0 || file.indexOf('.m4a') > 0) {
                 GLOBAL.files[file] = 0;
             }
         }
