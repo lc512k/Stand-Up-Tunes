@@ -74,6 +74,12 @@ exports.playTune = function () {
 
     domain.on('error', function (err) {
         debug(err);
-        exec('say Hi! I am your mobile web jingle.');
+        exec('say Oh, no! The mobile web jingle is broken.');
     });
 };
+
+exports.updateWinner = function () {
+    var winningTune = findWinner();
+    // UPDATE ENV VAR WINNER
+    // cron job will play env var
+}

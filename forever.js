@@ -1,5 +1,5 @@
-//https://github.com/foreverjs/forever-monitor
-// Run as nohup nodde forever > foo.out 2> foo.err < /dev/null &
+// https://github.com/foreverjs/forever-monitor
+// Run as nohup node forever > sut.out 2> sut.err < /dev/null &
 
 var debug = require('debug')('forever');
 

@@ -5,19 +5,18 @@
   "main": "server.js",
   "author": "Laura Carvajal",
   "dependencies": {
-    "cron": "^1.0.5",
+    "cron": "*",
     "debug": "*",
     "domain": "*",
     "express": "*",
-    "express-force-ssl": "^0.2.9",
-    "forever-monitor": "^1.5.2",
-    "mongodb": "^1.4.30",
-    "node-gcm": "^0.9.14",
+    "forever-monitor": "*",
+    "mongodb": "*",
+    "node-gcm": "*",
     "node-static": "*",
     "socket.io": "*",
-    "socket.io-client": "^1.2.0",
-    "time": "^0.11.0",
-    "webcomponents.js": "^0.5.2"
+    "socket.io-client": "*",
+    "time": "*",
+    "webcomponents.js": "*"
   },
   "repository": {
     "type": "git",
@@ -30,8 +29,5 @@
     "url": "https://github.com/lauracarvajal/Stand-Up-Tunes/issues"
   },
   "homepage": "https://github.com/lauracarvajal/Stand-Up-Tunes",
-  "devDependencies": {
-    "qunitjs": "^1.15.0"
-  },
   "license": "ISC"
 }
