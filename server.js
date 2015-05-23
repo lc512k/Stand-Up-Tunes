@@ -73,7 +73,7 @@ io.sockets.on('connection', function (socket) {
 
     // A client connected
     socket.on('init', function () {
-        debug('Headers',  socket.client.request.headers);
+        //debug('Headers',  socket.client.request.headers);
 
         var clientIp = socket.client.conn.remoteAddress;
         debug('New client connected ', clientIp);
@@ -88,6 +88,7 @@ io.sockets.on('connection', function (socket) {
 
             // Say Hi!
             socket.emit('welcome', name);
+
 
             // Tell everyone else this client joined
             socket.broadcast.emit('new user', name);
@@ -110,6 +111,9 @@ io.sockets.on('connection', function (socket) {
         var votingClientIp = socket.client.conn.remoteAddress;
 
         debug('vote received for ' + tuneId + ' by ' + votingClientIp);
+
+        debug('FILES', GLOBAL.files);
+        debug('TALLY', GLOBAL.tally);
 
         // Store the vote and broadcast the new vote counts to all clients
         voting.save(tuneId, socket, votingClientIp);
