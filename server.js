@@ -67,52 +67,40 @@ cron.set(pushManager.sendPushNotifications, PUSH_ITME, 'push');
 ///////////////////////////////// CLIENT CONNECTIONS /////////////////////////////////
 
 io.sockets.on('connection', function (socket) {
+    console.log('connection');
 
-    var authenticated = false;
-    var name;
+    socket.on('init', function (cookie) {
+    //debug('Headers',  socket.client.request.headers);
 
-    // A client connected
-    socket.on('init', function () {
-        debug('Headers',  socket.client.request.headers);
+    console.log('New init ', cookie);
 
-        var clientIp = socket.client.conn.remoteAddress;
-        debug('New client connected ', clientIp);
+        //debug('Headers',  socket.client.request.headers);
 
-        if (authenticated) {
-            // Give the client the list of tunes
-            // and the time the next jingle will play
-            socket.emit('startup', {
-                files: GLOBAL.files,
-                playTime: PLAY_TIME
-            });
+        console.log('New client connected ', cookie);
 
-            // Say Hi!
-            socket.emit('welcome', name);
+        socket.emit('startup', {
+            files: GLOBAL.files,
+            playTime: PLAY_TIME
+        });
 
-            // Tell everyone else this client joined
-            socket.broadcast.emit('new user', name);
-        }
-        else {
-            debug('not authenticated');
-            socket.emit('authenticate');
-        }
-    });
+        // Say Hi!
+        socket.emit('welcome', cookie);
 
-    socket.on('login', function (loginData) {
-        debug('logged in with ', loginData);
-        authenticated = loginData.name ? true : false;
-        name = loginData.name;
+        // Tell everyone else this client joined
+        socket.broadcast.emit('new user', cookie);
+
     });
 
     // Handle a vote
-    socket.on('vote', function (tuneId) {
+    socket.on('vote', function (tuneId, cookie) {
 
-        var votingClientIp = socket.client.conn.remoteAddress;
+        debug('vote received for ' + tuneId + ' by ' + cookie);
 
-        debug('vote received for ' + tuneId + ' by ' + votingClientIp);
+        debug('FILES', GLOBAL.files);
+        debug('TALLY', GLOBAL.tally);
 
         // Store the vote and broadcast the new vote counts to all clients
-        voting.save(tuneId, socket, votingClientIp);
+        voting.save(tuneId, socket, cookie);
     });
 
     // Uploading: Start saving a new file or resuming a previous upload

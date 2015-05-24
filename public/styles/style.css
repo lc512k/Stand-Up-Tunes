@@ -186,3 +186,7 @@ p {
 .play-time {
     color: green;
 }
+
+.userpic {
+    border: 1px solid red;
+}

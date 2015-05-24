@@ -13,7 +13,10 @@ function onConnected() {
         loginData.id = response.id;
 
         FB.api('/me/picture', function (response) {
+            debugger
             loginData.url = response.data.url;
+            document.getElementById('fbbutton').setAttribute('style', 'background-image: url('+loginData.url+')');
+            document.getElementById('vote').className = ' hidden';
 
             socket.emit('login', loginData);
             socket.emit('init');
@@ -21,6 +24,8 @@ function onConnected() {
         });
 
     });
+
+    init();
 
 }
 
@@ -30,7 +35,7 @@ function statusChangeCallback(response) {
         onConnected();
     }
     else {
-        //alert('Sign in with Facebook');
+        document.getElementById('vote').className = '';
     }
 }
 
@@ -40,14 +45,14 @@ function checkLoginState() {
     });
 }
 
-document.getElementById('fbbutton').addEventListener('click', function () {
+document.getElementById('vote').addEventListener('click', function () {
 
     FB.login(function (response) {
         if (response.authResponse) {
             onConnected();
         }
         else {
-            alert('Oops! Cheap alert!');
+            alert('Oops!');
         }
     });
 

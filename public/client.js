@@ -36,16 +36,16 @@ socket.on('welcome', function (name) {
     console.log('%c%s%s', UI.USER_LOG_STYLE, 'welcome', name);
 });
 
-socket.on('authenticate', function () {
-    // tell them to login via fb
+// socket.on('authenticate', function () {
+//     // tell them to login via fb
 
-    socket.emit('login', {name: 'offline'});
-    socket.emit('init');
-});
+//     socket.emit('login', {name: 'offline'});
+//     socket.emit('init');
+// });
 
-socket.on('new user', function (ip) {
-    console.log('%cYour friend%shas joined!', UI.USER_LOG_STYLE, ip);
-});
+// socket.on('new user', function (ip) {
+//     console.log('%cYour friend%shas joined!', UI.USER_LOG_STYLE, ip);
+// });
 
 /////////////////////////////// VOTING ///////////////////////////////
 
@@ -203,9 +203,36 @@ socket.on('loading file list', function () {
 
 /////////////////////////////// INIT ///////////////////////////////
 
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+    }
+    return "";
+}
+
 function init() {
 
-    socket.emit('init');
+    var index;
+    if (document.cookie !== document.cookie) {
+        index = document.cookie.indexOf('sut');
+    }
+    else {
+        index = -1;
+    }
+
+    var d = new Date();
+    d.setTime(d.getTime() + (365*24*60*60*1000));
+
+    if (index === -1) {
+        document.cookie = 'sut=test; expires='+d.toUTCString();
+    }
+
+    socket.emit('init', getCookie('sut'));
 
     if (window.File && window.FileReader) {
         document.getElementById('upload-button').addEventListener('click', startUpload);
