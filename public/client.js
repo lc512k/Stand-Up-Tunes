@@ -5,6 +5,7 @@ var socket = io();
 // FILE SIZE CONSTANTS
 var ONE_KB = 1024;
 var HUNDRED_KB = ONE_KB * 100;
+var ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
 
 // Current winning vote count
 var highScore = 0;
@@ -204,32 +205,39 @@ socket.on('loading file list', function () {
 /////////////////////////////// INIT ///////////////////////////////
 
 
-function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0; i<ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1);
-        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+function makeid() {
+    var id = '';
+    var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+    for (var i = 0; i < 6; i++) {
+        id += possible.charAt(Math.floor(Math.random() * possible.length));
     }
-    return "";
+
+    return id;
+}
+
+function getCookie(cname) {
+    var name = cname + '=';
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return '';
 }
 
 function init() {
 
-    var index;
-    if (document.cookie !== document.cookie) {
-        index = document.cookie.indexOf('sut');
-    }
-    else {
-        index = -1;
-    }
-
     var d = new Date();
-    d.setTime(d.getTime() + (365*24*60*60*1000));
+    d.setTime(d.getTime() + ONE_YEAR);
 
-    if (index === -1) {
-        document.cookie = 'sut=test; expires='+d.toUTCString();
+    if (document.cookie.indexOf('sut') < 0) {
+        document.cookie = 'sut=' + makeid() + '; expires=' + d.toUTCString();
     }
 
     socket.emit('init', getCookie('sut'));
