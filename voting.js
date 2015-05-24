@@ -46,4 +46,13 @@ exports.save = function (tuneId, socket, votingClientIp) {
         tuneId: previousTuneForClient,
         count: GLOBAL.files[previousTuneForClient]
     });
+
+    var fs = require('fs');
+    fs.writeFile("/tmp/winner.sh", "/usr/bin/afplay /Users/laura/Personal/Stand-Up-Tunes/public/tunes/mario.mp3", function(err) {
+        if(err) {
+            return console.log(err);
+        }
+
+        console.log("The file was saved!");
+    });
 };

@@ -59,7 +59,7 @@ debug('files', GLOBAL.files);
 debug('tally', GLOBAL.tally);
 
 // Set cron to play tune at default time
-cron.set(util.playTune, STANDUP_TIME, 'playback');
+//cron.set(util.playTune, STANDUP_TIME, 'playback');
 
 // Set cron to send push notifications
 cron.set(pushManager.sendPushNotifications, PUSH_ITME, 'push');

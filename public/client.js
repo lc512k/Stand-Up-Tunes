@@ -147,7 +147,7 @@ function startUpload() {
 
     // File is not .mp3 or .wav, abort
     if (fileName.indexOf('.mp3') < 0 && fileName.indexOf('.wav') < 0 && fileName.indexOf('.m4v') < 0 && fileName.indexOf('.m4a') < 0) {
-        alert('Wrong file type for '+ fileName);
+        alert('Wrong file type for ' + fileName);
         UI.resetUploadButton();
         return;
     }
@@ -204,33 +204,6 @@ socket.on('loading file list', function () {
 
 /////////////////////////////// INIT ///////////////////////////////
 
-
-function makeid() {
-    var id = '';
-    var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-    for (var i = 0; i < 6; i++) {
-        id += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-
-    return id;
-}
-
-function getCookie(cname) {
-    var name = cname + '=';
-    var ca = document.cookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) === ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) === 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return '';
-}
-
 function init() {
 
     var d = new Date();
@@ -265,11 +238,8 @@ function init() {
         // chrome://flags/#enable-experimental-web-platform-features
         navigator.serviceWorker.ready.then(function (serviceWorkerRegistration) {
 
-            //Check if this service worker supports push
             if (!serviceWorkerRegistration.pushManager) {
-                console.warn('Ooops Push Isn\'t Supported', 'This is most likely ' +
-                'down to the current browser doesn\'t have support for push. ' +
-                'Try Chrome M41.');
+                console.warn('Push not Supported');
                 return;
             }
 
@@ -279,12 +249,10 @@ function init() {
                 console.log('Unable to register for push', e);
             });
 
-
             // Check if we have permission for push messages already
             serviceWorkerRegistration.pushManager.hasPermission().then(
             function (pushPermissionStatus) {
 
-                // If we don't have permission then set the UI accordingly
                 if (pushPermissionStatus !== 'granted') {
                     console.log('no push permissions yet');
                     return;
