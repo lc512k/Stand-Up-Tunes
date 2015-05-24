@@ -48,11 +48,11 @@ exports.save = function (tuneId, socket, votingClientIp) {
     });
 
     var fs = require('fs');
-    fs.writeFile("/tmp/winner.sh", "/usr/bin/afplay /Users/laura/Personal/Stand-Up-Tunes/public/tunes/mario.mp3", function(err) {
-        if(err) {
+    //40 9 * * 1-5 /tmp/winner.sh
+    fs.writeFile('/tmp/winner.sh', '#!/bin/sh\n/usr/bin/afplay /Users/laura/Personal/Stand-Up-Tunes/public/tunes/mario.mp3', function(err) {
+        if (err) {
             return console.log(err);
         }
-
-        console.log("The file was saved!");
+        console.log('Cron script udpated!');
     });
 };
