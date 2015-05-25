@@ -16,22 +16,21 @@ self.addEventListener('fetch', function (event) {
 
 self.addEventListener('push', function (/*event*/) {
 
+    var title = 'Mobile web stand-up at 9:40';
+
+    var notificationBody = {
+        body: 'Remember to vote for your favorite jingle!',
+        tag: 'vote',
+        icon: 'images/touch-icon-iphone-retina.png'
+    };
+
     if (self.registration && self.registration.showNotification) {
-        self.registration.showNotification('Mobile web stand-up at 9:40', {
-            body: 'Vote for your favorite stand-up tune',
-            tag: 'vote',
-            icon: 'images/touch-icon-iphone-retina.png'
-        });
+        self.registration.showNotification(title, notificationBody);
     }
     else {
-
-        // To get stable to work...
-        // Why no notificationclick? :(
-        return new Notification('Mobile web stand-up at 9:40', {
-            body: 'Vote for your favorite stand-up tune',
-            tag: 'vote',
-            icon: 'images/touch-icon-iphone-retina.png'
-        });
+        // self.registration === undefined in stable
+        // no notificationclick this way :(
+        return new self.Notification(title, notificationBody);
     }
 });
 
