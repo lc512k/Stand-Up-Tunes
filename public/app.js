@@ -29,22 +29,15 @@ var app = {
     },
 
     registerServiceWorker: function () {
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').then(this.onRegistered, this.onRegisterFailed);
-        }
+        navigator.serviceWorker.register('/sw.js')
+        .then(function (reg) {
+            console.log('Service worker registered! ◕‿◕', reg);
+        }, function (err) {
+            console.log('Sevice worker failed to register ಠ_ಠ', err);
+        });
 
         // chrome://flags/#enable-experimental-web-platform-features
         navigator.serviceWorker.ready.then(this.onReady);
-    },
-
-    onRegistered: function (reg) {
-        debugger
-        console.log('Service worker registered! ◕‿◕', reg);
-    },
-
-    onRegisterFailed: function (err) {
-        debugger
-        console.log('Sevice worker failed to register ಠ_ಠ', err);
     },
 
     onReady: function (serviceWorkerRegistration) {
@@ -54,7 +47,17 @@ var app = {
             return;
         }
 
-        serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true}).then(this.onSuscribed).catch(this.onSuscribeFailed);
+        serviceWorkerRegistration.pushManager.subscribe(/*{userVisibleOnly: true}*/).then(function (pushSubscription) {
+            debugger
+            // debugger
+            // var endpoint = pushSubscription.endpoint;
+            // var test = endpoint.subscriptionId;
+            // debugger
+            socket.emit('pushSubscription', pushSubscription);
+        }).catch(function (e) {
+            debugger
+            console.log('Unable to register for push', e);
+        });
 
         //https://www.chromestatus.com/feature/5778950739460096
         //https://code.google.com/p/chromium/issues/detail?id=477401
@@ -76,7 +79,7 @@ debugger
                 debugger
                 // Check if we have an existing pushSubscription
                 if (pushSubscription) {
-                    // sendSubscription(pushSubscription);
+                    //sendSubscription(pushSubscription);
                     // changeState(STATE_ALLOW_PUSH_SEND);
                 }
                 else {
@@ -86,20 +89,5 @@ debugger
         }).catch(function(e) {
             debugger
         });
-    },
-
-    onSuscribed: function (pushSubscription) {
-
-        debugger
-        var endpoint = pushSubscription.endpoint;
-        var test = endpoint.subscriptionId;
-        debugger
-        socket.emit('pushSubscription', pushSubscription);
-    },
-
-    onSuscribeFailed: function (e) {
-
-        debugger
-        console.log('Unable to register for push', e);
     }
 };

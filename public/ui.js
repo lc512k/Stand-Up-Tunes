@@ -93,7 +93,7 @@ var UI = {
             var clone = document.importNode(template.content, true);
 
             shadow.appendChild(clone);
-debugger
+
             var audioElement = shadow.querySelectorAll('audio')[0];
 
             shadow.querySelectorAll('.play')[0].addEventListener('click', function () {

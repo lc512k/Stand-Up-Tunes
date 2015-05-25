@@ -15,9 +15,8 @@ var cron = require('./cron');
 var pushManager = require('./pushManager');
 
 var PLAY_TIME = '9:40 am';
-var STANDUP_TIME = '0 40 9 * * 1-5';
-var PUSH_ITME = '0 30 9 * * 1-5';
-//var STANDUP_TIME = '0 * * * * *';
+var EVERY_MIN = '0 * * * * *';
+var PUSH_ITME = EVERY_MIN;//'0 30 9 * * 1-5';
 
 ///////////////////////////////////// MONGO //////////////////////////////////
 
