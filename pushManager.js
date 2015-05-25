@@ -8,8 +8,10 @@ var gcm = require('node-gcm');
 exports.subscribe = function (pushSubscription) {
     console.log('suscribed', pushSubscription);
 
-    // TODO Save pushSubscription.subscriptionId to DBs
-    GLOBAL.pushRegistrationIds.push(pushSubscription.subscriptionId);
+    // TODO DB
+    if (GLOBAL.pushRegistrationIds.indexOf(pushSubscription.subscriptionId) === -1) {
+        GLOBAL.pushRegistrationIds.push(pushSubscription.subscriptionId);
+    }
 };
 
 /**
