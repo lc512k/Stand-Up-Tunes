@@ -6,10 +6,12 @@ var gcm = require('node-gcm');
  * Subscribe him
  */
 exports.subscribe = function (pushSubscription) {
-    debug(pushSubscription);
+    console.log('suscribed', pushSubscription);
 
-    // TODO Save pushSubscription.subscriptionId to DBs
-    GLOBAL.pushRegistrationIds.push(pushSubscription.subscriptionId);
+    // TODO DB
+    if (GLOBAL.pushRegistrationIds.indexOf(pushSubscription.subscriptionId) === -1) {
+        GLOBAL.pushRegistrationIds.push(pushSubscription.subscriptionId);
+    }
 };
 
 /**
@@ -17,6 +19,8 @@ exports.subscribe = function (pushSubscription) {
  * Triggered by cron.js at 9:30
  */
 exports.sendPushNotifications = function () {
+
+    console.log('send push notif');
 
     // TODO give message real contents
     // figure out why chrome don't see them
@@ -38,10 +42,10 @@ exports.sendPushNotifications = function () {
     // Fill up registrationIds from select * from pushUsers
     sender.send(message, GLOBAL.pushRegistrationIds, 10, function (err, result) {
         if (err) {
-            debug('GCM error', err);
+            console.log('GCM error', err);
         }
         else {
-            debug('GCM result', result);
+            console.log('GCM result', result);
         }
     });
 };

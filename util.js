@@ -9,7 +9,7 @@ var DEFAULT_TUNE = 'mario.mp3';
  * Search the global file list and find the tune with the most votes
  * @return {String} winningTune - the tune to play or the default when no winner
  */
-var findWinner = function () {
+exports.findWinner = function () {
 
     var winningTune;
 
@@ -46,13 +46,15 @@ var findWinner = function () {
 
 /**
  * Play the winning tune with afplay on the mac terminal
+ * @deprecated
+ * Handled by crontab directly
  */
 exports.playTune = function () {
 
     var winningTune = findWinner();
 
     domain.run(function () {
-        exec('afplay -t 15 -v 10 ./public/tunes/' + winningTune, function (error) { // -r 2 twice as fast lol
+        exec('afplay -t 15 -v 5 ./public/tunes/' + winningTune, function (error) {
 
             if (error) {
                 debug('error playing', winningTune);
@@ -77,9 +79,3 @@ exports.playTune = function () {
         exec('say Oh, no! The mobile web jingle is broken.');
     });
 };
-
-exports.updateWinner = function () {
-    var winningTune = findWinner();
-    // UPDATE ENV VAR WINNER
-    // cron job will play env var
-}

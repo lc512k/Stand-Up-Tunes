@@ -11,27 +11,28 @@ var MongoClient = require('mongodb').MongoClient;
 var fsManager = require('./fileSystemManager');
 var voting = require('./voting');
 var cron = require('./cron');
-var util = require('./util');
+//var util = require('./util');
 var pushManager = require('./pushManager');
 
 var PLAY_TIME = '9:40 am';
-var STANDUP_TIME = '0 40 9 * * 1-5';
+var EVERY_MIN = '0 * * * * *';
 var PUSH_ITME = '0 30 9 * * 1-5';
-//var STANDUP_TIME = '0 * * * * *';
 
 ///////////////////////////////////// MONGO //////////////////////////////////
 
-// var url = 'mongodb://localhost:27017/sut';
+/*
+var url = 'mongodb://localhost:27017/sut';
 
-// MongoClient.connect(url, function (err, db) {
+MongoClient.connect(url, function (err, db) {
 
-//     if (err) {
-//         console.error('error connecting to db', err);
-//     }
-//     console.log('Connected correctly to server');
+    if (err) {
+        console.error('error connecting to db', err);
+    }
+    console.log('Connected correctly to server');
 
-//     db.close();
-// });
+    db.close();
+});
+*/
 
 ///////////////////////////////// SERVER SETUP /////////////////////////////////
 
@@ -49,17 +50,14 @@ app.use('/docs', express.static(__dirname + '/docs')); //jshint ignore:line
 
 // Start the http server
 server.listen(3000, function () {
-    debug('Server listening at port %d', 3000);
+    console.log('Server listening at port %d', 3000);
 });
 
 // Load all available tunes and their votes
 fsManager.init();
 
-debug('files', GLOBAL.files);
-debug('tally', GLOBAL.tally);
-
-// Set cron to play tune at default time
-cron.set(util.playTune, STANDUP_TIME, 'playback');
+console.log('files', GLOBAL.files);
+console.log('tally', GLOBAL.tally);
 
 // Set cron to send push notifications
 cron.set(pushManager.sendPushNotifications, PUSH_ITME, 'push');
@@ -67,56 +65,38 @@ cron.set(pushManager.sendPushNotifications, PUSH_ITME, 'push');
 ///////////////////////////////// CLIENT CONNECTIONS /////////////////////////////////
 
 io.sockets.on('connection', function (socket) {
+    console.log('connection');
 
-    var authenticated = false;
-    var name;
+    socket.on('init', function (cookie) {
+    //console.log('Headers',  socket.client.request.headers);
 
-    // A client connected
-    socket.on('init', function () {
-        //debug('Headers',  socket.client.request.headers);
+    console.log('New init ', cookie);
 
-        var clientIp = socket.client.conn.remoteAddress;
-        debug('New client connected ', clientIp);
+        console.log('Client connected ', cookie);
 
-        if (authenticated) {
-            // Give the client the list of tunes
-            // and the time the next jingle will play
-            socket.emit('startup', {
-                files: GLOBAL.files,
-                playTime: PLAY_TIME
-            });
+        socket.emit('startup', {
+            files: GLOBAL.files,
+            playTime: PLAY_TIME
+        });
 
-            // Say Hi!
-            socket.emit('welcome', name);
+        // Say Hi!
+        socket.emit('welcome', cookie);
 
+        // Tell everyone else this client joined
+        socket.broadcast.emit('new user', cookie);
 
-            // Tell everyone else this client joined
-            socket.broadcast.emit('new user', name);
-        }
-        else {
-            debug('not authenticated');
-            socket.emit('authenticate');
-        }
-    });
-
-    socket.on('login', function (loginData) {
-        debug('logged in with ', loginData);
-        authenticated = loginData.name ? true : false;
-        name = loginData.name;
     });
 
     // Handle a vote
-    socket.on('vote', function (tuneId) {
+    socket.on('vote', function (tuneId, cookie) {
 
-        var votingClientIp = socket.client.conn.remoteAddress;
+        console.log('vote received for ' + tuneId + ' by ' + cookie);
 
-        debug('vote received for ' + tuneId + ' by ' + votingClientIp);
-
-        debug('FILES', GLOBAL.files);
-        debug('TALLY', GLOBAL.tally);
+        console.log('FILES', GLOBAL.files);
+        console.log('TALLY', GLOBAL.tally);
 
         // Store the vote and broadcast the new vote counts to all clients
-        voting.save(tuneId, socket, votingClientIp);
+        voting.save(tuneId, socket, cookie);
     });
 
     // Uploading: Start saving a new file or resuming a previous upload
