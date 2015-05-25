@@ -48,14 +48,14 @@ app.use('/docs', express.static(__dirname + '/docs')); //jshint ignore:line
 
 // Start the http server
 server.listen(3000, function () {
-    debug('Server listening at port %d', 3000);
+    console.log('Server listening at port %d', 3000);
 });
 
 // Load all available tunes and their votes
 fsManager.init();
 
-debug('files', GLOBAL.files);
-debug('tally', GLOBAL.tally);
+console.log('files', GLOBAL.files);
+console.log('tally', GLOBAL.tally);
 
 // Set cron to play tune at default time
 //cron.set(util.playTune, STANDUP_TIME, 'playback');
@@ -69,11 +69,11 @@ io.sockets.on('connection', function (socket) {
     console.log('connection');
 
     socket.on('init', function (cookie) {
-    //debug('Headers',  socket.client.request.headers);
+    //console.log('Headers',  socket.client.request.headers);
 
     console.log('New init ', cookie);
 
-        //debug('Headers',  socket.client.request.headers);
+        //console.log('Headers',  socket.client.request.headers);
 
         console.log('New client connected ', cookie);
 
@@ -93,10 +93,10 @@ io.sockets.on('connection', function (socket) {
     // Handle a vote
     socket.on('vote', function (tuneId, cookie) {
 
-        debug('vote received for ' + tuneId + ' by ' + cookie);
+        console.log('vote received for ' + tuneId + ' by ' + cookie);
 
-        debug('FILES', GLOBAL.files);
-        debug('TALLY', GLOBAL.tally);
+        console.log('FILES', GLOBAL.files);
+        console.log('TALLY', GLOBAL.tally);
 
         // Store the vote and broadcast the new vote counts to all clients
         voting.save(tuneId, socket, cookie);
