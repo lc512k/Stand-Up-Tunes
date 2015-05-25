@@ -1,4 +1,4 @@
-/* global UI, util, io, app, document, window */
+/* global UI, util, io, navigator, document, window */
 
 var socket = io();
 
@@ -36,17 +36,6 @@ socket.on('startup', function (message) {
 socket.on('welcome', function (name) {
     console.log('%c%s%s', UI.USER_LOG_STYLE, 'welcome', name);
 });
-
-// socket.on('authenticate', function () {
-//     // tell them to login via fb
-
-//     socket.emit('login', {name: 'offline'});
-//     socket.emit('init');
-// });
-
-// socket.on('new user', function (ip) {
-//     console.log('%cYour friend%shas joined!', UI.USER_LOG_STYLE, ip);
-// });
 
 /////////////////////////////// VOTING ///////////////////////////////
 
@@ -207,4 +196,78 @@ if (window.location.href.indexOf('192.168') > 0) {
     window.location.replace('https://dev5.mshoteu.badoo.com/');
 }
 
-window.addEventListener('load', app.init());
+function init() {
+    var d = new Date();
+    d.setTime(d.getTime() + ONE_YEAR);
+
+    if (document.cookie.indexOf('sut') < 0) {
+        document.cookie = 'sut=' + makeid() + '; expires=' + d.toUTCString();
+    }
+
+    socket.emit('init', getCookie('sut'));
+
+    if (window.File && window.FileReader) {
+        document.getElementById('upload-button').addEventListener('click', startUpload);
+        UI.fileBox.addEventListener('change', fileChosen);
+        UI.nameBox.addEventListener('click', function () {
+            UI.fileBox.click();
+        });
+    }
+
+    // Web
+    UI.registerCustomElements();
+
+    // Service Worker
+    navigator.serviceWorker.register('/sw.js').then(function (reg) {
+        console.log('Service worker registered! ◕‿◕', reg);
+    }, function (err) {
+        console.log('Sevice worker failed to register ಠ_ಠ', err);
+    });
+
+    // chrome://flags/#enable-experimental-web-platform-features
+    navigator.serviceWorker.ready.then(function (serviceWorkerRegistration) {
+
+        if (!serviceWorkerRegistration.pushManager) {
+            console.warn('Push not Supported');
+            return;
+        }
+
+        serviceWorkerRegistration.pushManager.subscribe(/*{userVisibleOnly: true}*/).then(function (pushSubscription) {
+            socket.emit('pushSubscription', pushSubscription);
+        }).catch(function (e) {
+            console.log('Unable to register for push', e);
+        });
+
+        //https://www.chromestatus.com/feature/5778950739460096
+        //https://code.google.com/p/chromium/issues/detail?id=477401
+        var servicePromise = serviceWorkerRegistration.pushManager.permissionState ?
+                            serviceWorkerRegistration.pushManager.permissionState() :
+                            serviceWorkerRegistration.pushManager.hasPermission();
+
+        // Check if we have permission for push messages already
+        servicePromise.then(function (pushPermissionStatus) {
+
+            if (pushPermissionStatus !== 'granted') {
+                console.log('no push permissions yet');
+                return;
+            }
+            // We have permission,
+            // so let's update the subscription
+            // just to be safe
+            serviceWorkerRegistration.pushManager.getSubscription().then(function (pushSubscription) {
+
+                if (pushSubscription) {
+                    //sendSubscription(pushSubscription);
+                    //changeState(STATE_ALLOW_PUSH_SEND);
+                }
+                else {
+                    //changeState(STATE_NOTIFICATION_PERMISSION);
+                }
+            });
+        }).catch(function (error) {
+            console.log(error)
+        });
+    });
+}
+
+window.addEventListener('load', init());
