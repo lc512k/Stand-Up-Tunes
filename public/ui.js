@@ -93,26 +93,26 @@ var UI = {
             var clone = document.importNode(template.content, true);
 
             shadow.appendChild(clone);
+debugger
+            var audioElement = shadow.querySelectorAll('audio')[0];
 
-            var audioElement = shadow.getElementsByTagName('audio')[0];
-
-            shadow.getElementsByClassName('play')[0].addEventListener('click', function () {
+            shadow.querySelectorAll('.play')[0].addEventListener('click', function () {
                 audioElement.play();
             });
 
-            shadow.getElementsByClassName('tune')[0].addEventListener('click', function (e) {
+            shadow.querySelectorAll('.tune')[0].addEventListener('click', function (e) {
 
                 // If clicked play button, ignore
                 if (e.target.getAttribute('class') === 'play') {
                     return;
                 }
 
-                var otherElements = document.getElementsByTagName('standup-tune');
+                var otherElements = document.querySelectorAll('standup-tune');
 
                 // TODO find alternative to poking shadow root of other elements
                 for (var i = 0; i < otherElements.length; i++) {
                     var element = otherElements[i];
-                    element.shadowRoot.getElementsByClassName('tune')[0].style.backgroundColor = '';
+                    element.shadowRoot.querySelectorAll('.tune')[0].style.backgroundColor = '';
                 }
 
                 this.style.backgroundColor = UI.SELECTED_COLOR;
@@ -138,15 +138,15 @@ var UI = {
         var tuneElement = new this.StandupTune();
 
         // set the values in the light DOM
-        tuneElement.getElementsByTagName('tune-name')[0].innerText = tuneId;
-        tuneElement.getElementsByTagName('tune-voters')[0].innerText = votes;
+        tuneElement.querySelectorAll('tune-name')[0].innerText = tuneId;
+        tuneElement.querySelectorAll('tune-voters')[0].innerText = votes;
         tuneElement.setAttribute('data-tune-id', tuneId);
 
         // TODO find alternative to poking the shadow DOM
         // Setting the tuneId where needed
-        tuneElement.shadowRoot.getElementsByClassName('image')[0].style.backgroundImage = 'url(images/tunes/' + tuneId + '.png)';
-        tuneElement.shadowRoot.getElementsByTagName('source')[0].src = 'tunes/' + tuneId;
-        tuneElement.shadowRoot.getElementsByClassName('tune')[0].setAttribute('data-tune-id', tuneId);
+        tuneElement.shadowRoot.querySelectorAll('.image')[0].style.backgroundImage = 'url(images/tunes/' + tuneId + '.png)';
+        tuneElement.shadowRoot.querySelectorAll('source')[0].src = 'tunes/' + tuneId;
+        tuneElement.shadowRoot.querySelectorAll('.tune')[0].setAttribute('data-tune-id', tuneId);
 
         return tuneElement;
     }

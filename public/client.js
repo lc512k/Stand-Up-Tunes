@@ -1,4 +1,4 @@
-/* global UI, navigator, util, io, document, window */
+/* global UI, util, io, app, document, window */
 
 var socket = io();
 
@@ -202,94 +202,9 @@ socket.on('loading file list', function () {
     // TODO spinner
 });
 
-/////////////////////////////// INIT ///////////////////////////////
-
-function init() {
-
-    var d = new Date();
-    d.setTime(d.getTime() + ONE_YEAR);
-
-    if (document.cookie.indexOf('sut') < 0) {
-        document.cookie = 'sut=' + makeid() + '; expires=' + d.toUTCString();
-    }
-
-    socket.emit('init', getCookie('sut'));
-
-    if (window.File && window.FileReader) {
-        document.getElementById('upload-button').addEventListener('click', startUpload);
-        UI.fileBox.addEventListener('change', fileChosen);
-        UI.nameBox.addEventListener('click', function () {
-            UI.fileBox.click();
-        });
-    }
-
-    // Web
-    UI.registerCustomElements();
-
-    // Service Worker
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js')
-        .then(function (reg) {
-            console.log('Service worker registered! ◕‿◕', reg);
-        }, function (err) {
-            console.log('Sevice worker failed to register ಠ_ಠ', err);
-        });
-
-        // chrome://flags/#enable-experimental-web-platform-features
-        navigator.serviceWorker.ready.then(function (serviceWorkerRegistration) {
-
-            if (!serviceWorkerRegistration.pushManager) {
-                console.warn('Push not Supported');
-                return;
-            }
-
-            serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true}).then(function (pushSubscription) {
-                var endpoint = subscription.endpoint;
-                var test = endpoint.subscriptionId;
-                debugger
-                socket.emit('pushSubscription', pushSubscription);
-            }).catch(function (e) {
-                console.log('Unable to register for push', e);
-            });
-
-            //https://www.chromestatus.com/feature/5778950739460096
-            //https://code.google.com/p/chromium/issues/detail?id=477401
-
-            var servicePromise = serviceWorkerRegistration.pushManager.permissionState ?
-                                serviceWorkerRegistration.pushManager.permissionState() :
-                                serviceWorkerRegistration.pushManager.hasPermission();
-
-            // Check if we have permission for push messages already
-            servicePromise.then(function (pushPermissionStatus) {
-
-                if (pushPermissionStatus !== 'granted') {
-                    console.log('no push permissions yet');
-                    return;
-                }
-                // We have permission,
-                // so let's update the subscription
-                // just to be safe
-                serviceWorkerRegistration.pushManager.getSubscription().then(
-                function (pushSubscription) {
-                    // Check if we have an existing pushSubscription
-                    if (pushSubscription) {
-                        // sendSubscription(pushSubscription);
-                        // changeState(STATE_ALLOW_PUSH_SEND);
-                    }
-                    else {
-                        //changeState(STATE_NOTIFICATION_PERMISSION);
-                    }
-                });
-            }).catch(function(e) {
-                debugger
-            });
-        });
-    }
-}
-
 // Redirect to https
 if (window.location.href.indexOf('192.168') > 0) {
     window.location.replace('https://dev5.mshoteu.badoo.com/');
 }
 
-window.addEventListener('load', init);
+window.addEventListener('load', app.init());
