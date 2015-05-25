@@ -15,11 +15,24 @@ self.addEventListener('fetch', function (event) {
 });
 
 self.addEventListener('push', function (/*event*/) {
-    self.registration.showNotification('Mobile web stand-up at 9:40', {
-        body: 'Vote for your favorite stand-up tune',
-        tag: 'vote',
-        icon: 'images/touch-icon-iphone-retina.png'
-    });
+
+    if (self.registration && self.registration.showNotification) {
+        self.registration.showNotification('Mobile web stand-up at 9:40', {
+            body: 'Vote for your favorite stand-up tune',
+            tag: 'vote',
+            icon: 'images/touch-icon-iphone-retina.png'
+        });
+    }
+    else {
+
+        // To get stable to work...
+        // Why no notificationclick? :(
+        return new Notification('Mobile web stand-up at 9:40', {
+            body: 'Vote for your favorite stand-up tune',
+            tag: 'vote',
+            icon: 'images/touch-icon-iphone-retina.png'
+        });
+    }
 });
 
 self.addEventListener('notificationclick', function (event) {
