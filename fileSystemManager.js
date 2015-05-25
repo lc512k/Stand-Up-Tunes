@@ -6,6 +6,7 @@ var HUNDRED_KB = ONE_KB * 100;
 var ONE_MB = Math.pow(ONE_KB, 2);
 var FIVE_MB = ONE_MB * 5;
 
+var BASE_DIR = '/Users/laura/Stand-Up-Tunes/public/tunes/';
 /**
  * Read the tunes folder and load all available file names
  * Read the backup.json file for any previously backed up vote counts
@@ -13,7 +14,7 @@ var FIVE_MB = ONE_MB * 5;
 exports.init = function () {
     debug('init');
 
-    fs.readdir('public/tunes', function (err, files) {
+    fs.readdir(BASE_DIR, function (err, files) {
 
         if (err) {
             debug('error reading public tunes folder', err);
@@ -100,7 +101,7 @@ exports.startUpload = function (data, socket) {
     var marker = 0;
 
     try {
-        var existingFile = fs.statSync('public/tunes/' + name);
+        var existingFile = fs.statSync(BASE_DIR + name);
 
         // If the file exists in public/tunes/
         // continue downloading where we left off
@@ -119,7 +120,7 @@ exports.startUpload = function (data, socket) {
      * if it's an existing file we open it.
      * We ask the client to send more data.
      */
-    fs.open('public/tunes/' + name, 'a', 0755, function (err, fd) {
+    fs.open(BASE_DIR + name, 'a', 0755, function (err, fd) {
         if (err) {
             debug(err);
         }

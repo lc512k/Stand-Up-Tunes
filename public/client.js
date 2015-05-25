@@ -69,8 +69,11 @@ socket.on('new vote', function (vote) {
  * @param {Object} vote
  * @param {String} vote.tuneId
  * @param {String} vote.count
+ * @deprecated
  */
 socket.on('votes reset', function () {
+
+    console.warn('deprecated event "votes reset" called')
 
     var allScores = document.getElementsByClassName('voters');
 

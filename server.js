@@ -16,21 +16,23 @@ var pushManager = require('./pushManager');
 
 var PLAY_TIME = '9:40 am';
 var EVERY_MIN = '0 * * * * *';
-var PUSH_ITME = EVERY_MIN;//'0 30 9 * * 1-5';
+var PUSH_ITME = '0 30 9 * * 1-5';
 
 ///////////////////////////////////// MONGO //////////////////////////////////
 
-// var url = 'mongodb://localhost:27017/sut';
+/*
+var url = 'mongodb://localhost:27017/sut';
 
-// MongoClient.connect(url, function (err, db) {
+MongoClient.connect(url, function (err, db) {
 
-//     if (err) {
-//         console.error('error connecting to db', err);
-//     }
-//     console.log('Connected correctly to server');
+    if (err) {
+        console.error('error connecting to db', err);
+    }
+    console.log('Connected correctly to server');
 
-//     db.close();
-// });
+    db.close();
+});
+*/
 
 ///////////////////////////////// SERVER SETUP /////////////////////////////////
 
@@ -57,9 +59,6 @@ fsManager.init();
 console.log('files', GLOBAL.files);
 console.log('tally', GLOBAL.tally);
 
-// Set cron to play tune at default time
-//cron.set(util.playTune, STANDUP_TIME, 'playback');
-
 // Set cron to send push notifications
 cron.set(pushManager.sendPushNotifications, PUSH_ITME, 'push');
 
@@ -73,9 +72,7 @@ io.sockets.on('connection', function (socket) {
 
     console.log('New init ', cookie);
 
-        //console.log('Headers',  socket.client.request.headers);
-
-        console.log('New client connected ', cookie);
+        console.log('Client connected ', cookie);
 
         socket.emit('startup', {
             files: GLOBAL.files,

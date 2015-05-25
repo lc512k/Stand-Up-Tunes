@@ -1,0 +1,7 @@
+MAILTO=laura.carvajal@corp.badoo.com
+
+00 5 * * 1-5 /usr/bin/killall node
+
+01 5 * * 1-5 /usr/local/bin/node /Users/laura/Stand-Up-Tunes/server.js
+
+40 9 * * 1-5 /tmp/winner.sh
