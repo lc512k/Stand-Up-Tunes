@@ -1,5 +1,3 @@
-//screen node server -L &
-
 var express = require('express');
 var app = express();
 var http = require('http');
@@ -11,28 +9,11 @@ var MongoClient = require('mongodb').MongoClient;
 var fsManager = require('./fileSystemManager');
 var voting = require('./voting');
 var cron = require('./cron');
-//var util = require('./util');
 var pushManager = require('./pushManager');
 
 var PLAY_TIME = '9:40 am';
 var EVERY_MIN = '0 * * * * *';
-var PUSH_ITME = '0 30 9 * * 1-5';
-
-///////////////////////////////////// MONGO //////////////////////////////////
-
-/*
-var url = 'mongodb://localhost:27017/sut';
-
-MongoClient.connect(url, function (err, db) {
-
-    if (err) {
-        console.error('error connecting to db', err);
-    }
-    console.log('Connected correctly to server');
-
-    db.close();
-});
-*/
+var PUSH_ITME = EVERY_MIN;//'0 30 9 * * 1-5';
 
 ///////////////////////////////// SERVER SETUP /////////////////////////////////
 
@@ -89,14 +70,13 @@ io.sockets.on('connection', function (socket) {
 
     // Handle a vote
     socket.on('vote', function (tuneId, cookie) {
-
         console.log('vote received for ' + tuneId + ' by ' + cookie);
-
-        console.log('FILES', GLOBAL.files);
-        console.log('TALLY', GLOBAL.tally);
 
         // Store the vote and broadcast the new vote counts to all clients
         voting.save(tuneId, socket, cookie);
+
+        console.log('FILES', GLOBAL.files);
+        console.log('TALLY', GLOBAL.tally);
     });
 
     // Uploading: Start saving a new file or resuming a previous upload

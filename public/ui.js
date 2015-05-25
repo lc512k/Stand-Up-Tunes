@@ -120,7 +120,7 @@ var UI = {
                 var chosenTuneId = this.dataset.tuneId;
 
                 if (chosenTuneId) {
-                    socket.emit('vote', chosenTuneId);
+                    socket.emit('vote', chosenTuneId, getCookie(COOKIE_NAME));
                 }
                 else {
                     console.error('no tune id in ', e);

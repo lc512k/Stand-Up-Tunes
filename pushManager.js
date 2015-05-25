@@ -16,30 +16,19 @@ exports.subscribe = function (pushSubscription) {
 
 /**
  * Send the push notifications
- * Triggered by cron.js at 9:30
+ * Triggered by crontab at 9:30
  */
 exports.sendPushNotifications = function () {
 
-    console.log('send push notif');
-
-    // TODO give message real contents
-    // figure out why chrome don't see them
-    var message = new gcm.Message({
-        collapseKey: 'demo',
-        delayWhileIdle: true,
-        timeToLive: 3,
-        data: {
-            key1: 'message1',
-            key2: 'message2'
-        }
-    });
+    // payload gets ignored anyway
+    var message = new gcm.Message({});
 
     // Our Google Cloud Manager app key
     var sender = new gcm.Sender('AIzaSyDURRSD3bpmMjBLiTKvr4CTCXkVOsOIioU');
 
-    debug('Sending message to all recipients:', message);
+    debug('Sending push to all recipients:', message);
 
-    // Fill up registrationIds from select * from pushUsers
+    // TODO Fill up registrationIds from select * from pushUsers
     sender.send(message, GLOBAL.pushRegistrationIds, 10, function (err, result) {
         if (err) {
             console.log('GCM error', err);

@@ -15,14 +15,6 @@ exports.findWinner = function () {
 
     var highScore = 0;
 
-    for (var user in GLOBAL.tally) {
-
-        if (GLOBAL.tally.hasOwnProperty(user)) {
-            var tune = GLOBAL.tally[user];
-            GLOBAL.files[tune]++;
-        }
-    }
-
     for (var tuneId in GLOBAL.files) {
 
         if (GLOBAL.files.hasOwnProperty(tuneId)) {

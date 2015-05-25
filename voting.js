@@ -1,5 +1,6 @@
 var debug = require('debug')('voting');
 var util = require('./util');
+var fs = require('fs');
 
 var BASE_DIR = '/Users/laura/Stand-Up-Tunes/public/tunes/';
 var SCRIPT_NAME = '/tmp/winner.sh';
@@ -10,13 +11,12 @@ var SCRIPT_NAME = '/tmp/winner.sh';
  * and increase its vote count by one.
  * Tell all clients to update the vote count for this file
  */
-exports.save = function (tuneId, socket, votingClientIp) {
+exports.save = function (tuneId, socket, cookie) {
 
-    var previousTuneForClient = GLOBAL.tally[votingClientIp];
+    var previousTuneForClient = GLOBAL.tally[cookie];
 
-    debug('previousTuneForClient', previousTuneForClient);
 
-    GLOBAL.tally[votingClientIp] = tuneId;
+    GLOBAL.tally[cookie] = tuneId;
 
     // Increase the vote count by one
     GLOBAL.files[tuneId]++;
@@ -51,7 +51,6 @@ exports.save = function (tuneId, socket, votingClientIp) {
         count: GLOBAL.files[previousTuneForClient]
     });
 
-    var fs = require('fs');
     // cronjob is:
     // 40 9 * * 1-5 /tmp/winner.sh
     fs.writeFile(SCRIPT_NAME, '#!/bin/sh\n/usr/bin/afplay ' + BASE_DIR + util.findWinner(), function (err) {
