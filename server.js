@@ -11,7 +11,7 @@ var MongoClient = require('mongodb').MongoClient;
 var fsManager = require('./fileSystemManager');
 var voting = require('./voting');
 var cron = require('./cron');
-var util = require('./util');
+//var util = require('./util');
 var pushManager = require('./pushManager');
 
 var PLAY_TIME = '9:40 am';

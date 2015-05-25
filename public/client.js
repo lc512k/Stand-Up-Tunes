@@ -243,15 +243,24 @@ function init() {
                 return;
             }
 
-            serviceWorkerRegistration.pushManager.subscribe().then(function (pushSubscription) {
+            serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true}).then(function (pushSubscription) {
+                var endpoint = subscription.endpoint;
+                var test = endpoint.subscriptionId;
+                debugger
                 socket.emit('pushSubscription', pushSubscription);
             }).catch(function (e) {
                 console.log('Unable to register for push', e);
             });
 
+            //https://www.chromestatus.com/feature/5778950739460096
+            //https://code.google.com/p/chromium/issues/detail?id=477401
+
+            var servicePromise = serviceWorkerRegistration.pushManager.permissionState ?
+                                serviceWorkerRegistration.pushManager.permissionState() :
+                                serviceWorkerRegistration.pushManager.hasPermission();
+
             // Check if we have permission for push messages already
-            serviceWorkerRegistration.pushManager.hasPermission().then(
-            function (pushPermissionStatus) {
+            servicePromise.then(function (pushPermissionStatus) {
 
                 if (pushPermissionStatus !== 'granted') {
                     console.log('no push permissions yet');
@@ -271,9 +280,16 @@ function init() {
                         //changeState(STATE_NOTIFICATION_PERMISSION);
                     }
                 });
+            }).catch(function(e) {
+                debugger
             });
         });
     }
+}
+
+// Redirect to https
+if (window.location.href.indexOf('192.168') > 0) {
+    window.location.replace('https://dev5.mshoteu.badoo.com/');
 }
 
 window.addEventListener('load', init);

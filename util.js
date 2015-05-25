@@ -9,7 +9,7 @@ var DEFAULT_TUNE = 'mario.mp3';
  * Search the global file list and find the tune with the most votes
  * @return {String} winningTune - the tune to play or the default when no winner
  */
-var findWinner = function () {
+exports.findWinner = function () {
 
     var winningTune;
 

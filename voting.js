@@ -1,4 +1,8 @@
 var debug = require('debug')('voting');
+var util = require('./util');
+
+var BASE_DIR = '/Users/laura/Stand-Up-Tunes/public/tunes/';
+var SCRIPT_NAME = '/tmp/winner.sh';
 
 /**
  * When a new vote is received
@@ -48,8 +52,9 @@ exports.save = function (tuneId, socket, votingClientIp) {
     });
 
     var fs = require('fs');
-    //40 9 * * 1-5 /tmp/winner.sh
-    fs.writeFile('/tmp/winner.sh', '#!/bin/sh\n/usr/bin/afplay /Users/laura/Personal/Stand-Up-Tunes/public/tunes/mario.mp3', function(err) {
+    // cronjob is:
+    // 40 9 * * 1-5 /tmp/winner.sh
+    fs.writeFile(SCRIPT_NAME, '#!/bin/sh\n/usr/bin/afplay ' + BASE_DIR + util.findWinner(), function (err) {
         if (err) {
             return console.log(err);
         }
