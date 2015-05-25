@@ -6,6 +6,7 @@ var socket = io();
 var ONE_KB = 1024;
 var HUNDRED_KB = ONE_KB * 100;
 var ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
+var COOKIE_NAME = 'play_fair';
 
 // Current winning vote count
 var highScore = 0;
@@ -73,7 +74,7 @@ socket.on('new vote', function (vote) {
  */
 socket.on('votes reset', function () {
 
-    console.warn('deprecated event "votes reset" called')
+    console.warn('deprecated event "votes reset" called');
 
     var allScores = document.getElementsByClassName('voters');
 
@@ -186,13 +187,15 @@ socket.on('more data', function (data) {
 });
 
 socket.on('done', function (newFileName) {
-    UI.addRow(newFileName);
+    UI.addItem(newFileName);
     UI.updateProgressBar(100);
 });
 
 socket.on('loading file list', function () {
     // TODO spinner
 });
+
+//// INIT
 
 // Redirect to https
 if (window.location.href.indexOf('192.168') > 0) {
@@ -203,11 +206,11 @@ function init() {
     var d = new Date();
     d.setTime(d.getTime() + ONE_YEAR);
 
-    if (document.cookie.indexOf('sut') < 0) {
-        document.cookie = 'sut=' + makeid() + '; expires=' + d.toUTCString();
+    if (document.cookie.indexOf(COOKIE_NAME) < 0) {
+        document.cookie = COOKIE_NAME + '=' + makeid() + '; expires=' + d.toUTCString();
     }
 
-    socket.emit('init', getCookie('sut'));
+    socket.emit('init', getCookie(COOKIE_NAME));
 
     if (window.File && window.FileReader) {
         document.getElementById('upload-button').addEventListener('click', startUpload);
@@ -258,17 +261,10 @@ function init() {
             // so let's update the subscription
             // just to be safe
             serviceWorkerRegistration.pushManager.getSubscription().then(function (pushSubscription) {
-
-                if (pushSubscription) {
-                    //sendSubscription(pushSubscription);
-                    //changeState(STATE_ALLOW_PUSH_SEND);
-                }
-                else {
-                    //changeState(STATE_NOTIFICATION_PERMISSION);
-                }
+                if (pushSubscription) {} else {}
             });
         }).catch(function (error) {
-            console.log(error)
+            console.error(error);
         });
     });
 }

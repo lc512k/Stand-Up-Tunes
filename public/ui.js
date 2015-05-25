@@ -44,7 +44,7 @@ var UI = {
         }
     },
 
-    addRow: function (tuneId, listener) {
+    addItem: function (tuneId, listener) {
         var tuneItem = this.createTuneItem(tuneId, 0, listener);
         this.tunesContainer.appendChild(tuneItem);
     },
