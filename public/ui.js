@@ -19,6 +19,11 @@ var UI = {
 
     selectedFile: null,
 
+    updateWinner: function (winner) {
+        var winnerNameNode = document.querySelector('.winner-name');
+        winnerNameNode.innerHTML = winner;
+    },
+
     updateProgressBar: function (percent) {
 
         if (percent < 0) {

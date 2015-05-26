@@ -176,11 +176,8 @@ p {
 
 /* MISC */
 
-.winner > .tune-name::after {
-    padding-right:  5px;
-    content:        '♕';
-    float:          left;
-    color:          orange;
+.winner-name {
+    font-weight:    bold;
 }
 
 .play-time {

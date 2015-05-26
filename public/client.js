@@ -90,10 +90,8 @@ socket.on('votes reset', function () {
     }
 });
 
-socket.on('winner', function (winners) {
-    for (var winnerIp in winners) {
-        console.log('%c%s wins!', winnerIp);
-    }
+socket.on('winner', function (winner) {
+    UI.updateWinner(winner);
 });
 
 var highlightIfWinner = function (rowItem, voteCount) {

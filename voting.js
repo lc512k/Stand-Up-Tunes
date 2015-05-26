@@ -57,6 +57,7 @@ exports.save = function (tuneId, socket, cookie) {
         if (err) {
             return console.log(err);
         }
+        socket.emit('winner', util.findWinner());
         console.log('Cron script udpated!');
     });
 };
